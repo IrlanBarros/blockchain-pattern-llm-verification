@@ -1,0 +1,1424 @@
+issue_id,repository_full_name,issue_number,type,state,created_at,closed_at,labels,repository_category,repository_category_canonical,data_source,issue_title,issue_body,concatenated_comments,comments_count,comments_count_filtered,commits_count,raw_text_sha256,sample_group,selection_trigger,annotator_id,relevant_to_pattern_study,patterns_present,adoption_status,issue_activity_type,challenge_categories,evidence_text,evidence_location,false_friend_detected,overlapping_patterns,insufficient_context,confidence,human_notes,annotation_date
+934478623,solana-labs/solana-program-library,2003,Pull Request,closed,2021-07-01T06:54:50+00:00,2021-07-16T01:21:44+00:00,community,Smart Contract Library,Smart Contract Library,provider,we added a secondary oracle and functionality to deposit asset + ctoken in same instruction,cc. @jordansexton,"I think the idea with switchboard is for now just to have a backup because we did run in to some issues, but in the future we might want to have the ability for each reserve to specify an oracle if we plan on having some exotic assets, switchboard seemed really onboard with adding basically whatever we wanted so that flexibility seemed nice. ",1.0,1.0,24.0,7de6cf5a4ca2fee0bfe57cb1bf8b9fa7415aa3de190f1d2388c74a890416f360,false_friend,oracle,,,,,,,,,,,,,,
+850503182,hyperledger/fabric-sdk-go,172,Pull Request,closed,2021-04-05T16:52:35+00:00,2022-03-30T19:39:20+00:00,stale,SDK / Library,SDK / Library,provider,add Checkpointer proposal,"The goal of this PR is to propose a way to do event checkpointing using Go SDK, this is a a desirable feature to replay missed events emitted by peers.
+
+Node SDK and Java SDK have this feature, in Java, when a client starts to listen to events, they inject the checkpointer like this:  
+
+contract.addContractListener(
+  newCheckpointer(""checkpointer.json""),
+  handler
+  ""Event""
+)
+
+We want to emulate this using Go, we have a question before we continue with unit testing and the injection of the checkpointer itself:
+
+- What is the best way to approach the injection of the checkpointer ? We were thinking adding it as a parameter 
+ in the RegisterEvent function https://pkg.go.dev/github.com/chrainwang/fabric-sdk-go/pkg/gateway#Contract.RegisterEvent
+so the client doesn't need to worry about nothing.
+
+
+Signed-off-by: jsebastianms1 <jsebastianms1@gmail.com>","I'm not sure that we should store a checkpoint of the last retrieved event, it's a business logic for which the SDK is not responsible. Once you received the event, you can push it to some queue, process, acknowledge and in case of failure start from the last one and reconnect using `WithBlockNum` as was described above.  | Also, there are two another issues:
+1) running sdk in an unprivileged container with no access to a host system.
+2) load balancing multiple replicas, they will have different checkpoint state, no way to know to which one you were connected, etc.  | Hi team,
+can we use checkpointer in go if it is not now then how we can create deliverclient.
+ ",4.0,3.0,1.0,7155fc3eee2048e43397fc54d4d7f572066af623e324f2b73a8be81d7c77250f,false_friend,checkpoint,,,,,,,,,,,,,,
+329935650,blockscout/blockscout,254,Issue,closed,2018-06-06T16:08:16+00:00,2018-06-20T17:38:40+00:00,"bug :bug:, team: architecture",Other,Other,provider,Detect 413 Request Entity Too Large and autoscale down batches,"While running `iex -S mix` locally for development, the `eth_getBlockByNumber` batch call blow up with a `failed to decode json payload` error that contained an HTML error with title `413 Request Entity Too Large` from the nginx server that is the reverse proxy for https://sokol.poa.network.  We should check for 413 and autoscale down batches when it occurs.
+
+<details>
+
+```
+[error] failed to decode json payload:
+
+    url: ""https://sokol.poa.network""
+
+    body: ""<html>\\r\\n<head><title>413 Request Entity Too Large</title></head>\\r\\n<body bgcolor=\\""white\\"">\\r\\n<center><h1>413 Request Entity Too Large</h1></center>\\r\\n<hr><center>nginx/1.10.3 (Ubuntu)</center>\\r\\n</body>\\r\\n</html>\\r\\n""
+
+    posted payload: [%{""id"" => 2848556, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B772C"", true]}, %{""id"" => 2848555, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B772B"", true]}, %{""id"" => 2848554, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B772A"", true]}, %{""id"" => 2848553, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B7729"", true]}, %{""id"" => 2848552, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B7728"", true]}, %{""id"" => 2848551, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B7727"", true]}, %{""id"" => 2848550, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B7726"", true]}, %{""id"" => 2848549, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B7725"", true]}, %{""id"" => 2848548, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B7724"", true]}, %{""id"" => 2848547, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B7723"", true]}, %{""id"" => 2848546, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B7722"", true]}, %{""id"" => 2848545, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B7721"", true]}, %{""id"" => 2848544, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B7720"", true]}, %{""id"" => 2848543, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B771F"", true]}, %{""id"" => 2848542, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B771E"", true]}, %{""id"" => 2848541, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B771D"", true]}, %{""id"" => 2848540, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B771C"", true]}, %{""id"" => 2848539, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B771B"", true]}, %{""id"" => 2848538, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B771A"", true]}, %{""id"" => 2848537, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B7719"", true]}, %{""id"" => 2848536, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B7718"", true]}, %{""id"" => 2848535, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B7717"", true]}, %{""id"" => 2848534, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B7716"", true]}, %{""id"" => 2848533, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B7715"", true]}, %{""id"" => 2848532, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B7714"", true]}, %{""id"" => 2848531, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B7713"", true]}, %{""id"" => 2848530, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B7712"", true]}, %{""id"" => 2848529, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B7711"", true]}, %{""id"" => 2848528, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B7710"", true]}, %{""id"" => 2848527, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B770F"", true]}, %{""id"" => 2848526, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B770E"", true]}, %{""id"" => 2848525, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B770D"", true]}, %{""id"" => 2848524, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B770C"", true]}, %{""id"" => 2848523, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B770B"", true]}, %{""id"" => 2848522, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B770A"", true]}, %{""id"" => 2848521, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B7709"", true]}, %{""id"" => 2848520, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B7708"", true]}, %{""id"" => 2848519, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B7707"", true]}, %{""id"" => 2848518, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B7706"", true]}, %{""id"" => 2848517, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B7705"", true]}, %{""id"" => 2848516, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B7704"", true]}, %{""id"" => 2848515, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B7703"", true]}, %{""id"" => 2848514, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B7702"", true]}, %{""id"" => 2848513, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B7701"", true]}, %{""id"" => 2848512, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [""0x2B7700"", ...]}, %{""id"" => 2848511, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ""params"" => [...]}, %{""id"" => 2848510, ""jsonrpc"" => ""2.0"", ""method"" => ""eth_getBlockByNumber"", ...}, %{""id"" => 2848509, ""jsonrpc"" => ""2.0"", ...}, %{""id"" => 2848508, ...}, %{...}, ...]
+```
+
+</details>",I'm receiving this same error and it looks like it keeps trying this every few minutes. I don't think the indexer will finish unless it gets passed this error.,1.0,1.0,0.0,01ffc42bea8dcfbb5407ed9d103f3f9c7abf09b9697f53c81d8e4dafc9760d97,false_friend,proxy,,,,,,,,,,,,,,
+2436641545,ethereum/execution-apis,569,Pull Request,closed,2024-07-30T00:27:03+00:00,2024-07-30T15:21:22+00:00,,Specification,Specification,provider,Add `eth_signIntendedValidatorData` RPC,"## Summary
+
+This proposal adds a new JSON-RPC method, `eth_signIntendedValidatorData`, which allows signing data with an intended validator address using [EIP-191] version [0x00] with this format:
+
+```bash
+0x19 <0x00> <intended validator address> <data to sign>
+```
+
+## History
+
+There has always been work to integrate signing methods in various applications, but the focus was on `eth_sign` as it was already in use, and everyone adopted it. Although [EIP-191] defines different versions serving different purposes, versions `0x00` and `0x45` (E) do not serve the same purpose.
+
+In this issue, we can see that [EIP-191] was almost fully supported, but precedence led to only versions [0x45] and [0x01] being implemented, dropping version [0x00].
+
+Due to this, several apps have deviated from version [0x00], although it makes more sense to use it than [0x45]. For example, in the issue mentioned above, the team deviated from [0x00] and chose [0x45], even though a smart contract account (Multisig) should handle verification and signing for one intended validator address.
+
+This was the issue where support for [EIP-191] Full was being worked on: [GitHub Issue](https://github.com/nucypher/nucypher/issues/1566)
+
+## Motivation
+
+Currently, signing messages relies heavily on [EIP-191] version [0x45] (`eth_sign`) and [EIP-712] (`eth_signTypedDataV4`). While [EIP-712] provides a more structured approach, it is often seen as complex. On the other hand, [EIP-191] version [0x45] is widely used but poses significant phishing risks due to the lack of data parsing.
+
+EIP-191 defines three versions: [0x45], [0x01], and [0x00]. This proposal aims to fully support [EIP-191] by introducing the rpc call for [0x00] version, which enables signing data with an intended validator address. This new method will:
+
+- Enable more dApps to use [EIP-191] version [0x00] without using raw signing methods which might be dangerous and restricted in few wallets.
+- Enhance security by parsing data and displaying the intended validator address, reducing phishing risks.
+- Provide a simpler alternative to [EIP-712], offering a balance between usability and security.
+- Be particularly relevant for smart contract accounts, allowing signing with a specific intended validator address.
+
+With the rise of smart contract accounts and the reliance on signatures to improve UX, the need for supporting [EIP-191] version [0x00] increases, especially given the prevalence of verifier smart contracts, such as Entry Points, Smart Contract Accounts, Key Managers, etc.
+
+## Specification
+
+The key words ""MUST"", ""MUST NOT"", ""REQUIRED"", ""SHALL"", ""SHALL NOT"", ""SHOULD"", ""SHOULD NOT"", ""RECOMMENDED"", ""NOT RECOMMENDED"", ""MAY"", and ""OPTIONAL"" in this document are to be interpreted as described in RFC 2119 and RFC 8174.
+
+### `eth_signIntendedValidatorData`
+
+MUST calculate an Ethereum signature using `sign(keccak256(""\\x19\\x00<signature validator address><data to sign>""))`.
+
+This method adds a prefix to the message to prevent malicious dApps from signing arbitrary data (e.g., a transaction) and using the signature to impersonate the victim.
+
+#### Parameters
+
+1. `DATA` - 20-byte account address: The address signing the constructed message.
+2. `DATA` - 20-byte account address: The intended validator address included in the message to sign.
+3. `DATA` - Data string: The data to sign.
+
+#### Returns
+
+`DATA` - Signature.
+
+#### Example
+
+**Request:**
+
+```bash
+curl -X POST --data '{""jsonrpc"":""2.0"",""method"":""eth_signIntendedValidatorData"",""params"":[""0x6aFbBC5e6AFcB251371711a6551E60ead2779Dc0"", ""0x345B918b9E06fAa7B0e56bd71Ba418F31F47FED4"", ""0x59616d656e""], ""id"":1}'
+```
+
+```json
+{
+  ""jsonrpc"": ""2.0"",
+  ""method"": ""eth_signIntendedValidatorData"",
+  ""params"": [
+    ""0x6aFbBC5e6AFcB251371711a6551E60ead2779Dc0"",
+    ""0x345B918b9E06fAa7B0e56bd71Ba418F31F47FED4"",
+    ""0x59616d656e""
+  ],
+  ""id"": 1
+}
+```
+
+**Result:**
+
+```json
+{
+  ""jsonrpc"": ""2.0"",
+  ""id"": 1,
+  ""result"": ""0x4355c47d63924e8a72e509b65029052eb6c299d53a04e167c5775fd466751c9d07299936d304c153f6443dfa05f40ff007d72911b6f72307f996231605b915621c""
+}
+```
+
+## Support
+
+We see many members of the ETH ecosystem tired of the hacks that happen due to blind signing. Even if this standard is not perfect, it at least provides an idea of which verifier will verify the message. If you trust the verifier, then it's one extra step towards safety (not full safety as users can't know what bytes they are signing, but still).
+
+In the Metamask forum, it received support and was praised by [nick.eth](https://x.com/nicksdjohnson), Lead developer of ENS & Ethereum Foundation alum.
+
+* [Nick's Tweet](https://x.com/0xYamen/status/1790736305539661977)
+* [Metamask Forum - 15+ Votes](https://community.metamask.io/t/add-support-for-eipe-191-version-0-intended-validator-data/28940)
+
+## Links
+
+* Closed [EIP Specs PR](https://github.com/ethereum/EIPs/pull/8680/).
+* [Discussion in Metamask Forum](https://community.metamask.io/t/add-support-for-eipe-191-version-0-intended-validator-data/28940) (+15 votes).","Looking into this more, this may make more sense as a wallet API. This repo is really focused on the RPC provided by Ethereum clients and while some signing methods are supported due to legacy reasons, I don't know if it makes sense to add additional ones. | @lightclient I see, where is the best place to have this PR ?  | There isn't really a central spec for the wallet API like there is for the client API. I think an interface EIP like you started with would actually be best, but with `wallet_` as the prefix instead of `eth_`. Sorry for diverting you originally.",3.0,3.0,1.0,a18d52edd5c84800195b01860db38800cafdfbf98768f9ccdeb79e3a96feddb9,false_friend,signature,,,,,,,,,,,,,,
+895196411,bnb-chain/bsc,238,Issue,closed,2021-05-19T09:14:40+00:00,2021-07-30T07:34:01+00:00,,Blockchain Core / Protocol,Blockchain Core / Protocol,provider,Why can't the node I built keep up with the latest block data?,"Why can't the node I created keep up with the latest block data? Always differ by about 100 blocks. 
+
+
+Server configuration: 4c
+Version: 1.0.7
+Node start command：./geth --config config.toml --datadir data --pprofaddr 0.0.0.0 --metrics --pprof --maxpeers=50 --cache=5000
+
+config.toml info:
+[Eth]
+NetworkId = 56
+NoPruning = false
+NoPrefetch = false
+LightPeers = 100
+UltraLightFraction = 75
+TrieTimeout = 100000000000
+EnablePreimageRecording = false
+EWASMInterpreter = """"
+EVMInterpreter = """"
+
+[Eth.Miner]
+GasFloor = 30000000
+GasCeil = 40000000
+GasPrice = 1000000000
+Recommit = 10000000000
+Noverify = false
+
+[Eth.TxPool]
+Locals = []
+NoLocals = true
+Journal = ""transactions.rlp""
+Rejournal = 3600000000000
+PriceLimit = 1000000000
+PriceBump = 10
+AccountSlots = 512
+GlobalSlots = 10000
+AccountQueue = 256
+GlobalQueue = 5000
+Lifetime = 10800000000000
+
+
+[Node]
+IPCPath = ""geth.ipc""
+HTTPHost = ""localhost""
+NoUSB = true
+InsecureUnlockAllowed = false
+HTTPPort = 8545
+HTTPVirtualHosts = [""localhost""]
+HTTPModules = [""eth"", ""net"", ""web3"", ""txpool"", ""parlia""]
+WSPort = 8546
+WSModules = [""net"", ""web3"", ""eth""]
+GraphQLPort = 8557
+GraphQLVirtualHosts = [""*""]
+
+[Node.P2P]
+MaxPeers = 2000
+NoDiscovery = false
+BootstrapNodes = [""enode://1cc4534b14cfe351ab740a1418ab944a234ca2f702915eadb7e558a02010cb7c5a8c295a3b56bcefa7701c07752acd5539cb13df2aab8ae2d98934d712611443@52.71.43.172:30311"",""enode://28b1d16562dac280dacaaf45d54516b85bc6c994252a9825c5cc4e080d3e53446d05f63ba495ea7d44d6c316b54cd92b245c5c328c37da24605c4a93a0d099c4@34.246.65.14:30311"",""enode://5a7b996048d1b0a07683a949662c87c09b55247ce774aeee10bb886892e586e3c604564393292e38ef43c023ee9981e1f8b335766ec4f0f256e57f8640b079d5@35.73.137.11:30311""]
+StaticNodes = [""enode://f3cfd69f2808ef64838abd8786342c0b22fdd28268703c8d6812e26e109f9a7cb2b37bd49724ebb46c233289f22da82991c87345eb9a2dadeddb8f37eeb259ac@18.180.28.21:30311"",""enode://ae74385270d4afeb953561603fcedc4a0e755a241ffdea31c3f751dc8be5bf29c03bf46e3051d1c8d997c45479a92632020c9a84b96dcb63b2259ec09b4fde38@54.178.30.104:30311"",""enode://d1cabe083d5fc1da9b510889188f06dab891935294e4569df759fc2c4d684b3b4982051b84a9a078512202ad947f9240adc5b6abea5320fb9a736d2f6751c52e@54.238.28.14:30311"",""enode://f420209bac5324326c116d38d83edfa2256c4101a27cd3e7f9b8287dc8526900f4137e915df6806986b28bc79b1e66679b544a1c515a95ede86f4d809bd65dab@54.178.62.117:30311"",""enode://c0e8d1abd27c3c13ca879e16f34c12ffee936a7e5d7b7fb6f1af5cc75c6fad704e5667c7bbf7826fcb200d22b9bf86395271b0f76c21e63ad9a388ed548d4c90@54.65.247.12:30311"",""enode://f1b49b1cf536e36f9a56730f7a0ece899e5efb344eec2fdca3a335465bc4f619b98121f4a5032a1218fa8b69a5488d1ec48afe2abda073280beec296b104db31@13.114.199.41:30311"",""enode://4924583cfb262b6e333969c86eab8da009b3f7d165cc9ad326914f576c575741e71dc6e64a830e833c25e8c45b906364e58e70cdf043651fd583082ea7db5e3b@18.180.17.171:30311"",""enode://4d041250eb4f05ab55af184a01aed1a71d241a94a03a5b86f4e32659e1ab1e144be919890682d4afb5e7afd837146ce584d61a38837553d95a7de1f28ea4513a@54.178.99.222:30311"",""enode://b5772a14fdaeebf4c1924e73c923bdf11c35240a6da7b9e5ec0e6cbb95e78327690b90e8ab0ea5270debc8834454b98eca34cc2a19817f5972498648a6959a3a@54.170.158.102:30311"",""enode://f329176b187cec87b327f82e78b6ece3102a0f7c89b92a5312e1674062c6e89f785f55fb1b167e369d71c66b0548994c6035c6d85849eccb434d4d9e0c489cdd@34.253.94.130:30311"",""enode://cbfd1219940d4e312ad94108e7fa3bc34c4c22081d6f334a2e7b36bb28928b56879924cf0353ad85fa5b2f3d5033bbe8ad5371feae9c2088214184be301ed658@54.75.11.3:30311"",""enode://c64b0a0c619c03c220ea0d7cac754931f967665f9e148b92d2e46761ad9180f5eb5aaef48dfc230d8db8f8c16d2265a3d5407b06bedcd5f0f5a22c2f51c2e69f@54.216.208.163:30311"",""enode://352a361a9240d4d23bb6fab19cc6dc5a5fc6921abf19de65afe13f1802780aecd67c8c09d8c89043ff86947f171d98ab06906ef616d58e718067e02abea0dda9@79.125.105.65:30311"",""enode://bb683ef5d03db7d945d6f84b88e5b98920b70aecc22abed8c00d6db621f784e4280e5813d12694c7a091543064456ad9789980766f3f1feb38906cf7255c33d6@54.195.127.237:30311"",""enode://11dc6fea50630b68a9289055d6b0fb0e22fb5048a3f4e4efd741a7ab09dd79e78d383efc052089e516f0a0f3eacdd5d3ffbe5279b36ecc42ad7cd1f2767fdbdb@46.137.182.25:30311"",""enode://21530e423b42aed17d7eef67882ebb23357db4f8b10c94d4c71191f52955d97dc13eec03cfeff0fe3a1c89c955e81a6970c09689d21ecbec2142b26b7e759c45@54.216.119.18:30311"",""enode://d61a31410c365e7fcd50e24d56a77d2d9741d4a57b295cc5070189ad90d0ec749d113b4b0432c6d795eb36597efce88d12ca45e645ec51b3a2144e1c1c41b66a@34.204.129.242:30311"",""enode://bb91215b1d77c892897048dd58f709f02aacb5355aa8f50f00b67c879c3dffd7eef5b5a152ac46cdfb255295bec4d06701a8032456703c6b604a4686d388ea8f@75.101.197.198:30311"",""enode://786acbdf5a3cf91b99047a0fd8305e11e54d96ea3a72b1527050d3d6f8c9fc0278ff9ef56f3e56b3b70a283d97c309065506ea2fc3eb9b62477fd014a3ec1a96@107.23.90.162:30311"",""enode://4653bc7c235c3480968e5e81d91123bc67626f35c207ae4acab89347db675a627784c5982431300c02f547a7d33558718f7795e848d547a327abb111eac73636@54.144.170.236:30311"",""enode://c6ffd994c4ef130f90f8ee2fc08c1b0f02a6e9b12152092bf5a03dd7af9fd33597d4b2e2000a271cc0648d5e55242aeadd6d5061bb2e596372655ba0722cc704@54.147.151.108:30311"",""enode://99b07e9dc5f204263b87243146743399b2bd60c98f68d1239a3461d09087e6c417e40f1106fa606ccf54159feabdddb4e7f367559b349a6511e66e525de4906e@54.81.225.170:30311"",""enode://1479af5ea7bda822e8747d0b967309bced22cad5083b93bc6f4e1d7da7be067cd8495dc4c5a71579f2da8d9068f0c43ad6933d2b335a545b4ae49a846122b261@52.7.247.132:30311""]
+ListenAddr = "":30311""
+EnableMsgEvents = false
+
+[Node.HTTPTimeouts]
+ReadTimeout = 30000000000
+WriteTimeout = 30000000000
+IdleTimeout = 120000000000
+
+[Node.LogConfig]
+FilePath = ""bsc.log""
+MaxBytesSize = 10485760
+Level = ""info""
+FileRoot = """"","What do I need to do to solve this problem? thank | You're --cache setting is low ?  Which might be for not having enough RAM in your machine ? | 2000 maxpeers.. is this possible? I thought about 200?
+ | > Always differ by about 100 blocks
+
+This has always pointed to resources issues. What are the specs of your hardware? With the massive amount of transactions per block, IOPS is king; you'll need to use NVMe drive(s), SATA SSDs won't cut it. | Same issue here. @DefiDebauchery in my case it's running on an AWS c5.9xlarge instance with 36 CPU cores, 72GB of RAM and a gp3 volume with 8000 IOPS and 500Mbps throughput. I'm having a hard time explaining how it doesn't meet ressources requirements!? Do you you have any advice? | @pybfinger - 8000 IOPS is pretty slow. A traditional SATA-based SSD runs between [80 - 100K IOPS](https://en.wikipedia.org/wiki/IOPS#Solid-state_devices). You need more.
+
+The tasks are IO-bound - no amount of raw CPU or RAM will compensate for the required workload of constantly writing to the LevelDB database files on disk (unless #233 is a problem that can be solved) | @DefiDebauchery Yea so I downgraded the instance to 8 cores and 64GB RAM. Gp3 is now 16000 IOPS and 250Mb throughput. I was able to get my node synced. I simply deleted the whole data folder and restarted full sync. Maybe something happened first time!? Or it's the fact I doubled IOPS.
+
+@520guanyu Your config seems fine to me. Try upgrading to v1.1.0-beta and do a full sync. Took me about 5 hours and it was working. As explained above, if you're in the cloud (AWS or Google) make sure your IOPS is large enough on the volume used for data.
+
+ | @pybfinger - Thank you for the datapoint! Being able to sync on 16K IOPS may provide good guidance for others; I was expecting that to require more. | What is my problem? I used the snapshot first and then switched it to syncmode=fast.I think it syncs very slowly.
+
+## config
+`
+[Eth]
+NetworkId = 56
+SyncMode = ""fast""
+NoPruning = false
+NoPrefetch = false
+LightPeers = 100
+UltraLightFraction = 75
+TrieTimeout = 100000000000
+EnablePreimageRecording = false
+EWASMInterpreter = """"
+EVMInterpreter = """"
+
+[Eth.Miner]
+GasFloor = 30000000
+GasCeil = 40000000
+GasPrice = 1000000000
+Recommit = 10000000000
+Noverify = false
+
+[Eth.TxPool]
+Locals = []
+NoLocals = true
+Journal = ""transactions.rlp""
+Rejournal = 3600000000000
+PriceLimit = 1000000000
+PriceBump = 10
+AccountSlots = 512
+GlobalSlots = 10000
+AccountQueue = 256
+GlobalQueue = 5000
+Lifetime = 10800000000000
+
+[Eth.GPO]
+Blocks = 20
+Percentile = 60
+OracleThreshold = 20
+
+[Node]
+IPCPath = ""geth.ipc""
+HTTPHost = ""0.0.0.0""
+NoUSB = true
+InsecureUnlockAllowed = false
+HTTPPort = 8545
+HTTPVirtualHosts = [""localhost""]
+HTTPModules = [""eth"", ""net"", ""web3"", ""txpool"", ""parlia""]
+WSPort = 8546
+WSModules = [""net"", ""web3"", ""eth""]
+
+[Node.P2P]
+MaxPeers = 30
+NoDiscovery = false
+BootstrapNodes = [""enode://1cc4534b14cfe351ab740a1418ab944a234ca2f702915eadb7e558a02010cb7c5a8c295a3b56bcefa7701c07752acd5539cb13df2aab8ae2d98934d712611443@52.71.43.172:30311"",""enode://28b1d16562dac280dacaaf45d54516b85bc6c994252a9825c5cc4e080d3e53446d05f63ba495ea7d44d6c316b54cd92b245c5c328c37da24605c4a93a0d099c4@34.246.65.14:30311"",""enode://5a7b996048d1b0a07683a949662c87c09b55247ce774aeee10bb886892e586e3c604564393292e38ef43c023ee9981e1f8b335766ec4f0f256e57f8640b079d5@35.73.137.11:30311""]
+StaticNodes = [""enode://f3cfd69f2808ef64838abd8786342c0b22fdd28268703c8d6812e26e109f9a7cb2b37bd49724ebb46c233289f22da82991c87345eb9a2dadeddb8f37eeb259ac@18.180.28.21:30311"",""enode://ae74385270d4afeb953561603fcedc4a0e755a241ffdea31c3f751dc8be5bf29c03bf46e3051d1c8d997c45479a92632020c9a84b96dcb63b2259ec09b4fde38@54.178.30.104:30311"",""enode://d1cabe083d5fc1da9b510889188f06dab891935294e4569df759fc2c4d684b3b4982051b84a9a078512202ad947f9240adc5b6abea5320fb9a736d2f6751c52e@54.238.28.14:30311"",""enode://f420209bac5324326c116d38d83edfa2256c4101a27cd3e7f9b8287dc8526900f4137e915df6806986b28bc79b1e66679b544a1c515a95ede86f4d809bd65dab@54.178.62.117:30311"",""enode://c0e8d1abd27c3c13ca879e16f34c12ffee936a7e5d7b7fb6f1af5cc75c6fad704e5667c7bbf7826fcb200d22b9bf86395271b0f76c21e63ad9a388ed548d4c90@54.65.247.12:30311"",""enode://f1b49b1cf536e36f9a56730f7a0ece899e5efb344eec2fdca3a335465bc4f619b98121f4a5032a1218fa8b69a5488d1ec48afe2abda073280beec296b104db31@13.114.199.41:30311"",""enode://4924583cfb262b6e333969c86eab8da009b3f7d165cc9ad326914f576c575741e71dc6e64a830e833c25e8c45b906364e58e70cdf043651fd583082ea7db5e3b@18.180.17.171:30311"",""enode://4d041250eb4f05ab55af184a01aed1a71d241a94a03a5b86f4e32659e1ab1e144be919890682d4afb5e7afd837146ce584d61a38837553d95a7de1f28ea4513a@54.178.99.222:30311"",""enode://b5772a14fdaeebf4c1924e73c923bdf11c35240a6da7b9e5ec0e6cbb95e78327690b90e8ab0ea5270debc8834454b98eca34cc2a19817f5972498648a6959a3a@54.170.158.102:30311"",""enode://f329176b187cec87b327f82e78b6ece3102a0f7c89b92a5312e1674062c6e89f785f55fb1b167e369d71c66b0548994c6035c6d85849eccb434d4d9e0c489cdd@34.253.94.130:30311"",""enode://cbfd1219940d4e312ad94108e7fa3bc34c4c22081d6f334a2e7b36bb28928b56879924cf0353ad85fa5b2f3d5033bbe8ad5371feae9c2088214184be301ed658@54.75.11.3:30311"",""enode://c64b0a0c619c03c220ea0d7cac754931f967665f9e148b92d2e46761ad9180f5eb5aaef48dfc230d8db8f8c16d2265a3d5407b06bedcd5f0f5a22c2f51c2e69f@54.216.208.163:30311"",""enode://352a361a9240d4d23bb6fab19cc6dc5a5fc6921abf19de65afe13f1802780aecd67c8c09d8c89043ff86947f171d98ab06906ef616d58e718067e02abea0dda9@79.125.105.65:30311"",""enode://bb683ef5d03db7d945d6f84b88e5b98920b70aecc22abed8c00d6db621f784e4280e5813d12694c7a091543064456ad9789980766f3f1feb38906cf7255c33d6@54.195.127.237:30311"",""enode://11dc6fea50630b68a9289055d6b0fb0e22fb5048a3f4e4efd741a7ab09dd79e78d383efc052089e516f0a0f3eacdd5d3ffbe5279b36ecc42ad7cd1f2767fdbdb@46.137.182.25:30311"",""enode://21530e423b42aed17d7eef67882ebb23357db4f8b10c94d4c71191f52955d97dc13eec03cfeff0fe3a1c89c955e81a6970c09689d21ecbec2142b26b7e759c45@54.216.119.18:30311"",""enode://d61a31410c365e7fcd50e24d56a77d2d9741d4a57b295cc5070189ad90d0ec749d113b4b0432c6d795eb36597efce88d12ca45e645ec51b3a2144e1c1c41b66a@34.204.129.242:30311"",""enode://bb91215b1d77c892897048dd58f709f02aacb5355aa8f50f00b67c879c3dffd7eef5b5a152ac46cdfb255295bec4d06701a8032456703c6b604a4686d388ea8f@75.101.197.198:30311"",""enode://786acbdf5a3cf91b99047a0fd8305e11e54d96ea3a72b1527050d3d6f8c9fc0278ff9ef56f3e56b3b70a283d97c309065506ea2fc3eb9b62477fd014a3ec1a96@107.23.90.162:30311"",""enode://4653bc7c235c3480968e5e81d91123bc67626f35c207ae4acab89347db675a627784c5982431300c02f547a7d33558718f7795e848d547a327abb111eac73636@54.144.170.236:30311"",""enode://c6ffd994c4ef130f90f8ee2fc08c1b0f02a6e9b12152092bf5a03dd7af9fd33597d4b2e2000a271cc0648d5e55242aeadd6d5061bb2e596372655ba0722cc704@54.147.151.108:30311"",""enode://99b07e9dc5f204263b87243146743399b2bd60c98f68d1239a3461d09087e6c417e40f1106fa606ccf54159feabdddb4e7f367559b349a6511e66e525de4906e@54.81.225.170:30311"",""enode://1479af5ea7bda822e8747d0b967309bced22cad5083b93bc6f4e1d7da7be067cd8495dc4c5a71579f2da8d9068f0c43ad6933d2b335a545b4ae49a846122b261@52.7.247.132:30311"",""enode://43562d35f274d9e93f5ccac484c7cb185eabc746dbc9f3a56c36dc5a9ef05a3282695de7694a71c0bf4600651f49395b2ee7a6aaef857db2ac896e0fcbe6b518@35.73.15.198:30311"",""enode://08867e57849456fc9b0b00771f53e87ca6f2dd618c23b34a35d0c851cd484a4b7137905c5b357795025b368e4f8fe4c841b752b0c28cc2dbbf41a03d048e0e24@35.74.39.234:30311""]
+ListenAddr = "":30311""
+EnableMsgEvents = false
+
+[Node.HTTPTimeouts]
+ReadTimeout = 30000000000
+WriteTimeout = 30000000000
+IdleTimeout = 120000000000
+
+[Node.LogConfig]
+FilePath = ""bsc.log""
+MaxBytesSize = 10485760
+Level = ""info""
+FileRoot = ""/data/bsc_data/logs""
+`
+
+## geth version
+`
+Geth
+Version: 1.1.0-beta
+Git Commit: b67a129e5bdd2774c9493f505d1a83f1e0a215c4
+Git Commit Date: 20210524
+Architecture: amd64
+Go Version: go1.13.5
+Operating System: linux
+GOPATH=
+GOROOT=go
+`
+
+## logs
+`
+t=2021-06-22T11:29:30+0800 lvl=info msg=""Imported new chain segment""             blocks=3  txs=657  mgas=103.142 elapsed=9.369s    mgasps=11.008 number=7,891,998 hash=0x4c42bfc331df4d544a15402daf89d43329c093f97ef8a3ea9ed2faec0334fd7f age=3w11h53m dirty=""255.90 MiB""
+t=2021-06-22T11:29:38+0800 lvl=info msg=""Imported new chain segment""             blocks=4  txs=898  mgas=128.161 elapsed=8.146s    mgasps=15.732 number=7,892,002 hash=0x6ae2ba23f1e4ba708fd9ea420186cbf1963058d2b505a4a936682781ccf442b5 age=3w11h53m dirty=""255.90 MiB""
+t=2021-06-22T11:29:46+0800 lvl=info msg=""Imported new chain segment""             blocks=6  txs=1161 mgas=178.543 elapsed=8.281s    mgasps=21.560 number=7,892,008 hash=0x8b4d414f8068fde5a50b94b231fa9322930f840bc8c7bb7e8e2a50ec8febc7a8 age=3w11h53m dirty=""255.90 MiB""
+t=2021-06-22T11:29:54+0800 lvl=info msg=""Imported new chain segment""             blocks=7  txs=1465 mgas=221.217 elapsed=8.277s    mgasps=26.724 number=7,892,015 hash=0x04d5e78b02aae16ba4a966af35a63de8b5a0a596568bd285a9e56e7a85d321e8 age=3w11h53m dirty=""255.90 MiB""
+t=2021-06-22T11:30:03+0800 lvl=info msg=""Imported new chain segment""             blocks=4  txs=825  mgas=146.015 elapsed=8.847s    mgasps=16.504 number=7,892,019 hash=0xa209c3d61e1d4c4b84eaf0ef86600d7e95f70c7fff079c04f070a1c29b69a305 age=3w11h53m dirty=""255.90 MiB""
+
+`
+ | > 我的问题是什么？我先用了snapshot，然后把它改成syncmode=fast。我觉得它同步的很慢。
+> 
+> ## 配置
+> `
+> [Eth]
+> NetworkId = 56
+> SyncMode = ""fast""
+> NoPruning = false
+> NoPrefetch = false
+> LightPeers = 100
+> UltraLightFraction = 75
+> TrieTimeout = 100000000000
+> EnablePreimageRecording = false
+> EWASMInterpreter = """"
+> EVMInterpreter = """"
+> 
+> [Eth.Miner]
+> GasFloor = 30000000
+> GasCeil =
+> 40000000 GasPrice
+> = 1000000000
+> Recommit = 10000000000 Noverify = false
+> 
+> [Eth.TxPool]
+> 当地人= []
+> NoLocals =真
+> 杂志= “transactions.rlp”
+> Rejournal = 36000亿
+> PriceLimit =十亿
+> PriceBump = 10
+> AccountSlots = 512
+> GlobalSlots = 10000
+> AccountQueue = 256
+> GlobalQueue = 5000
+> 终身= 108000亿
+> 
+> [Eth.GPO]
+> 区块 = 20
+> 百分位数 = 60
+> OracleThreshold = 20
+> 
+> [节点]
+> IPCPath = ""geth.ipc""
+> HTTPHost = ""0.0.0.0""
+> NoUSB = true
+> InsecureUnlockAllowed = false
+> HTTPPort = 8545
+> HTTPVirtualHosts = [""localhost""]
+> HTTPModules = [""eth"", ""net"", ""web3"", ""txpool "", ""parlia""]
+> WSPort = 8546
+> WSModules = [""net"", ""web3"", ""eth""]
+> 
+> [Node.P2P]
+> MaxPeers = 30
+> NoDiscovery =假
+> BootstrapNodes = [ “e节点：//1cc4534b14cfe351ab740a1418ab944a234ca2f702915eadb7e558a02010cb7c5a8c295a3b56bcefa7701c07752acd5539cb13df2aab8ae2d98934d712611443@52.71.43.172：30311”， “e节点：//28b1d16562dac280dacaaf45d54516b85bc6c994252a9825c5cc4e080d3e53446d05f63ba495ea7d44d6c316b54cd92b245c5c328c37da24605c4a93a0d099c4@34.246.65.14：30311”，“e节点：//5a7b996048d1b0a07683a949662c87c09b55247ce774aeee10bb886892e586e3c604564393292e38ef43c023ee9981e1f8b335766ec4f0f256e57f8640b079d5@35.73 .137.11:30311""]
+> StaticNodes = [ “e节点：//f3cfd69f2808ef64838abd8786342c0b22fdd28268703c8d6812e26e109f9a7cb2b37bd49724ebb46c233289f22da82991c87345eb9a2dadeddb8f37eeb259ac@18.180.28.21：30311”， “e节点：//ae74385270d4afeb953561603fcedc4a0e755a241ffdea31c3f751dc8be5bf29c03bf46e3051d1c8d997c45479a92632020c9a84b96dcb63b2259ec09b4fde38@54.178.30.104：30311”， “e节点：//d1cabe083d5fc1da9b510889188f06dab891935294e4569df759fc2c4d684b3b4982051b84a9a078512202ad947f9240adc5b6abea5320fb9a736d2f6751c52e@54.238.28.14：30311”，“e节点：// f420209bac5324326c116d38d83edfa2256c4101a27cd3e7f9b8287dc8526900f4137e915df6806986b28bc79b1e66679b544a1c515a95ede86f4d809bd65dab@54.178.62.117：30311"" ， “e节点：//c0e8d1abd27c3c13ca879e16f34c12ffee936a7e5d7b7fb6f1af5cc75c6fad704e5667c7bbf7826fcb200d22b9bf86395271b0f76c21e63ad9a388ed548d4c90@54.65.247.12：30311”，“e节点：//f1b49b1cf536e36f9a56730f7a0ece899e5efb344eec2fdca3a335465bc4f619b98121f4a5032a1218fa8b69a5488d1ec48afe2abda073280beec296b104db31@13.114.199.41：30311”， “e节点：//4924583cfb262b6e333969c86eab8da009b3f7d165cc9ad326914f576c575741e71dc6e64a830e833c25e8c45b906364e58e70cdf043651fd583082ea7db5e3b@18.180.17.171：30311”， “e节点：//4d041250eb4f05ab55af184a01aed1a71d241a94a03a5b86f4e32659e1ab1e144be919890682d4afb5e7afd837146ce584d61a38837553d95a7de1f28ea4513a@54.178.99.222：30311”，“e节点：//b5772a14fdaeebf4c1924e73c923bdf11c35240a6da7b9e5ec0e6cbb95e78327690b90e8ab0ea5270debc8834454b98eca34cc2a19817f5972498648a6959a3a@54.170 .158.102：30311"" ， “e节点：//f329176b187cec87b327f82e78b6ece3102a0f7c89b92a5312e1674062c6e89f785f55fb1b167e369d71c66b0548994c6035c6d85849eccb434d4d9e0c489cdd@34.253.94.130：30311”，“e节点：//cbfd1219940d4e312ad94108e7fa3bc34c4c22081d6f334a2e7b36bb28928b56879924cf0353ad85fa5b2f3d5033bbe8ad5371feae9c2088214184be301ed658@54.75.11.3:30311"",""enode://c64b0a0c619c03c220ea0d7cac754931f967665f9e148b92d2e46761ad9180f5eb5aaef48dfc230d8db8f8c16d2265a3d5407b06bedcd5f0f5a22c2f51c2e69f@54.216.208.163:30311"",""enode://352a361a9240d4d23bb6fab19cc6dc5a5fc6921abf19de65afe13f1802780aecd67c8c09d8c89043ff86947f171d98ab06906ef616d58e718067e02abea0dda9@79.125.105.65:30311"",""enode://bb683ef5d03db7d945d6f84b88e5b98920b70aecc22abed8c00d6db621f784e4280e5813d12694c7a091543064456ad9789980766f3f1feb38906cf7255c33d6@54.195.127.237： 30311"" ， “e节点：//11dc6fea50630b68a9289055d6b0fb0e22fb5048a3f4e4efd741a7ab09dd79e78d383efc052089e516f0a0f3eacdd5d3ffbe5279b36ecc42ad7cd1f2767fdbdb@46.137.182.25：30311”，“e节点：//21530e423b42aed17d7eef67882ebb23357db4f8b10c94d4c71191f52955d97dc13eec03cfeff0fe3a1c89c955e81a6970c09689d21ecbec2142b26b7e759c45@54.216.119.18:30311"",""enode://d61a31410c365e7fcd50e24d56a77d2d9741d4a57b295cc5070189ad90d0ec749d113b4b0432c6d795eb36597efce88d12ca45e645ec51b3a2144e1c1c41b66a@34.204.129.242:30311"",""enode://bb91215b1d77c892897048dd58f709f02aacb5355aa8f50f00b67c879c3dffd7eef5b5a152ac46cdfb255295bec4d06701a8032456703c6b604a4686d388ea8f@75.101.197.198:30311"",""enode://786acbdf5a3cf91b99047a0fd8305e11e54d96ea3a72b1527050d3d6f8c9fc0278ff9ef56f3e56b3b70a283d97c309065506ea2fc3eb9b62477fd014a3ec1a96@107.23.90.162： 30311"" ， “e节点：//4653bc7c235c3480968e5e81d91123bc67626f35c207ae4acab89347db675a627784c5982431300c02f547a7d33558718f7795e848d547a327abb111eac73636@54.144.170.236：30311”，“e节点：//c6ffd994c4ef130f90f8ee2fc08c1b0f02a6e9b12152092bf5a03dd7af9fd33597d4b2e2000a271cc0648d5e55242aeadd6d5061bb2e596372655ba0722cc704@54.147.151.108:30311"",""enode://99b07e9dc5f204263b87243146743399b2bd60c98f68d1239a3461d09087e6c417e40f1106fa606ccf54159feabdddb4e7f367559b349a6511e66e525de4906e@54.81.225.170:30311"",""enode://1479af5ea7bda822e8747d0b967309bced22cad5083b93bc6f4e1d7da7be067cd8495dc4c5a71579f2da8d9068f0c43ad6933d2b335a545b4ae49a846122b261@52.7.247.132:30311"",""enode://43562d35f274d9e93f5ccac484c7cb185eabc746dbc9f3a56c36dc5a9ef05a3282695de7694a71c0bf4600651f49395b2ee7a6aaef857db2ac896e0fcbe6b518@35.73.15.198： 30311"" ， “e节点：//08867e57849456fc9b0b00771f53e87ca6f2dd618c23b34a35d0c851cd484a4b7137905c5b357795025b368e4f8fe4c841b752b0c28cc2dbbf41a03d048e0e24@35.74.39.234：30311”]]]]]30311"" ， “e节点：//99b07e9dc5f204263b87243146743399b2bd60c98f68d1239a3461d09087e6c417e40f1106fa606ccf54159feabdddb4e7f367559b349a6511e66e525de4906e@54.81.225.170：30311”， “e节点：//1479af5ea7bda822e8747d0b967309bced22cad5083b93bc6f4e1d7da7be067cd8495dc4c5a71579f2da8d9068f0c43ad6933d2b335a545b4ae49a846122b261@52.7.247.132：30311”， “e节点：//43562d35f274d9e93f5ccac484c7cb185eabc746dbc9f3a56c36dc5a9ef05a3282695de7694a71c0bf4600651f49395b2ee7a6aaef857db2ac896e0fcbe6b518@35.73.15.198：30311”，“e节点：// 08867e57849456fc9b0b00771f53e87ca6f2dd618c23b34a35d0c851cd484a4b7137905c5b357795025b368e4f8fe4c840d24a3.b340d3.b340d240e4c840d240b340b340b340c840d240d240b340b340c840d20757849456fc84b340c840b34b340d2075784945757849456fc9b0b00771f53e87c23b34a35d0c851cd484a4b7137905c5b357849456fc9b0b00771f53b30d0c85330311"" ， “e节点：//99b07e9dc5f204263b87243146743399b2bd60c98f68d1239a3461d09087e6c417e40f1106fa606ccf54159feabdddb4e7f367559b349a6511e66e525de4906e@54.81.225.170：30311”， “e节点：//1479af5ea7bda822e8747d0b967309bced22cad5083b93bc6f4e1d7da7be067cd8495dc4c5a71579f2da8d9068f0c43ad6933d2b335a545b4ae49a846122b261@52.7.247.132：30311”， “e节点：//43562d35f274d9e93f5ccac484c7cb185eabc746dbc9f3a56c36dc5a9ef05a3282695de7694a71c0bf4600651f49395b2ee7a6aaef857db2ac896e0fcbe6b518@35.73.15.198：30311”，“e节点：// 08867e57849456fc9b0b00771f53e87ca6f2dd618c23b34a35d0c851cd484a4b7137905c5b357795025b368e4f8fe4c840d24a3.b340d3.b340d240e4c840d240b340b340b340c840d240d240b340b340c840d20757849456fc84b340c840b34b340d2075784945757849456fc9b0b00771f53e87c23b34a35d0c851cd484a4b7137905c5b357849456fc9b0b00771f53b30d0c85330311"" ， “e节点：//1479af5ea7bda822e8747d0b967309bced22cad5083b93bc6f4e1d7da7be067cd8495dc4c5a71579f2da8d9068f0c43ad6933d2b335a545b4ae49a846122b261@52.7.247.132：30311”， “e节点：//43562d35f274d9e93f5ccac484c7cb185eabc746dbc9f3a56c36dc5a9ef05a3282695de7694a71c0bf4600651f49395b2ee7a6aaef857db2ac896e0fcbe6b518@35.73.15.198：30311”， “e节点：//08867e57849456fc9b0b00771f53e87ca6f2dd618c23b34a35d0c851cd484a4b7137905c5b357795025b368e4f8fe4c841b752b0c28cc2dbbf41a03d048e0e24@35.74.39.234：30311”]30311"" ， “e节点：//1479af5ea7bda822e8747d0b967309bced22cad5083b93bc6f4e1d7da7be067cd8495dc4c5a71579f2da8d9068f0c43ad6933d2b335a545b4ae49a846122b261@52.7.247.132：30311”， “e节点：//43562d35f274d9e93f5ccac484c7cb185eabc746dbc9f3a56c36dc5a9ef05a3282695de7694a71c0bf4600651f49395b2ee7a6aaef857db2ac896e0fcbe6b518@35.73.15.198：30311”， “e节点：//08867e57849456fc9b0b00771f53e87ca6f2dd618c23b34a35d0c851cd484a4b7137905c5b357795025b368e4f8fe4c841b752b0c28cc2dbbf41a03d048e0e24@35.74.39.234：30311”]enode://08867e57849456fc9b0b00771f53e87ca6f2dd618c23b34a35d0c851cd484a4b7137905c5b357795025b368e4025b368e4f8fe4c222b340400000771f53e84b34b34b34b34b34b34b34b34b34b34b34d24d24d24b34b34a35d0cenode://08867e57849456fc9b0b00771f53e87ca6f2dd618c23b34a35d0c851cd484a4b7137905c5b357795025b368e4025b368e4f8fe4c222b3404b34b34b34b34b34b34b34b34d24d24d24b34b34d24d24d24b34b34b34d23b34a35d0c
+> ListenAddr = "":30311""
+> EnableMsgEvents = false
+> 
+> [Node.HTTPTimeouts]
+> ReadTimeout = 30000000000
+> WriteTimeout = 30000000000
+> IdleTimeout = 120000000000
+> 
+> [Node.LogConfig]
+> FilePath = ""bsc.log""
+> MaxBytesSize = 10485760
+> Level = ""info""
+> FileRoot = ""/data/bsc_data/logs""
+> `
+> 
+> ## 版本
+> `Geth Version: 1.1.0-beta Git Commit: b67a129e5bdd2774c9493f505d1a83f1e0a215c4 Git Commit Date: 20210524 Architecture: amd64 Go Version: go1.13.5 Operating System: linux GOPATH= GOROOT=go`
+> 
+> ## 日志
+> `
+> 吨= 2021-06-22T11：29：30 + 0800 LVL =信息MSG = “导入的新的链段”块= 3个TXS = 657个MGAS = 103.142经过= 9.369s mgasps = 11.008号码= 7891998散列= 0x4c42bfc331df4d544a15402daf89d43329c093f97ef8a3ea9ed2faec0334fd7f年龄= 3w11h53m dirty=""255.90 MiB""
+> t=2021-06-22T11:29:38+0800 lvl=info msg=""导入的新链段"" blocks=4 txs=898 mgas=128.161 elapsed=8.146s mgasps=17,7822 number, hash=0 = 0x6ae2ba23f1e4ba708fd9ea420186cbf1963058d2b505a4a936682781ccf442b5年龄= 3w11h53m脏= “255.90 MIB”
+> T = 2021-06-22T11：29：46 + 0800 LVL =信息MSG = “导入的新的链段”块= 6个TXS = 1161个MGAS = 178.543经过= 8.281s mgasps = 21.560 数字=7,892，008 哈希=0x8b4d414f8068fde5a50b94b231fa9322930f840bc8c7bb7e8e2a50ec8febc7a8 年龄=3w11h53mdirty=""255.90 MiB""
+> T = 2021-06-22T11：29：54 + 0800 LVL =信息MSG = “导入的新的链段”块= 7个TXS = 1465个MGAS = 221.217经过= 8.277s mgasps = 26.724号码= 7892015散列= 0x04d5e78b02aae16ba4a966af35a63de8b5a0a596568bd285a9e56e7a85d321e8年龄= 3w11h53m脏=""255.90 MiB""
+> t=2021-06-22T11:30:03+0800 lvl=info msg=""导入的新链段"" blocks=4 txs=825 mgas=146.015 elapsed=8.847s mgasps=16.5904 number,=0 0xa209c3d61e1d4c4b84eaf0ef86600d7e95f70c7fff079c04f070a1c29b69a305 年龄=3w11h53m 脏=“255.90 MiB”
+> 
+> `
+
+## Start command
+`
+nohup geth --config config.toml --datadir node --cache=1024 --maxpeers 200 --syncmode fast &
+` | Hi all.
+Thank you for your report.
+We have received many report of a sync issue.
+You can try the latest version. If you have any problems, please feedback #338.
+We will pay attention to the issue #338 for a long time, and if there are any updates, we will explain it on this issue.
+
+Thanks.",11.0,11.0,0.0,243362d4562cc67ff31b226a51da612729d29f5c1b79270734e209b1195ff8d5,false_friend,snapshot,,,,,,,,,,,,,,
+550993536,MetaMask/metamask-extension,7849,Pull Request,closed,2020-01-16T18:57:02+00:00,2020-01-16T19:23:15+00:00,,Browser Extension,Browser Extension,provider,Fix propTypes and test props for SignatureRequest component,"This PR fixes the `propTypes` for the `SignatureRequest` component and adds the required props to the tests to reduce noise in the output. The `selectedAccount` prop isn't actually required because the `Header` component will test its existence.
+
+**Before:**
+
+```
+$ yarn test:unit
+yarn run v1.19.2
+$ cross-env METAMASK_ENV=test mocha --exit --require test/setup.js --recursive ""test/unit/**/*.js"" ""ui/app/**/*.test.js""
+
+
+  Signature Request Component
+    render
+Warning: Failed prop type: The prop `selectedAccount` is marked as required in `SignatureRequest`, but its value is `undefined`.
+    in SignatureRequest
+Warning: Failed prop type: The prop `clearConfirmTransaction` is marked as required in `SignatureRequest`, but its value is `undefined`.
+    in SignatureRequest
+Warning: Failed prop type: The prop `cancel` is marked as required in `SignatureRequest`, but its value is `undefined`.
+    in SignatureRequest
+Warning: Failed prop type: The prop `sign` is marked as required in `SignatureRequest`, but its value is `undefined`.
+    in SignatureRequest
+Warning: Failed prop type: The prop `selectedAccount` is marked as required in `SignatureRequestHeader`, but its value is `undefined`.
+    in SignatureRequestHeader
+Warning: Failed prop type: The prop `cancelAction` is marked as required in `SignatureRequestFooter`, but its value is `undefined`.
+    in SignatureRequestFooter
+Warning: Failed prop type: The prop `signAction` is marked as required in `SignatureRequestFooter`, but its value is `undefined`.
+    in SignatureRequestFooter
+      ✓ should render a div with one child
+
+
+  1 passing (254ms)
+
+✨  Done in 17.87s.
+```
+
+**After:**
+
+```
+$ yarn test:unit
+yarn run v1.19.2
+$ cross-env METAMASK_ENV=test mocha --exit --require test/setup.js --recursive ""test/unit/**/*.js"" ""ui/app/**/*.test.js""
+
+
+  Signature Request Component
+    render
+      ✓ should render a div with one child
+
+
+  1 passing (253ms)
+
+✨  Done in 18.28s.
+```","[Line 23 of the `Header`](https://github.com/MetaMask/metamask-extension/pull/7849/files#diff-27c944dbd4e1474f2fe4f87dd1cf3d82L23) where is `{name}` from? | From nowhere, I suspect | [`Window.name`](https://developer.mozilla.org/en-US/docs/Web/API/Window/name) 🤦‍♂  | That's a separate issue, I dunno what to do about that. | I suspect it was intended to be `selectedAccount.name` | I think it would be best to just delete `{name}`, perhaps in a different PR. There are only those two components in the header in the designs - no additional name.",6.0,6.0,1.0,f2bf23f2465a3848b84715951dd5389a084debc6f1bb4f7d238e09a3e6bf46dc,false_friend,Signature,,,,,,,,,,,,,,
+1434708057,Vectorized/solady,207,Pull Request,closed,2022-11-03T13:57:18+00:00,2022-11-03T14:27:50+00:00,,Smart Contract Library,Smart Contract Library,provider,👷‍♂️ Update ci,"## Description
+
+- Fuzz runs is under a different toml config now.
+- Speed up intense fuzz runs via parallel tasks.
+
+## Checklist
+
+Ensure you completed **all of the steps** below before submitting your pull request:
+
+- [x] Ran `forge snapshot`?
+- [x] Ran `npm run lint`?
+- [x] Ran `forge test`?
+
+_Pull requests with an incomplete checklist will be thrown out._
+
+<!--     Emoji Table:     -->
+<!-- readme/docs       📝 -->
+<!-- new feature       ✨ -->
+<!-- refactor/cleanup  ♻️ -->
+<!-- nit               🥢 -->
+<!-- security fix      🔒 -->
+<!-- optimization      ⚡️ -->
+<!-- configuration     👷‍♂️ -->
+<!-- events            🔊 -->
+<!-- bug fix           🐞 -->
+",,0.0,0.0,5.0,4c8cda7d98eabb0fcd08b7604e175cfe4b998fb669a73c8acc57d7ae2c30458d,false_friend,snapshot,,,,,,,,,,,,,,
+1094495094,OpenZeppelin/nile,47,Issue,closed,2022-01-05T15:50:52+00:00,2022-01-18T06:50:32+00:00,,Development Platform / Framework,Development Platform / Framework,provider,Can't invoke functions from deployed contracts,"Hello,
+I have deployed a group of contrats on testnet and would like to interact with them using
+`nile invoke`
+The issue I face is that the goerli.deployments.txt doesn't seem like it is parsed correctly when nile is looking for the ABI:
+```
+(cairo_venv) macbook-pro-de-henri:starknet-cairo-101 henrilieutaud$ nile invoke 0x001102cdbe07a9b776a30002c331f83f01b7a9154a534fcf1e44a6c213dc9c41 set_teacher_temp 1 1507638031522682312191916131341364110496142099655924630921045603037699363192 --network goerli
+usage: starknet [-h] --address ADDRESS --abi ABI --function FUNCTION
+                [--inputs [INPUTS [INPUTS ...]]]
+                [--signature [SIGNATURE [SIGNATURE ...]]]
+starknet: error: argument --abi: can't open 'artifacts/abis/TDERC20.json
+': [Errno 2] No such file or directory: 'artifacts/abis/TDERC20.json\n'
+```
+I have observed this with `nile call` too
+Steps to reproduce:
+- Deploy more than one contract
+- `nile invoke <contract_address> <function_name> <inputs> --network goerli`
+Steps to correct:
+- Remove all following lines in goerli.deployments.txt 
+","Thanks for reporting this! Will take a look | Sorry for taking so long. I wasn't able to reproduce this, is this still happening to you? Can you provide more details to reproduce it? | This reproduces for me using the latest (from git) nile on osx w/ python 3.7:
+1. Setup environment: 
+`python3 -m venv env; source env/bin/activate; git clone https://github.com/OpenZeppelin/nile.git; pip install ./nile; nile init`
+
+2. Compile a contract (including the default contract `contract.cairo`)
+`nile compile`
+
+3. Deploy said contract
+`nile deploy <contract_name>`
+
+4. Invoke said contract:
+`nile invoke 0x01c92c4dbce24ffb53d21c689d64723329c279649f4bbb61c82c84917d354510 set_token_id 5 10`
+
+Results in:
+```
+usage: starknet [-h] --address ADDRESS --abi ABI --function FUNCTION
+                [--inputs [INPUTS [INPUTS ...]]]
+                [--signature [SIGNATURE [SIGNATURE ...]]]
+starknet: error: argument --abi: can't open 'artifacts/abis/dungeon.json
+': [Errno 2] No such file or directory: 'artifacts/abis/dungeon.json\n'
+Traceback (most recent call last):
+  File ""/Users/threepwave/code/cryptsandcaverns/contract/env/bin/nile"", line 8, in <module>
+    sys.exit(cli())
+  File ""/Users/threepwave/code/cryptsandcaverns/contract/env/lib/python3.7/site-packages/click/core.py"", line 1128, in __call__
+    return self.main(*args, **kwargs)
+  File ""/Users/threepwave/code/cryptsandcaverns/contract/env/lib/python3.7/site-packages/click/core.py"", line 1053, in main
+    rv = self.invoke(ctx)
+  File ""/Users/threepwave/code/cryptsandcaverns/contract/env/lib/python3.7/site-packages/click/core.py"", line 1659, in invoke
+    return _process_result(sub_ctx.command.invoke(sub_ctx))
+  File ""/Users/threepwave/code/cryptsandcaverns/contract/env/lib/python3.7/site-packages/click/core.py"", line 1395, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+  File ""/Users/threepwave/code/cryptsandcaverns/contract/env/lib/python3.7/site-packages/click/core.py"", line 754, in invoke
+    return __callback(*args, **kwargs)
+  File ""/Users/threepwave/code/cryptsandcaverns/contract/env/lib/python3.7/site-packages/nile/main.py"", line 84, in invoke
+    call_or_invoke_command(contract_name, ""invoke"", method, params, network)
+  File ""/Users/threepwave/code/cryptsandcaverns/contract/env/lib/python3.7/site-packages/nile/commands/call.py"", line 36, in call_or_invoke_command
+    subprocess.check_call(command)
+  File ""/usr/local/opt/python@3.7/Frameworks/Python.framework/Versions/3.7/lib/python3.7/subprocess.py"", line 363, in check_call
+    raise CalledProcessError(retcode, cmd)
+subprocess.CalledProcessError: Command '['starknet', 'invoke', '--address', '0x01c92c4dbce24ffb53d21c689d64723329c279649f4bbb61c82c84917d354510', '--abi', 'artifacts/abis/dungeon.json\n', '--function', 'set_token_id', '--gateway_url=http://localhost:5001/', '--inputs', '5', '10']' returned non-zero exit status 2.``` | Thanks! I was able to reproduce it and fix it in https://github.com/OpenZeppelin/nile/pull/51 :)",4.0,4.0,0.0,2174e780a7407731fa6e3e4cc0868111658e95fad35e01fbb32e569ba3ef8d12,false_friend,signature,,,,,,,,,,,,,,
+651644545,paritytech/substrate,6585,Issue,closed,2020-07-06T15:50:53+00:00,2021-07-05T17:06:54+00:00,I3-bug,Blockchain Core / Protocol,Blockchain Core / Protocol,provider,Invalid signatures passed to a pallet's method stop block import,"We have a pallet with a function that accepts an SR25199 signature and verifies it. Our implementation looks like this:
+
+```
+pub trait Trait: system::Trait {
+   ...
+   type Public: IdentifyAccount<AccountId = Self::AccountId>;
+   type Signature: Verify<Signer = Self::Public> + Member + Decode + Encode;
+}
+```
+
+And a verify method which verifies the signature
+
+```
+pub struct Proof {
+   pub signer: T::AccountId,
+   pub signature: T::Signature,
+}
+```
+
+```
+fn verify_signature(
+       proof: &Proof<T::Signature, T::AccountId>,
+       signed_payload: &[u8]
+   ) -> Result<(), Error<T>> 
+{
+    match proof.signature.verify(signed_payload,&proof.signer) 
+    {
+        true => Ok(()),
+        false => Err(<Error<T>>::UnauthorizedTransaction.into()),
+    }
+}
+```
+
+This setup worked fine for us until recently where we discovered that our network was stopping to finalise with an error about Signature verification.
+
+> ====================
+> 
+> Version: 2.0.0-rc2-5eb246fb6-x86_64-linux-gnu
+> 
+>    0: sp_panic_handler::set::{{closure}}
+>    1: std::panicking::rust_panic_with_hook
+>              at /rustc/b8cedc00407a4c56a3bda1ed605c6fc166655447/src/libstd/panicking.rs:476
+>    2: std::panicking::begin_panic
+>    3: frame_executive::Executive<System,Block,Context,UnsignedValidator,AllModules,COnRuntimeUpgrade>::execute_block
+>    4: <node_runtime::Runtime as sp_api::runtime_decl_for_Core::Core<sp_runtime::generic::block::Block<sp_runtime::generic::header::Header<u32,sp_runtime::traits::BlakeTwo256>,sp_runtime::generic::unchecked_extrinsic::UncheckedExtrinsic<<pallet_indices::Module<node_runtime::Runtime> as sp_runtime::traits::StaticLookup>::Source,node_runtime::Call,sp_runtime::MultiSignature,(frame_system::CheckSpecVersion<node_runtime::Runtime>, frame_system::CheckTxVersion<node_runtime::Runtime>, frame_system::CheckGenesis<node_runtime::Runtime>, frame_system::CheckEra<node_runtime::Runtime>, frame_system::CheckNonce<node_runtime::Runtime>, frame_system::CheckWeight<node_runtime::Runtime>, pallet_transaction_payment::ChargeTransactionPayment<node_runtime::Runtime>, pallet_grandpa::equivocation::ValidateEquivocationReport<node_runtime::Runtime>)>>>>::execute_block
+>    5: std::panicking::try::do_call
+>    6: __rust_maybe_catch_panic
+>              at /rustc/b8cedc00407a4c56a3bda1ed605c6fc166655447/src/libpanic_unwind/lib.rs:86
+>    7: std::thread::local::LocalKey<T>::with
+>    8: sc_executor::native_executor::WasmExecutor::with_instance::{{closure}}
+>    9: sc_executor::wasm_runtime::RuntimeCache::with_instance
+>   10: <sc_executor::native_executor::NativeExecutor<D> as sp_core::traits::CodeExecutor>::call
+>   11: sp_state_machine::StateMachine<B,H,N,Exec>::execute_aux
+>   12: sp_state_machine::StateMachine<B,H,N,Exec>::execute_using_consensus_failure_handler
+>   13: <sc_service::client::call_executor::LocalCallExecutor<B,E> as sc_client_api::call_executor::CallExecutor<Block>>::contextual_call
+>   14: <sc_service::client::client::Client<B,E,Block,RA> as sp_api::CallApiAt<Block>>::call_api_at
+>   15: sp_api::runtime_decl_for_Core::execute_block_call_api_at
+>   16: sp_api::Core::execute_block
+>   17: <&sc_service::client::client::Client<B,E,Block,RA> as sp_consensus::block_import::BlockImport<Block>>::import_block
+>   18: <sc_finality_grandpa::import::GrandpaBlockImport<BE,Block,Client,SC> as sp_consensus::block_import::BlockImport<Block>>::import_block
+>   19: <sc_consensus_babe::BabeBlockImport<Block,Client,Inner> as sp_consensus::block_import::BlockImport<Block>>::import_block
+>   20: sp_consensus::import_queue::import_single_block
+>   21: <futures_util::future::poll_fn::PollFn<F> as core::future::future::Future>::poll
+>   22: <futures_util::future::future::Map<Fut,F> as core::future::future::Future>::poll
+>   23: <futures_util::future::future::flatten::Flatten<Fut,<Fut as core::future::future::Future>::Output> as core::future::future::Future>::poll
+>   24: <futures_util::future::poll_fn::PollFn<F> as core::future::future::Future>::poll
+>   25: std::panicking::try::do_call
+>   26: __rust_maybe_catch_panic
+>              at /rustc/b8cedc00407a4c56a3bda1ed605c6fc166655447/src/libpanic_unwind/lib.rs:86
+>   27: std::panicking::try
+>   28: <futures_util::future::select::Select<A,B> as core::future::future::Future>::poll
+>   29: <std::future::GenFuture<T> as core::future::future::Future>::poll
+>   30: std::thread::local::LocalKey<T>::with
+>   31: futures_executor::local_pool::block_on
+>   32: tokio::runtime::task::core::Core<T,S>::poll
+>   33: std::panicking::try::do_call
+>   34: __rust_maybe_catch_panic
+>              at /rustc/b8cedc00407a4c56a3bda1ed605c6fc166655447/src/libpanic_unwind/lib.rs:86
+>   35: tokio::runtime::task::harness::Harness<T,S>::poll
+>   36: tokio::runtime::blocking::pool::Inner::run
+>   37: tokio::runtime::context::enter
+>   38: std::sys_common::backtrace::__rust_begin_short_backtrace
+>   39: std::panicking::try::do_call
+>   40: __rust_maybe_catch_panic
+>              at /rustc/b8cedc00407a4c56a3bda1ed605c6fc166655447/src/libpanic_unwind/lib.rs:86
+>   41: core::ops::function::FnOnce::call_once{{vtable.shim}}
+>   42: <alloc::boxed::Box<F> as core::ops::function::FnOnce<A>>::call_once
+>              at /rustc/b8cedc00407a4c56a3bda1ed605c6fc166655447/src/liballoc/boxed.rs:1015
+>   43: <alloc::boxed::Box<F> as core::ops::function::FnOnce<A>>::call_once
+>              at /rustc/b8cedc00407a4c56a3bda1ed605c6fc166655447/src/liballoc/boxed.rs:1015
+>       std::sys_common::thread::start_thread
+>              at /rustc/b8cedc00407a4c56a3bda1ed605c6fc166655447/src/libstd/sys_common/thread.rs:13
+>       std::sys::unix::thread::Thread::new::thread_start
+>              at /rustc/b8cedc00407a4c56a3bda1ed605c6fc166655447/src/libstd/sys/unix/thread.rs:80
+>   44: start_thread
+>   45: clone
+> 
+> 
+> Thread 'tokio-runtime-worker' panicked at 'Signature verification failed.', <::std::macros::panic macros>:2
+> 
+> This is a bug. Please report it at:
+> 
+> 	https://github.com/paritytech/substrate/issues/new
+
+After investigating this issue we discovered that the nodes start throwing this exception when we submit a signature that fails validation. 
+We looked into it a bit more and found the root cause to be this PR: https://github.com/paritytech/substrate/commit/d61504391dcc730b747b8a825230933d034666e8
+
+Prior to this change, the verify  method (defined here: primitives/runtime/src/traits.rs)  uses a method called sr25519_verify to simply do the verification and return the result (defined here: primitives/io/src/lib.rs).
+
+After this PR, `sr25519_verify` adds all signature verification requests into a vector and does a batch verification when a block is executed, so if we pass in an invalid signature to our pallet, instead of the pallet returning an error and continuing (as it normally does), it errors when trying to execute the block.
+
+Do you have any suggestions on how to fix this problem?
+
+Thanks.
+",,0.0,0.0,0.0,00944ccf74c20b2fb84245e329cfd77059724a125b1e4add2b884126dacd3232,false_friend,signature,,,,,,,,,,,,,,
+2984314520,sigp/lighthouse,7304,Pull Request,closed,2025-04-10T02:55:44+00:00,2025-05-01T01:30:42+00:00,"optimization, ready-for-merge, das",Blockchain Core / Protocol,Blockchain Core / Protocol,provider,Compute proposer shuffling only once in gossip verification,"## Issue Addressed
+
+When we perform data column gossip verification, we sometimes see multiple proposer shuffling cache miss simultaneously and this results in multiple threads computing the shuffling cache and potentially slows down the gossip verification. 
+
+Proposal here is to use a `OnceCell` for each shuffling key to make sure it's only computed once. I have only implemented this in data column verification as a PoC, but this can also be applied to blob and block verification
+
+Related issues:
+- https://github.com/sigp/lighthouse/issues/4447
+- https://github.com/sigp/lighthouse/issues/7203","I've pushed a PoC, however I think this is still problematic because we hold the lock for the entire duration of the computation. | Pushed another reworked version to avoid lock contention mentioned above @pawanjay176  | Thanks @eserilev !
+
+@pawanjay176 I wrote a [test](https://github.com/jimmygchen/lighthouse/commit/a811daa26c9a42036afb64e69b7e95e333ccb548) to measure time for each step in column verification with some numbers for each step, and comparison with `unstable`. This seems to work and could potentially perform better when columns are received in a staggered way.
+
+## Single column verification
+
+This single test (7 blobs) shows that `verify_proposer_and_signature` is the only step taking significant amount of time ~500ms. The rest are pretty negligible.
+
+```
+verify_data_column_sidecar: 29.458µs
+verify_index_matches_subnet: 2.125µs
+verify_sidecar_not_from_future_slot: 8.041µs
+verify_slot_greater_than_latest_finalized_slot: 10.5µs
+verify_is_first_sidecar: 3.75µs
+verify_column_inclusion_proof: 218.125µs
+verify_parent_block_and_finalized_descendant: 33.083µs
+verify_slot_higher_than_parent: 750ns
+verify_proposer_and_signature: 519.821916ms
+verify_kzg_for_data_column: 4.024208ms
+observe_slashable: 54.709µs
+All verifications passed successfully
+verify_total_time_0: 524.22925ms
+```
+
+## Running multiple concurrent verifications + shuffling cache miss
+
+8 verifications triggered 100ms apart in a 8 worker threads test. 
+On PeerDAS network the number of concurrent verifications could be higher.
+
+### Without Optimisation (`unstable`)
+
+**Result**: 
+- Majority of `verify_proposer_and_signature` took 500+ ms, as they all tried to load state and compute shuffling. 
+- 6 out of 8 columns took 500+ms total time.
+
+```
+verify_proposer_and_signature: 514.836333ms
+verify_proposer_and_signature: 1.295792ms
+verify_proposer_and_signature: 523.640709ms
+verify_proposer_and_signature: 1.183375ms
+verify_proposer_and_signature: 536.179417ms
+verify_proposer_and_signature: 537.438958ms
+verify_proposer_and_signature: 510.963667ms
+verify_proposer_and_signature: 501.606625ms
+
+verify_kzg_for_data_column: 5.755458ms
+verify_kzg_for_data_column: 7.827084ms
+verify_kzg_for_data_column: 18.534791ms
+verify_kzg_for_data_column: 5.266708ms
+verify_kzg_for_data_column: 5.164334ms
+verify_kzg_for_data_column: 4.364958ms
+verify_kzg_for_data_column: 4.01325ms
+verify_kzg_for_data_column: 3.930458ms
+
+verify_total_time_6: 9.262542ms
+verify_total_time_0: 520.857667ms
+verify_total_time_1: 542.32725ms
+verify_total_time_7: 6.59375ms
+verify_total_time_2: 541.493416ms
+verify_total_time_3: 541.944417ms
+verify_total_time_4: 515.2415ms
+verify_total_time_5: 505.678333ms
+```
+
+### After Optimisation (`OnceCell`)
+
+**Result**: 
+- Only one instance of `verify_proposer_and_signature` took 500+ ms, and the rest are lower depending on when the call was made - state was only load once and result was reused.
+- Columns that arrive later took less time to verify, as they don't try to compute shuffling cache again.
+
+```
+verify_proposer_and_signature: 82.829084ms
+verify_proposer_and_signature: 490.811709ms
+verify_proposer_and_signature: 185.32525ms
+verify_proposer_and_signature: 388.889333ms
+verify_proposer_and_signature: 287.246667ms
+verify_proposer_and_signature: 931.125µs
+verify_proposer_and_signature: 2.505083ms
+verify_proposer_and_signature: 1.602709ms
+
+verify_kzg_for_data_column: 5.510167ms
+verify_kzg_for_data_column: 5.613208ms
+verify_kzg_for_data_column: 5.590584ms
+verify_kzg_for_data_column: 5.566792ms
+verify_kzg_for_data_column: 5.530834ms
+verify_kzg_for_data_column: 5.974208ms
+verify_kzg_for_data_column: 13.915542ms
+
+verify_total_time_0: 496.674875ms
+verify_total_time_4: 88.488625ms
+verify_total_time_3: 191.037667ms
+verify_total_time_2: 292.921833ms
+verify_total_time_1: 394.67475ms
+verify_total_time_5: 4.596292ms
+verify_total_time_6: 7.768875ms
+verify_total_time_7: 17.04425ms
+``` | May be worth adding this to block verification as well, as we're likely to receive the block + 128 columns within a small window under PeerDAS. | @jimmygchen we can as well cache the proposer signature verification with a similar strategy: LRUCache + OnceCell. Have a cache `LRUCache<(BlockRoot, BlockSignature), Result>`, and use it in block, blob and data column proposer signature verification. In a supernode case we will amortize the 500 ms across 128 columns. | Do you see much benefit of adding this signature cache in addition to `beacon_proposer_cache`?
+From the numbers above, if we hit the `beacon_proposer_cache`, the verification time is quite minimal: 0.9 - 2.5ms. Am I missing something?  | > From the numbers above, if we hit the beacon_proposer_cache, the verification time is quite minimal: 0.9 - 2.5ms. Am I missing something?
+
+Right not necessary for now, we can revisit later if you want to hyper optimize | Thanks all! 
+
+I've found a [bug](https://github.com/sigp/lighthouse/pull/7199/commits/337408500c0758925bb1c676cf728e03b304458a) in data column verification which causes proposer shuffling cache miss on every data column, due to incorrect epoch calculation only in minimal preset, as it was hard coded to use `MainnetEthSpec`.
+
+This shouldn't happen often at all. But this PR should improve the performance in case if it happens and not do `128 + 1` state load + shuffling computation.
+
+Agree to do it on block + blob verification as well once this is proven to be stable for some time on PeerDAS.
+
+I'll go ahead and merge this now. ",8.0,8.0,4.0,b2f7532ad46b8d3b324d9450b271de411ce25193067bcbc4e54bf5aacdc02252,false_friend,lock,,,,,,,,,,,,,,
+1209151403,ipfs/js-ipfs,4085,Pull Request,closed,2022-04-20T04:36:08+00:00,2022-04-20T12:09:29+00:00,,Storage Protocol,Storage Protocol,provider,fix: update car dependency for CARv2 read support,"4.x adds basic CARv2 read support, so you could `ipfs dag import` a CARv2 with this; also with https://explore.ipld.io/ getting CAR support, this would allow importing and inspection of a CARv2 there.
+
+The breakage was in the return type definition of `CarReader#header()` which I don't believe is touched in js-ipfs, which only cares about `getRoots()` in the header which remains the same.",Thanks!,1.0,1.0,1.0,d4b6f955dc3bc1c162923cf63f126ae4c5f9476fd5560bca4cee5045972e0f5d,pattern_enriched,ipfs,,,,,,,,,,,,,,
+248579428,Consensys/Token-Factory,53,Issue,closed,2017-08-08T02:00:49+00:00,2018-08-17T14:26:08+00:00,,UI / Frontend / Library,UI / Frontend / Library,provider,Provide branding and link to Github - so we know it is yours?,"Friend recommended: http://tokenfactory.surge.sh/#/
+
+No idea where to find the source.
+
+Google ""token factory"" and this is the first result...
+
+_(no idea though)_
+
+___________
+
+> Token Factory, an application that lets you create these tokens, just to play around with: https://tokenfactory.surge.sh
+
+https://theethereum.wiki/w/index.php/ERC20_Token_Standard","You can use https://openzeppelin.org/ | Unrelated.
+
+",2.0,2.0,0.0,0998036c706b253046d50c1461667a78ac45234a61ed8af0953e5cfa09ac8a0a,pattern_enriched,factory,,,,,,,,,,,,,,
+299472160,INFURA/infura,81,Issue,closed,2018-02-22T19:10:17+00:00,2018-02-23T05:43:26+00:00,,Infrastructure,Infrastructure,provider,IPFS No 'Access-Control-Allow-Origin' header,"I'm getting error: Failed to load https://ipfs.infura.io:5001/api/v0/add?pin=true: No 'Access-Control-Allow-Origin' header is present on the requested resource. Origin
+
+This has been working fine in the past","Is the public Infura IPFS node down? | It seems to be working fine again. I think it was a problem with cors? | We had issues with our IPFS gateway today that may have manifested in this way (and others). We believe them to be resolved and are monitoring our service, however we can reopen this issue if the problem happens again.",3.0,3.0,0.0,0d5129e80d8bd5a2a08594f5b53d7eae0b90254281a66b871e2aa85b8bdd37d8,pattern_enriched,IPFS,,,,,,,,,,,,,,
+3325379066,paritytech/polkadot-sdk,9497,Pull Request,closed,2025-08-15T14:04:38+00:00,2025-08-25T11:51:48+00:00,"T1-FRAME, A4-backport-unstable2507",SDK / Library,SDK / Library,provider,Society pallet supports non-consecutive block provider,"Society pallet supports non-consecutive block provider
+
+Society pallet correctly handles situations where `on_initialize` is invoked with block numbers that:
+- increase but are not strictly consecutive (e.g., jump from 5 → 10), or
+- are repeated (e.g., multiple blocks are built at the same Relay Chain parent block, all reporting the same BlockNumberProvider value).
+
+This situation may occur when the BlockNumberProvider is not local - for example, on a parachain using the Relay Chain block number provider.",,1.0,0.0,10.0,259912321876caa104484b52c73dc6369adf861a38e8a45c36531071f8adf406,pattern_enriched,Relay,,,,,,,,,,,,,,
+1375284661,sigp/lighthouse,3582,Pull Request,closed,2022-09-16T01:55:12+00:00,2022-09-16T06:10:46+00:00,work-in-progress,Blockchain Core / Protocol,Blockchain Core / Protocol,provider,Reduce finalization migration frequency,"## Proposed Changes
+
+This is a low-hanging change I've been wanting to make for a while that might help reduce disk I/O a little bit.
+
+It prevents the database finalization migration from running _every time_ finalization happens, and runs it every 4 finalized epochs instead (configurable).
+
+The finalization migration does quite a bit of I/O which should be more efficient when batched into a single larger transaction:
+
+- Reads the finalized state from disk
+- Deletes non-canonical blocks and states
+- Deletes finalized canonical states from the hot database
+- Writes finalized block/state/randao roots to the freezer database
+- Writes a finalized state to the freezer database (on a restore point boundary)
+
+Impacts and considerations:
+
+- We store more states in the hot DB. They are not particularly large on disk, around 60MB for the head state at time of writing (no tree hash cache). 4 states is therefore only around 250MB, and even 256 states could fit in a modest 16GB. Keeping in mind the blocks alone are ~100GB, this isn't a substantial increase.
+- We forego purely-frozen forwards block iterators for the finalized-but-not-yet-migrated part of the chain. I think this is OK, as usually these slots will be in range of the 8192 lookback on the head state. We already clone the head state for these iterators on-demand here: https://github.com/sigp/lighthouse/blob/aa022f46855df2a1420a6a80a788c73dc2779aa7/beacon_node/beacon_chain/src/beacon_chain.rs#L561-L579
+- Block and attestation processing are still able to efficiently determine whether blocks are pre or post finalization, as they mostly use fork choice for this, and a few other caches. See: [`check_block_against_finalized_slot`](https://github.com/sigp/lighthouse/blob/aa022f46855df2a1420a6a80a788c73dc2779aa7/beacon_node/beacon_chain/src/block_verification.rs#L1434-L1459) and [`verify_head_block_is_known`](https://github.com/sigp/lighthouse/blob/aa022f46855df2a1420a6a80a788c73dc2779aa7/beacon_node/beacon_chain/src/attestation_verification.rs#L980-L1022). The only time the split slot is relevant is in [`get_inconsistent_state_for_attestation_verification_only`](https://github.com/sigp/lighthouse/blob/2983235650811437b44199f9c94e517e948a1e9b/beacon_node/store/src/hot_cold_store.rs#L523-L542), which is only called if we deem the attestation's head block suitable via the fork choice check.
+- If any undesired effects are discovered after release, they can be opted out of with `--db-migration-period 0` (or 1), which completely restores the current behaviour.
+
+## Additional Info
+
+I don't think this will solve the majority of our database woes, for that more drastic reform is needed, e.g.
+
+- https://github.com/sigp/lighthouse/issues/3208
+- https://github.com/sigp/lighthouse/issues/2844
+- https://github.com/sigp/lighthouse/issues/3211
+
+etc","I'm running some performance tests now and will update with results | Awh shucks, after running for an hour with migration-period 1 vs migration-period 4 it seems that 1 resulted in less writes:
+
+- `--db-migration-period 1`: 8.68 GB written in 1hr 3m
+- `--db-migration-period 4`: 12.03 GB written in 1hr
+
+The problem is I'm not sure if this is actually representative because there were different numbers of finalization events in each period:
+
+For the time running with MP=4, the migration ran 3 times and was deferred 6 times:
+
+> Sep 16 03:53:58.539 DEBG Database consolidation started, service: beacon, module: beacon_chain::migrate:256
+Sep 16 03:53:59.347 DEBG Database consolidation complete, service: beacon, module: beacon_chain::migrate:341
+Sep 16 04:00:22.523 DEBG Database consolidation deferred, epochs_per_run: 4, new_finalized_epoch: 147073, last_finalized_epoch: 147072, service: beacon, module: beacon_chain::migrate:381
+Sep 16 04:06:46.525 DEBG Database consolidation deferred, epochs_per_run: 4, new_finalized_epoch: 147074, last_finalized_epoch: 147072, service: beacon, module: beacon_chain::migrate:381
+Sep 16 04:13:10.542 DEBG Database consolidation deferred, epochs_per_run: 4, new_finalized_epoch: 147075, last_finalized_epoch: 147072, service: beacon, module: beacon_chain::migrate:381
+Sep 16 04:19:34.510 DEBG Database consolidation started, service: beacon, module: beacon_chain::migrate:256
+Sep 16 04:19:36.645 DEBG Database consolidation complete, service: beacon, module: beacon_chain::migrate:341
+Sep 16 04:25:58.541 DEBG Database consolidation deferred, epochs_per_run: 4, new_finalized_epoch: 147077, last_finalized_epoch: 147076, service: beacon, module: beacon_chain::migrate:381
+Sep 16 04:32:22.514 DEBG Database consolidation deferred, epochs_per_run: 4, new_finalized_epoch: 147078, last_finalized_epoch: 147076, service: beacon, module: beacon_chain::migrate:381
+Sep 16 04:38:46.571 DEBG Database consolidation deferred, epochs_per_run: 4, new_finalized_epoch: 147079, last_finalized_epoch: 147076, service: beacon, module: beacon_chain::migrate:381
+Sep 16 04:45:10.537 DEBG Database consolidation started, service: beacon, module: beacon_chain::migrate:256
+Sep 16 04:45:12.546 DEBG Database consolidation complete, service: beacon, module: beacon_chain::migrate:341
+
+For the time running with MP=1 it ran 9 times:
+
+> Sep 16 04:57:58.542 DEBG Database consolidation started, service: beacon, module: beacon_chain::migrate:256
+Sep 16 04:58:00.057 DEBG Database consolidation complete, service: beacon, module: beacon_chain::migrate:341
+Sep 16 05:04:22.511 DEBG Database consolidation started, service: beacon, module: beacon_chain::migrate:256
+Sep 16 05:04:23.343 DEBG Database consolidation complete, service: beacon, module: beacon_chain::migrate:341
+Sep 16 05:10:46.540 DEBG Database consolidation started, service: beacon, module: beacon_chain::migrate:256
+Sep 16 05:10:47.363 DEBG Database consolidation complete, service: beacon, module: beacon_chain::migrate:341
+Sep 16 05:17:10.540 DEBG Database consolidation started, service: beacon, module: beacon_chain::migrate:256
+Sep 16 05:17:11.384 DEBG Database consolidation complete, service: beacon, module: beacon_chain::migrate:341
+Sep 16 05:23:34.544 DEBG Database consolidation started, service: beacon, module: beacon_chain::migrate:256
+Sep 16 05:23:36.104 DEBG Database consolidation complete, service: beacon, module: beacon_chain::migrate:341
+Sep 16 05:29:58.528 DEBG Database consolidation started, service: beacon, module: beacon_chain::migrate:256
+Sep 16 05:29:59.358 DEBG Database consolidation complete, service: beacon, module: beacon_chain::migrate:341
+Sep 16 05:36:22.511 DEBG Database consolidation started, service: beacon, module: beacon_chain::migrate:256
+Sep 16 05:36:23.509 DEBG Database consolidation complete, service: beacon, module: beacon_chain::migrate:341
+Sep 16 05:42:46.532 DEBG Database consolidation started, service: beacon, module: beacon_chain::migrate:256
+Sep 16 05:42:48.060 DEBG Database consolidation complete, service: beacon, module: beacon_chain::migrate:341
+Sep 16 05:49:10.542 DEBG Database consolidation started, service: beacon, module: beacon_chain::migrate:256
+Sep 16 05:49:12.110 DEBG Database consolidation complete, service: beacon, module: beacon_chain::migrate:341
+
+I'm going to park this for now to look into the linearisation of blocks, as I suspect that makes up most of the writes.",2.0,2.0,1.0,3c11b26d26d067d107db1b9b380b2d9e524610760609058e2d07ec72c6971c62,pattern_enriched,migration,,,,,,,,,,,,,,
+510678073,paritytech/substrate,3885,Issue,closed,2019-10-22T14:02:04+00:00,2023-01-23T14:13:41+00:00,I9-optimisation,Blockchain Core / Protocol,Blockchain Core / Protocol,provider,put_code takes too much time,"https://github.com/paritytech/substrate/issues/3819 reports that `put_code` can take a lot of time for a big-but-still-reasonable-sized (IMO, 240k, see the issue) contract. While, [integration of wasmtime](https://github.com/paritytech/substrate/issues/3869) can fix that, the situation can imply that put_code requires some optimization.
+
+One clue how to improve this might be in the insight that we are doing multiple iterations over the wasm binary. We could try to leverage the streaming approach to read, check and instrument binary in one go. This however would require quite some refactorings of the wasm-utils side.","I've done some benchmarking on the wasm file in #3819 and (as expected) the hot functions are `parity_wasm::elements::deserialize_buffer` (4.46s) and `wasmi_validation::validate_module` (3.00s). The file actually fails to validate as it uses `f64`s, so a streaming approach would definitely speed things up by returning early. | Oh, thanks for looking into this!
+
+Good to know. I think we can't rely on an early return since we always have to take into account the worst case (e.g. an attacker can always put `f64` at the very end of code section). | A little update on this:
+
+I just ran into the same issue with:
+- The latest versions of Substrate FRAME-contracts (`spec_version: 195`, `impl_version: 196`, at commit [`# 6e9c675`](https://github.com/paritytech/substrate/commit/6e9c6759130d04c72389cf3fba96d8bcf95caef8))
+- Latest version of cargo-contract ([`#c54fef9`](https://github.com/paritytech/cargo-contract/commit/c54fef90ded5a092f72c5bb8ec6e52f2fccf144c))
+- and the latest version of ink! (https://github.com/paritytech/ink/commit/414eca1b526ab6fa020237e52af620a1b847bcba)) 
+
+with a more than reasonably sized contract (52k).
+
+The problem persists and might be worse than expected. It has already been reported in #4153, that deploying contracts much smaller than 240k will bring block production to halt.
+
+The compiled ERC20 example  in the [`ink/examples/lang2/erc20`](https://github.com/paritytech/ink/tree/master/examples/lang2/erc20) folder has a size of **52k** and will cause this bug. 
+The .wasm file of the [Flipper example](https://github.com/paritytech/ink/tree/master/examples/lang2/flipper) has a size of **17k** and can be deployed without problems.  
+
+So this might need some more investigation. | @Stefie I might try and write some benchmarks for this so we can examine why it's taking so long. | There were some reports in the Substrate Technical & the Smart Contracts Riot channel in the last 2 weeks about the ERC20 example not working with 2.0 and at least 2 of them seem to be directly related to this issue. So if you have time that would be great! 
+
+<img width=""588"" alt=""Screenshot 2019-11-26 at 15 44 30"" src=""https://user-images.githubusercontent.com/125398/69644042-6c6bce80-1064-11ea-8ad9-a1ba505cc8b8.png"">
+<img width=""593"" alt=""Screenshot 2019-11-26 at 15 47 17"" src=""https://user-images.githubusercontent.com/125398/69644044-6c6bce80-1064-11ea-81ad-d8651543a2e5.png"">
+<img width=""576"" alt=""Screenshot 2019-11-26 at 15 48 44"" src=""https://user-images.githubusercontent.com/125398/69644045-6d046500-1064-11ea-96fd-a34bc5378677.png"">
+
+
+ | Seems like @rphmeier accidentally fixed it with this commit https://github.com/paritytech/substrate/commit/47231564bc17d2ec7fcf3afa0e88b931c157c06b
+
+With #a3fb0fda6 the error still does occur, but it's gone after that commit. | Note that if I understand correctly this additional time to produce the block is under certain circumstances:
+
+> linear back-off.
+> in normal cases we only attempt to issue blocks up to the end of the slot.
+> when the chain has been stalled for a few slots, we give more lenience.
+
+So even if indeed with our testing chain that does nothing it seems we have this additional time, in production we can't actually use on it really. | additional idea that pop-up with @expenses maybe we can split the work in multiple extrinsics:
+
+instead of having only put_code that put the code and do the check we could do that in multiple extrinsic such as:
+* put_code: put_code but does no check
+* check_1: do some check, and mark those check as done
+* check_2: do some other check, and mark those check as done
+* checked: check all mark are true, and accept code to be instantiable. | > Seems like @rphmeier accidentally fixed it with this commit 4723156
+
+Definitely intentional :)  | <img width=""1171"" alt=""Screen Shot 2019-12-04 at 4 31 23 PM"" src=""https://user-images.githubusercontent.com/13566135/70168203-b1c57700-16c8-11ea-9464-1277b63e52c5.png"">
+
+Here's the instrumentation trace. | Should not be relevant anymore.",11.0,11.0,0.0,123763f81342b0262a655b19241a3f5ceff9aae796f21bb0e5d4493fefd125d0,pattern_enriched,ERC20,,,,,,,,,,,,,,
+303432072,ipfs/ipfs-companion,415,Issue,closed,2018-03-08T10:35:02+00:00,2019-12-03T19:17:50+00:00,"kind/enhancement, help wanted, exp/intermediate, P1, status/ready",Browser Extension,Browser Extension,provider,Save all uploads to MFS (via ipfs.files API),"> Part of UX improvements for sharing local files (#342)
+
+
+### Current behaviour
+
+Right now upload via right-click context menu or browser action menu item adds raw data to IPFS and it is up to user to memorize or save CID. 
+
+### Feature Description
+
+Would be great to let user manage shared files via WebUI's Files screen.
+
+Given discussion in https://github.com/ipfs/ipfs-gui/issues/10#issuecomment-373928862:
+
+- when file is uploaded via browser extension it should be automatically added to  MFS, so that user can later go back to it or decide to ""unpin"" it by removing it from MFS. 
+  - Maybe something like `/ipfs-companion-uploads/YYYY-MM-YY_HHMMSS`?
+  - OR, **show a checkbox below** (checked by default) saying  ""Add to My Files at `/some/path/`"" where the default path from Preferences can be chaged inline with super fast autocomplete   
+
+### References
+
+- pin labels https://github.com/ipfs/go-ipfs/issues/4586
+- Design: Pinning Content https://github.com/ipfs/ipfs-gui/issues/10#issuecomment-373928862
+- Moving away from current pin system  https://github.com/ipfs/go-ipfs/issues/4763
+- Context actions should add to MFS https://github.com/ipfs-shipyard/ipfs-companion/issues/635
+",,0.0,0.0,0.0,a9b206d2b92156d0668db1b96184eb1752d50b3d235c4b500ac0e685fd438bb2,pattern_enriched,ipfs,,,,,,,,,,,,,,
+359545889,ethereum/go-ethereum,17660,Issue,closed,2018-09-12T15:53:12+00:00,2019-10-30T12:05:43+00:00,,Blockchain Core / Protocol,Blockchain Core / Protocol,provider,[feature request] Add more information on self-destruct results obtained via debug_traceTransaction,"Small feature request:
+:) 
+
+#### System information
+
+Geth version: 1.8.x
+OS & Version: Windows/Linux/OSX
+Commit hash : (if `develop`)
+
+#### Expected behaviour
+```
+curl -X POST -H ""Content-Type: application/json"" --data '{""jsonrpc"":""2.0"",""method"":""debug_traceTransaction"",""params"":[""transaction_hash"", {""tracer"": ""callTracer""}],""id"":1}' 127.0.0.1:8545
+```
+return
+```
+...{""type"":""SELFDESTRUCT"", ""from"":""0xabc..."", ""to"":""0xefg..."", ""value"":""0x..."", ""error"":""...""}...
+```
+#### Actual behaviour
+```
+curl -X POST -H ""Content-Type: application/json"" --data '{""jsonrpc"":""2.0"",""method"":""debug_traceTransaction"",""params"":[""transaction_hash"", {""tracer"": ""callTracer""}],""id"":1}' 127.0.0.1:8545
+```
+return
+```
+...{""type"":""SELFDESTRUCT""}...
+```
+#### Steps to reproduce the behaviour
+
+
+#### Backtrace
+
+````
+[backtrace]
+````
+","![selfdestruct](https://user-images.githubusercontent.com/20891594/45437327-7412a380-b669-11e8-907e-19c8f3944184.png)
+ | This is really a duplicate of https://github.com/ethereum/go-ethereum/issues/16459#issuecomment-383048636 , right? 
+
+You could try modifying https://github.com/ethereum/go-ethereum/blob/master/eth/tracers/internal/tracers/call_tracer.js#L64 , and add `balance`. Now, you can't modify the file (because it has to be souped up into a resource-bundle) and simply rebuild, but what you could do is copy it into a separate file, edit, and send the javascript with the call, to see if works. 
+ | In fact, yes, a duplicate. Our company is looking at avoiding modification of the internals of geth to obtain that information (because we are able to get that info via modification of geth source code at this moment) solely via the public API. | Oh, so the tracers are only semi-internal. The caller can either send in some JavaScript, or select a predefined js script. The bundled ones are to be considered examples and PoCs, and I would encourage you to build on the callTracer and add the desired functionality. 
+
+The tracing feature is implemented to cater for this type of tracing, and the few built-in ones were never the intended end-goal. 
+
+But sure, we might at some point add that to the callTracer. ",5.0,4.0,0.0,3746dfd0d238f8c78b97ca0fdc6b426403722a027fbecaf4f9e52312b25dfacb,pattern_enriched,SELFDESTRUCT,,,,,,,,,,,,,,
+3031047587,mypdns/matrix,127030,Issue,closed,2025-04-30T11:52:46Z,2025-04-30T13:39:27Z,"Phishing, CloudFlare",,Unclassified,community,susni-swap.com,"### Comments
+
+These domains are part of a phishing campaign targeting сompanies and cryptocurrency holders/investors.
+The attackers use fake login pages and tampered software to steal seeds/keys.
+
+See full details in https://github.com/Phishing-Database/phishing/pull/811, Credit: @ninjacatcher
+
+### Wildcard domain records
+
+```CSV
+susni-swap.com|phishing
+```
+
+### Sub-Domain records
+
+```CSV
+null
+```
+
+### Hosts (RFC:952) specific records, not used by DNS RPZ firewalls
+
+```CSV
+null
+```
+
+### Safe Search records
+
+```CSV
+null
+```
+
+### Screenshots
+
+<details><summary>Screenshot, click to expand</summary>
+
+![Image](https://github.com/user-attachments/assets/46696fa8-fe6b-4770-97f0-164e992026c7)
+
+</details>
+
+
+### Links to external sources
+
+- https://kb.mypdns.org/issue/MTX-127030/susni-swap.com MTX-127030
+- https://mypdns.youtrack.cloud/issue/MTXB-209548/susni-swap.com MTXB-209548
+- https://github.com/mypdns/matrix/issues/127030
+- https://github.com/badmojr/1Hosts/issues/1984
+- https://github.com/hagezi/dns-blocklists/issues/6081
+- https://github.com/MetaMask/eth-phishing-detect/issues/152762
+- https://github.com/rainbow-me/browser-extension/issues/1886
+- https://github.com/sefinek/Sefinek-Blocklist-Collection/issues/92
+- https://github.com/Phishing-Database/phishing/pull/811
+- https://github.com/uBlockOrigin/uAssets/issues/28128
+
+### Name servers
+
+```text
+alexandra.ns.cloudflare.com.
+santino.ns.cloudflare.com.
+```
+
+### logs from uBlock Origin
+
+<details><summary>Logger output</summary>
+
+| | | | | | | | |
+|:--- |:--- |:--- |:--- |:--- |:--- |:--- |:--- |
+| +1 | `` |  | `www.www.susni-swap.com` | 1 | get | doc | `https://www.www.susni-swap.com/` |
+| +1 | `` |  | `www.susni-swap.com` | 1 | get | doc | `https://www.susni-swap.com/` |
+| +0 | `` |  | susni-swap.com | 1 | get | doc | `https://susni-swap.com/` |
+| +0 | `` |  | susni-swap.com | 1 | get | doc | `http://susni-swap.com/` |
+</details>
+",,0.0,0.0,0.0,5cd71704f39884bee2fbd3328aee81056268983bccb5881cea6767b6b65cbf20,pattern_enriched,Blocklist,,,,,,,,,,,,,,
+1422569244,Consensys/gnark,388,Pull Request,closed,2022-10-25T14:33:15+00:00,2025-09-03T23:12:49+00:00,type: new feature,ZK Library,ZK Library,provider,feat: add lookup table,"Adds AS-Waksman permutation network (for internal use only for building gadgets).
+
+We implement a simple append-only lookup table using it. We could probably also to a full RW memory possibly.
+
+Thoughts:
+
+- [ ] right now we use simplified form of RAM, which requires switching also indices and prev-values. If the actual values are smaller (for example when switching the limbs of non-native elements), then we could pack everything into a single variable and use more efficient switching.
+- [ ] otherwise, if we would want to lookup from arrays, we can have more efficient switching if we consider the whole array at once.
+- [ ] it would be rally easy to extend this approach to proper RAM. Maybe should add now?
+- [ ] the entries do not have to be consecutively ordered. Right now we use curr_index-prev_index to indicate if we should compare against current or previous but could use IsZero(curr_index-prev_index). It is only one constraint more.
+
+Actually, all these things seem to be something which could be provided as initialisation options. Maybe makes sense to implement that way?","FYI @Tabaie, I updated the PR description about possible improvements. | Does this implement a particular paper? | > Does this implement a particular paper?
+
+The AS Waksman routing network is described in [On Arbitrary Waksman Networks and their Vulnerability](https://hal.inria.fr/inria-00072871/document) by Beauquier and Darrot. It describes how to connect the gates in layers, the tricks for the lower gates and splitting to obtain the arbitrary-sizeness (compared to previous results where the number of inputs had to be power of two). It also describes bipartite coloring for deciding the routing. | Oh - I liked the PR, but there is probably no need for it anymore when we have a lot more efficient methods. It didn't work well neither.",4.0,4.0,8.0,d10a30f40c8e9c367ac110df13a85fe465f099f88dd7b729595e2c3bb8e728ca,pattern_enriched,append-only,,,,,,,,,,,,,,
+2578330263,MetaMask/metamask-mobile,11733,Pull Request,closed,2024-10-10T10:11:46+00:00,2024-10-10T18:29:52+00:00,"No QA Needed, team-mobile-platform, No E2E Smoke Needed, team-notifications, team-snaps-platform, release-7.34.0",Wallet Dapp / Library / Browser,Wallet Dapp / Library / Browser,provider,feat: add references and utils for delete storage key,"<!--
+Please submit this PR as a draft initially.
+Do not mark it as ""Ready for review"" until the template has been completely filled out, and PR status checks have passed at least once.
+-->
+
+## **Description**
+
+This PR implements a feature for our users get access to delete their Notification's storage keys if need.
+
+## **Related issues**
+
+Fixes:
+
+## **Manual testing steps**
+
+1. Go to Settings
+2. Choose Notifications
+3. Make sure its enabled
+4. Click on Reset Notifications
+5. Proceed 
+6. Check if Notifications remain enabled and a toast is shown.
+
+## **Screenshots/Recordings**
+
+<!-- If applicable, add screenshots and/or recordings to visualize the before and after of your change. -->
+
+### **Before**
+
+<!-- [screenshots/recordings] -->
+
+### **After**
+
+https://github.com/user-attachments/assets/07ed0870-a6f2-442c-a692-880037f03f8d
+
+
+<!-- [screenshots/recordings] -->
+
+## **Pre-merge author checklist**
+
+- [x] I’ve followed [MetaMask Contributor Docs](https://github.com/MetaMask/contributor-docs) and [MetaMask Mobile Coding Standards](https://github.com/MetaMask/metamask-mobile/blob/main/.github/guidelines/CODING_GUIDELINES.md).
+- [x] I've completed the PR template to the best of my ability
+- [x] I’ve included tests if applicable
+- [x] I’ve documented my code using [JSDoc](https://jsdoc.app/) format if applicable
+- [x] I’ve applied the right labels on the PR (see [labeling guidelines](https://github.com/MetaMask/metamask-mobile/blob/main/.github/guidelines/LABELING_GUIDELINES.md)). Not required for external contributors.
+
+## **Pre-merge reviewer checklist**
+
+- [x] I've manually tested the PR (e.g. pull and build branch, run the app, test code being changed).
+- [x] I confirm that this PR addresses all acceptance criteria described in the ticket it closes and includes the necessary testing evidence such as recordings and or screenshots.
+",Can you add manual steps to the PR description please? It will be easier to test on release that way!,5.0,1.0,8.0,05eb00ffb61ecdee71638b5c1e24d6ec47b3952a2f36b00f495e34afc8faa3d1,random_control,,,,,,,,,,,,,,,
+897873062,trustwallet/assets,8497,Pull Request,closed,2021-05-21T09:38:46+00:00,2021-05-21T09:57:08+00:00,Payment Status: Requested,Metadata Repository,Metadata Repository,provider,0xa123aB52a32267Dc357B7599739d3C6CAF856fe4,0xa123aB52a32267Dc357B7599739d3C6CAF856fe4,"**PR Summary** 
+Files in PR:  2 
+Token in PR: BEP20 0xa123ab52a32267dc357b7599739d3c6caf856fe4 
+Symbol: **AIR** decimals: 18  
+Links: [Logo](https://raw.githubusercontent.com/Aircoin-official/assets/master/blockchains/smartchain/assets/0xa123ab52a32267dc357b7599739d3c6caf856fe4/logo.png) [Info](https://raw.githubusercontent.com/Aircoin-official/assets/master/blockchains/smartchain/assets/0xa123ab52a32267dc357b7599739d3c6caf856fe4/info.json) [Website](https://github.com/Aircoin-official/Documments) [Explorer](https://bscscan.com/token/0xa123ab52a32267dc357b7599739d3c6caf856fe4) 
+Token check error: 
+❌  Contract is not in checksum format, should be 0xa123aB52a32267Dc357B7599739d3C6CAF856fe4 (not 0xa123ab52a32267dc357b7599739d3c6caf856fe4). Please rename it. You may need to rename to a temp name first, then to the checksum format, because lowercase-uppercase-only renames are often ignored by the Git client or the filesystem.
+❌  Socials field is no longer needed, please remove it.
+❌  Field 'socials' is not needed, please remove it.
+✓  Token type OK (BEP20); Type field OK; Symbol field OK; Decimals field OK; Description field OK; Website field OK; Explorer field OK; Status field OK; Id field OK; Logo image type is OK (image/png); Logo image size is OK (18.805 kB); Logo dimensions OK (378x306); Token circulation OK (no. of holders: 4193); 
+ 
+
+<span style=""padding: 5px; background-color: rgb(32,32,32);""><img src=""https://raw.githubusercontent.com/Aircoin-official/assets/master/blockchains/smartchain/assets/0xa123ab52a32267dc357b7599739d3c6caf856fe4/logo.png"" style=""max-width: 64px; border-radius: 48%;"" width=""48"" height=""48""/></span> 
+
+
+
+ | Hi! In order to compensate for the efforts of processing PRs, we kindly ask for a contribution.
+💀 As **there is no refund**, before **paying the fee**, make sure **new tokens fulfill the minimum circulation and other [acceptance criteria](https://community.trustwallet.com/t/how-to-submit-a-token-logo/3863)**.
+See also the [PR Fee FAQ](https://developer.trustwallet.com/add_new_asset/pr-fee).
+
+Please pay  **250 TWT**  with the memo **8497**  to the address `bnb1tqq9llyr3dyjd559dha6z5r5etk3qfwk07m098`.
+Alternatively, 2 BNB is also accepted (same memo & address).
+
+**QR** code: [Trust](https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Flink.trustwallet.com%2Fsend%3Fcoin%3D714%26address%3Dbnb1tqq9llyr3dyjd559dha6z5r5etk3qfwk07m098%26amount%3D250%26memo%3D8497) | [other wallet](https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=bnb1tqq9llyr3dyjd559dha6z5r5etk3qfwk07m098%26amount%3D250%26memo%3D8497)
+
+*Notes*:
+* [Trust Wallet Tokens (TWT)](https://community.trustwallet.com/t/trust-wallet-token-twt/4187) can be obtained through our [Referral Program](https://community.trustwallet.com/t/invite-a-friend-earn-trust-wallet-token-twt/4125) or [from DEXs/exchanges](https://community.trustwallet.com/t/where-to-get-trust-wallet-tokens/76641).
+* New tokens without significant usage are rejected, see criteria mentioned above.
+* One PR should be for a single project; PR's with more than 10 logos will be rejected.
+* Payment evaluation happens automatically, but with a few minutes delay.  When payment is detected, an Accept Review is automatically placed on the PR, which is a condition for merge.
+* Evaluating the PR is done manually, and it is merged only if all conditions are satisfied.
+* TWT-BEP2 is supported (Binance Chain), TWT-BEP20 version on Smart Chain is not.
+ | **PR Summary** 
+Files in PR:  2 
+Token in PR: BEP20 0xa123ab52a32267dc357b7599739d3c6caf856fe4 
+Symbol: **AIR** decimals: 18  
+Links: [Logo](https://raw.githubusercontent.com/Aircoin-official/assets/master/blockchains/smartchain/assets/0xa123ab52a32267dc357b7599739d3c6caf856fe4/logo.png) [Info](https://raw.githubusercontent.com/Aircoin-official/assets/master/blockchains/smartchain/assets/0xa123ab52a32267dc357b7599739d3c6caf856fe4/info.json) [Website](https://github.com/Aircoin-official/Documments) [Explorer](https://bscscan.com/token/0xa123ab52a32267dc357b7599739d3c6caf856fe4) 
+Token check error: 
+❌  Contract is not in checksum format, should be 0xa123aB52a32267Dc357B7599739d3C6CAF856fe4 (not 0xa123ab52a32267dc357b7599739d3c6caf856fe4). Please rename it. You may need to rename to a temp name first, then to the checksum format, because lowercase-uppercase-only renames are often ignored by the Git client or the filesystem.
+❌  Id field does not match contract, should be 0xa123ab52a32267dc357b7599739d3c6caf856fe4, not 00xa123aB52a32267Dc357B7599739d3C6CAF856fe4. Please rename.
+❌  Socials field is no longer needed, please remove it.
+❌  Field 'socials' is not needed, please remove it.
+✓  Token type OK (BEP20); Type field OK; Symbol field OK; Decimals field OK; Description field OK; Website field OK; Explorer field OK; Status field OK; Logo image type is OK (image/png); Logo image size is OK (18.805 kB); Logo dimensions OK (378x306); Token circulation OK (no. of holders: 4193); 
+ 
+
+<span style=""padding: 5px; background-color: rgb(32,32,32);""><img src=""https://raw.githubusercontent.com/Aircoin-official/assets/master/blockchains/smartchain/assets/0xa123ab52a32267dc357b7599739d3c6caf856fe4/logo.png"" style=""max-width: 64px; border-radius: 48%;"" width=""48"" height=""48""/></span> 
+
+
+
+ | **PR Summary** 
+Files in PR:  2 
+Token in PR: BEP20 0xa123ab52a32267dc357b7599739d3c6caf856fe4 
+Symbol: **AIR** decimals: 18  
+Links: [Logo](https://raw.githubusercontent.com/Aircoin-official/assets/master/blockchains/smartchain/assets/0xa123ab52a32267dc357b7599739d3c6caf856fe4/logo.png) [Info](https://raw.githubusercontent.com/Aircoin-official/assets/master/blockchains/smartchain/assets/0xa123ab52a32267dc357b7599739d3c6caf856fe4/info.json) [Website](https://github.com/Aircoin-official/Documments) [Explorer](https://bscscan.com/token/0xa123ab52a32267dc357b7599739d3c6caf856fe4) 
+Token check error: 
+❌  Contract is not in checksum format, should be 0xa123aB52a32267Dc357B7599739d3C6CAF856fe4 (not 0xa123ab52a32267dc357b7599739d3c6caf856fe4). Please rename it. You may need to rename to a temp name first, then to the checksum format, because lowercase-uppercase-only renames are often ignored by the Git client or the filesystem.
+❌  Id field does not match contract, should be 0xa123ab52a32267dc357b7599739d3c6caf856fe4, not 00xa123aB52a32267Dc357B7599739d3C6CAF856fe4. Please rename.
+✓  Token type OK (BEP20); Type field OK; Symbol field OK; Decimals field OK; Description field OK; Website field OK; Explorer field OK; Status field OK; Logo image type is OK (image/png); Logo image size is OK (18.805 kB); Logo dimensions OK (378x306); Token circulation OK (no. of holders: 4195); 
+ 
+
+<span style=""padding: 5px; background-color: rgb(32,32,32);""><img src=""https://raw.githubusercontent.com/Aircoin-official/assets/master/blockchains/smartchain/assets/0xa123ab52a32267dc357b7599739d3c6caf856fe4/logo.png"" style=""max-width: 64px; border-radius: 48%;"" width=""48"" height=""48""/></span> 
+
+
+
+ | need to be modified.",5.0,5.0,3.0,d7682d96161210654f6006c9c95ba93a9285cfca8ce0bb4c1a041140046289f0,random_control,,,,,,,,,,,,,,,
+1395433528,web3/web3.js,5503,Issue,closed,2022-10-03T22:57:58+00:00,2022-10-26T15:16:18+00:00,"Bug, 4.x",SDK / Library,SDK / Library,provider,Call method doesn't work from the contract if data is provided at initiation,"#### Expected behavior
+No error. Method call successfully
+
+#### Actual behavior
+`Returned error: VM Exception while processing transaction: revert`
+
+
+#### Steps to reproduce the behavior
+
+```ts
+// create instance of the contract with provider data at initiation
+const contractWithParams = new web3.eth.Contract(GreeterAbi, undefined, {
+				provider: web3.provider,
+				data: GreeterBytecode,
+				from: localAccount.address,
+				gas: '1000000',
+}) as unknown as Contract<typeof GreeterAbi>;
+
+// deploy contract
+const deployedContract = await contractWithParams.deploy({ arguments: ['Hello World'] }).send();
+
+// try to call any static method
+await deployedContract.methods.greet().call()
+```
+",The issue identified at https://github.com/web3/web3.js/issues/5433 could be part of this issue. | Related: https://github.com/web3/web3.js/issues/5473#issuecomment-1258397756,2.0,2.0,0.0,f79a5749966420b56d8d53a1bfdf7cefd69f0948886f07dee267bef3b4d7cab9,random_control,,,,,,,,,,,,,,,
+3222986175,paradigmxyz/reth,17371,Pull Request,closed,2025-07-11T13:42:50+00:00,2025-07-30T21:20:50+00:00,"C-perf, A-trie",Blockchain Core / Protocol,Blockchain Core / Protocol,provider,perf(trie): reuse allocated trie input in payload processor,"Fixes https://github.com/paradigmxyz/reth/issues/17292
+
+Puts a `TrieInput` in the payload processor, letting us reuse it. Changes `new_from_input` to use the `drain_into_sorted` methods.",,0.0,0.0,3.0,a9aad3b2affba6c5076d5f77e13f761e0ee6affac23f747640ca6c1ac45d935a,random_control,,,,,,,,,,,,,,,
+1697779700,foundry-rs/foundry,4883,Issue,closed,2023-05-05T15:06:39+00:00,2023-06-27T20:38:04+00:00,T-bug,Development Platform / Framework,Development Platform / Framework,provider,Wrong exit code when using forge test --fail-fast,"### Component
+
+Forge
+
+### Have you ensured that all of these are up to date?
+
+- [X] Foundry
+- [X] Foundryup
+
+### What version of Foundry are you on?
+
+forge 0.2.0 (326a889 2023-05-05T14:34:44.765124800Z)
+
+### What command(s) is the bug in?
+
+forge test --fail-fast
+
+### Operating System
+
+Windows
+
+### Describe the bug
+
+I am running the forge test command with the --fail-fast argument. The tests stop after the first failure as expected. However, the process still exits with code 0 although I'm not using the  --allow-failure argument. ",Closed with #5146,1.0,1.0,0.0,1e26c7ee9c5bcb655257d14b545d9ff1dcaebdd7fad633219ac3d153e07ca148,random_control,,,,,,,,,,,,,,,
+995474792,ethereum/ethereum-org-website,3897,Issue,closed,2021-09-14T01:02:17+00:00,2022-01-24T11:55:02+00:00,"question ❓, proposal 🤔, Status: Stale",UI / Frontend / Library,UI / Frontend / Library,provider,New wallet: yiToken,"Before suggesting a wallet, make sure you've read [our listing policy](https://www.ethereum.org/en/contributing/adding-products/).
+
+Only continue with the issue if your wallet meets the criteria listed there.
+
+If it does complete the following information which we need to accurately list the wallet.
+
+**Is your wallet security tested? Please explain security measures i.e. security audit, internal security team or some other method.**
+yiToken is continuously tested by our QA team and senior software engineers to ensure it complies with global security standards.
+<!-- Please explain any security measures you have taken to ensure your wallet is secure -->
+
+**When did your wallet go live to users?**
+April 2021
+<!-- Please provide an exact or approximate date when your wallet was usable by the public -->
+
+**Does your wallet have an active development team?**
+yes
+<!-- Are developers actively working on the wallet? -->
+
+**Is your wallet open-source?**
+no
+<!-- If yes, please provide a direct link to the repository, if you can -->
+
+**Is your wallet globally accessible?**
+Yes, there are no geographic limitations nor KYC requirements.
+<!-- Please list any KYC requirements or geographic limitations of your wallet, if any exist. -->
+
+**Is your wallet custodial, non-custodial, or a hardware wallet?**
+yiToken is a non-custodial wallet.
+<!-- Do users have access to their public and/or private keys? If your company/project were to disappear, would users still be able to access their funds? -->
+
+**Please describe the measures taken to ensure the wallet's security and provide documentation wherever possible**
+As a non-custodial wallet, yiToken has launched more than one year without security incidents.
+<!-- Please provide a link to a report or repo. If you haven't been audited but think your wallet should be listed anyway, explain here. -->
+
+**Does the wallet have fiat on-ramps?**
+no
+<!-- Does the wallet subsidise transaction fees for all or some wallet activity? -->
+
+**Does the wallet allow users to explore dapps?**
+Yes, yiToken developed a dapp browser to allow users to directly experience the dapps.
+<!-- Is the wallet integrated with WalletConnect? Does it have a dapp browser? Or can users connect to a dapp using the wallet?  -->
+
+**Does the wallet have integrated defi/financial tools?**
+no
+<!-- Can users borrow/earn/lend assets directly from a screen in the wallet?  -->
+
+**Can a user withdraw to their card?**
+no
+<!-- Can a user cash out their crypto assets directly to a card or bank account? -->
+
+**Does the wallet offer limits protection?**
+no
+<!-- Can a user set a limit for transfers to protect their assets? -->
+
+**Does the wallet allow high-volume purchases?**
+no
+<!-- Can a user buy more than $2000 worth of crypto in one go? -->
+
+**Does the wallet have an integrated token swap?**
+no
+<!-- Can a user swap ETH for other tokens from within a screen in the wallet? -->
+
+**Is the wallet a multi-signature wallet?**
+no
+<!-- Can a user opt to require multiple signatures to authorise transactions? -->
+
+**Wallet title**
+yiToken
+<!-- Please provide the official name of the wallet -->
+
+**Wallet description**
+yiToken is a decentralized multi-chain cryptocurrency and NFT wallet which supports chains such as Bitcoin, Ethereum, Polkadot, Polygon, Solana, BSC, Heco, OKExChain.etc.
+<!-- Please provide a short 1-2 sentence description of the wallet -->
+
+**Wallet logo**
+![yiToken-logo-rounded-288](https://user-images.githubusercontent.com/82084808/133053170-328e27a0-60a3-4bde-bb37-7053bf921842.png)
+
+<!-- Please provide a hi-res SVG or transparent PNG -->
+
+**Background colour for brand logo**
+![yiToken banner](https://user-images.githubusercontent.com/82084808/133051122-0591e94d-e325-4751-a5f7-3ad5d8d76862.jpeg)
+
+<!-- Please provide a hex code for the brand color. This will be added to the background of the wallet card. -->
+
+**URL**
+https://yitoken.im
+<!-- Please provide a URL (e.g. to the website of the wallet). -->
+","Hey @yiToken-frank, thanks creating this issue.
+
+> When did your wallet go live to users?
+September 2020
+
+Can you verify yiToken's launch date? Everything I'm finding is pointing to April of this year. Thanks 👍  | > Hey @yiToken-frank, thanks creating this issue.
+> 
+> > When did your wallet go live to users?
+> > September 2020
+> 
+> Can you verify yiToken's launch date? Everything I'm finding is pointing to April of this year. Thanks 👍
+
+Yeah, yiToken wallet went live to our internal users in September 2020 aming to test it, and in Aprial of this year went to the public users, shoud we update it to April of this year? | > Hey @yiToken-frank, thanks creating this issue.
+> 
+> > When did your wallet go live to users?
+> > September 2020
+> 
+> Can you verify yiToken's launch date? Everything I'm finding is pointing to April of this year. Thanks 👍
+
+I have updated it to April 2021. | Hey @yitokenfrank. Sorry for the delay on this.
+
+Unfortunately, this wallet does not meet our product listing criteria. As part of our wallet section revamp in our [Q1 roadmap](https://github.com/ethereum/ethereum-org-website/issues/5105), we will be updating the product listing criteria. Please feel free to reapply under the new criteria if you feel yiToken meets the necessary criteria.",5.0,4.0,0.0,11b981c8ef4ad7eab3375133a4daba9aa83a9db393486d25ff0c05591e494b82,random_control,multi-signature,,,,,,,,,,,,,,
+1024253034,solana-labs/token-list,1729,Pull Request,closed,2021-10-12T19:49:10+00:00,2021-10-12T20:03:46+00:00,automerge,Metadata Repository,Metadata Repository,provider,Add cryptor token,"## I agree to not ping _anybody_ on Discord/Twitter/email about this pull request. Instead I will inquire by posting a new comment in the pull request if needed.
+
+---
+
+PRs are reviewed in bulk and and can take up to **two weeks** to be merged.
+
+_This repository is managed using an auto merge action. Please ensure your PR has no deleted lines, and it will be merged._
+
+## **Please provide the following information for your token.**
+
+Please include change to the `src/tokens/solana.tokenlist.json` file in the PR.
+DON'T modify any other token on the list.
+
+At minimum each entry should have
+
+- Token Address:
+- Token Name:
+- Token Symbol:
+- Logo: (logo should be uploaded under assets/mainnet/<mint address>/\\*.<png/svg>)
+- Link to the official homepage of token:
+- Coingecko ID if available (https://www.coingecko.com/api/documentations/v3#/coins/get_coins__id_):
+",,0.0,0.0,1.0,f063abd94e98832efb7aa131fa87315b2dad2c36f9042ba9da1f70fde60f47e2,random_control,,,,,,,,,,,,,,,
+1154897691,WalletConnect/walletconnect-docs,156,Pull Request,closed,2022-03-01T05:44:49+00:00,2022-11-24T13:55:52+00:00,,Documentation,Documentation,provider,Wallet connect V2 protocol intro,"Introductory notes to the V2 Protocol serves as a glue to bring the docs under `/protocol` together. 
+Attempts to give a high level summary of how the protocol fits without repeating much of the contents in other docs.",Looks like the file structure and sidebar was totally different during `2.0 beta`. Should we prefer migrating this manually along with #250  | We appreciate the help! But this is stale and can't be merged.  Please re-open with any updates.,4.0,2.0,18.0,b83da51105a94d73e48ff311282fdc866a0f31a0b53f206f39e5e8eff32d73a3,random_control,,,,,,,,,,,,,,,
+2319337972,MetaMask/metamask-extension,24790,Pull Request,closed,2024-05-27T14:52:23+00:00,2024-05-27T16:32:54+00:00,"team-extension-platform, flaky tests, release-11.16.6",Browser Extension,Browser Extension,provider,test: Fix flaky test Update Network: update network details and validate the ui elements,"## **Description**
+
+This PR addresses a flaky test issue related to the Chain ID input field.
+
+Reason for flakiness: The root cause of the flakiness was identified as the rapid input of the entire Chain ID, which resulted in the error message appearing and persisting even after the correct Chain ID was fully entered.
+
+Observation: When entering the Chain ID manually, the error message correctly displays when incomplete values like ""0x53"" are input but disappears upon entering the full Chain ID with ""9"". To mimic more human-like actions in the automated test, I adjusted the test behavior accordingly.
+
+Key Changes:
+Split Chain ID Input: The Chain ID input process has been split into two distinct parts (chainId_part1 and chainId_part2). This modification adopts a more human-like approach to entering the Chain ID, allowing the error message sufficient time to respond accurately.
+
+Results:
+Before the Fix: The flakiness could be reproduced locally on Firefox with a 50% occurrence rate.
+After the Fix: After implementing the changes, I ran the test 20 consecutive times without encountering any flakiness, demonstrating the effectiveness of the fix.
+
+This adjustment ensures that the automated test behaves in a way that closely resembles user interaction, and reduce test flakiness.
+
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/MetaMask/metamask-extension/pull/24790?quickstart=1)
+
+## **Related issues**
+
+Fixes: #24628 
+
+## **Manual testing steps**
+
+1. Run the test several times yarn test:e2e:single test/e2e/tests/request-queuing/ui.spec.js --browser=firefox --leave-running --retryUntilFailure --retries=10
+2. Check ci jobs
+
+## **Screenshots/Recordings**
+
+<!-- If applicable, add screenshots and/or recordings to visualize the before and after of your change. -->
+
+### **Before**
+
+<!-- [screenshots/recordings] -->
+
+### **After**
+
+<!-- [screenshots/recordings] -->
+
+## **Pre-merge author checklist**
+
+- [x] I’ve followed [MetaMask Coding Standards](https://github.com/MetaMask/metamask-extension/blob/develop/.github/guidelines/CODING_GUIDELINES.md).
+- [x] I've completed the PR template to the best of my ability
+- [x] I’ve included tests if applicable
+- [x] I’ve documented my code using [JSDoc](https://jsdoc.app/) format if applicable
+- [x] I’ve applied the right labels on the PR (see [labeling guidelines](https://github.com/MetaMask/metamask-extension/blob/develop/.github/guidelines/LABELING_GUIDELINES.md)). Not required for external contributors.
+
+## **Pre-merge reviewer checklist**
+
+- [x] I've manually tested the PR (e.g. pull and build branch, run the app, test code being changed).
+- [x] I confirm that this PR addresses all acceptance criteria described in the ticket it closes and includes the necessary testing evidence such as recordings and or screenshots.
+",,3.0,0.0,1.0,02c7f19c128b3b271ad3b9fad95e55003c7953c3d496847e2d8113119da3ca1c,random_control,,,,,,,,,,,,,,,
+218910336,openethereum/parity-ethereum,5387,Issue,closed,2017-04-03T11:55:46+00:00,2017-05-05T08:00:45+00:00,F2-bug 🐞,Blockchain Core / Protocol,Blockchain Core / Protocol,provider,Signer bar sometimes pop up on top right,"Originally reported by @tomusdrw 
+
+![riot 2 2017-04-03 13-54-43](https://cloud.githubusercontent.com/assets/1424473/24608097/3730ddf8-1875-11e7-84ab-e3611df045cb.png)
+","Seems that the issue happens only on `#/home`.
+Recent Dapps component is loading some dapps, which in turn fire `loaded` event in `dappsStore`, that event is received by `ParityBar` and last dapp setting is actually applied (for me it was Pairty Web3 Console).",1.0,1.0,0.0,19ac65332524cad77bf6d59490a17a68235193663e0c88ead43865bc99215164,random_control,,,,,,,,,,,,,,,
