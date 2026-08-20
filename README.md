@@ -1,66 +1,37 @@
 # Pipeline Gemini de verificação de blockchain design patterns
 
-**Versão:** 0.6.1-gemini  
-**Manual metodológico:** 0.2 (2026-07-20)  
-**Catálogo:** `blockchain_patterns_keywords_v3.csv` (82 patterns)  
-**Provedor:** Gemini Developer API, via SDK oficial `google-genai`
+Pipeline em 2 estágios para identificar e verificar menções a blockchain design patterns em issues/PRs de projetos OSS.
 
-Este projeto executa e audita o pipeline em duas etapas da pesquisa **An Empirical Study of the Adoption and Challenges of Blockchain Design Patterns in OSS Projects**:
+- Stage 1 (recall): lê a issue/PR e propõe candidatos de pattern.
+- Stage 2 (precisão): valida cada par `(issue, pattern)` com regras mais estritas.
+- Agregação final: consolida no nível da issue (`issue_results.csv`).
 
-1. **Stage 1 — recall:** compreende a issue/PR e gera candidatos plausíveis;
-2. **Stage 2 — precisão:** verifica rigorosamente cada par `(issue, pattern)`.
+## Visão rápida
 
-O pacote contém somente a implementação atual para Gemini. Não há arquivos de versões anteriores.
+- Linguagem: Python
+- SDK de LLM: `google-genai`
+- Catálogo de patterns: `blockchain_patterns_keywords_v3.csv`
+- Entrypoint principal: `run_pipeline.py`
 
-## Modelos padrão
+Documentação técnica detalhada do projeto e dos arquivos está em `docs/PROJECT_DOCUMENTATION.md`.
 
-```text
-Stage 1: gemini-3.1-flash-lite
-Stage 2: gemini-3.5-flash
+## 1. Clonar o projeto
+
+Opção SSH:
+
+```bash
+git clone git@github.com:IrlanBarros/blockchain-pattern-llm-verification.git
+cd blockchain-pattern-llm-verification
 ```
 
-Os dois IDs são versões estáveis e suportam Structured Outputs e Batch API. Os parâmetros padrão são:
+Opção HTTPS:
 
-```text
-temperature: 1.0
-seed: 0
-Stage 1 thinking level: minimal
-Stage 2 thinking level: low
+```bash
+git clone https://github.com/IrlanBarros/blockchain-pattern-llm-verification.git
+cd blockchain-pattern-llm-verification
 ```
 
-A temperatura `1.0` segue a recomendação da família Gemini 3. O `seed` melhora a repetibilidade, mas não garante resultados idênticos em chamadas distintas; por isso o pipeline registra modelos, parâmetros, prompts, schemas e respostas brutas.
-
-## Estrutura
-
-```text
-.
-├── run_pipeline.py
-├── evaluate_pipeline.py
-├── blockchain_patterns_keywords_v3.csv
-├── requirements.txt
-├── llm_pipeline/
-│   ├── config.py
-│   ├── prompts.py
-│   ├── models.py
-│   ├── utils.py
-│   ├── normalization.py
-│   ├── data.py
-│   ├── schemas.py
-│   ├── requests.py
-│   ├── client.py
-│   ├── stages.py
-│   ├── aggregation.py
-│   ├── artifacts.py
-│   └── cli.py
-├── docs/
-│   ├── ARCHITECTURE.md
-│   └── PIPELINE_STAGE1_STAGE2.md
-└── tests/
-```
-
-## 1. Instalação
-
-Recomenda-se Python 3.11 ou 3.12.
+## 2. Preparar ambiente Python
 
 ```bash
 python3 -m venv .venv
@@ -69,277 +40,131 @@ python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-## 2. Configuração da chave Gemini
+## 3. Configurar chave da API Gemini
 
-Crie a chave no Google AI Studio e defina apenas uma variável de ambiente:
-
-```bash
-read -s GEMINI_API_KEY
-export GEMINI_API_KEY
-```
-
-Confirme sem imprimir a chave:
+Defina apenas uma variável (`GEMINI_API_KEY` ou `GOOGLE_API_KEY`).
 
 ```bash
-python -c 'import os; print("Configurada" if os.getenv("GEMINI_API_KEY") else "Ausente")'
+export GEMINI_API_KEY="SUA_CHAVE_AQUI"
 ```
 
-O SDK também aceita `GOOGLE_API_KEY`, mas o projeto interrompe a execução se as duas variáveis existirem com valores diferentes.
-
-Nunca coloque a chave no código, CSV, Git, relatório ou captura de tela.
-
-## 3. CSV do smoke test
-
-Use o CSV original dos 30 registros, não a planilha já anotada. Ele deve conter:
-
-```text
-repository
-issue_number
-issue_title
-issue_body
-```
-
-A coluna abaixo é opcional, mas deve ser incluída quando disponível:
-
-```text
-concatenated_comments
-```
-
-Também podem permanecer no arquivo `type`, `labels`, `state`, `html_url`, `sample_group`, `selection_trigger` e outras colunas. Os campos de seleção não entram como rótulos de verdade.
-
-## 4. Testes automatizados
+Verificação rápida:
 
 ```bash
-python -m pytest -q
+python -c 'import os; print("OK" if os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY") else "MISSING")'
 ```
 
-Resultado esperado nesta versão:
+## 4. Rodar testes
 
-```text
-28 passed
-```
-
-Os testes não acessam a API.
-
-## 5. Validação e normalização
+Neste repositório, prefira rodar com `PYTHONPATH=.` para evitar problemas de import.
 
 ```bash
-python run_pipeline.py validate \
+PYTHONPATH=. .venv/bin/pytest -q
+```
+
+Teste de integração (usa API real):
+
+```bash
+PYTHONPATH=. .venv/bin/python run_integration_tests.py
+```
+
+## 5. Validar e normalizar um CSV de entrada
+
+```bash
+PYTHONPATH=. .venv/bin/python run_pipeline.py validate \
   --input data/smoke/smoke_annotation_sample.csv \
   --patterns blockchain_patterns_keywords_v3.csv \
   --report-dir outputs/validation/smoke
 ```
 
-O projeto trata, de forma auditável:
+Saídas dessa etapa vão para `outputs/validation/smoke/`.
 
-- UTF-8, UTF-8 com BOM e CP1252;
-- vírgula, ponto e vírgula ou tab como separador;
-- espaços, tabs, quebras de linha e espaços Unicode;
-- BOM e caracteres invisíveis;
-- cabeçalhos com caixa, espaço, hífen ou underscore diferentes;
-- células vazias sem transformação indevida em `NaN` textual;
-- `issue_number` exportado como `15.0`;
-- valores separados por `|`, espaços e duplicatas;
-- variantes estruturais de enums e nomes de patterns;
-- colisões de colunas e chaves compostas duplicadas.
+## 6. Rodar pipeline
 
-A normalização não aceita sinônimos e não adivinha semântica. `RBAC`, por exemplo, não é convertido automaticamente em `Role-based control`.
-
-Confirme em `validation_report.json`:
-
-```json
-{
-  "input_rows": 30,
-  "pattern_count": 82,
-  "duplicate_keys": 0,
-  "status": "ok"
-}
-```
-
-## 6. Dry-run dos 30 registros
+### 6.1 Dry-run (sem chamadas de API)
 
 ```bash
-python run_pipeline.py run \
+PYTHONPATH=. .venv/bin/python run_pipeline.py run \
   --input data/smoke/smoke_annotation_sample.csv \
   --patterns blockchain_patterns_keywords_v3.csv \
   --mode dry-run \
-  --limit 30 \
-  --run-id smoke_gemini_dry_run
+  --run-id smoke_dry_run
 ```
 
-O dry-run não usa a API. Ele preserva snapshots, hashes, parâmetros, schemas, catálogo e as requisições completas do Stage 1.
-
-Revise principalmente:
-
-```text
-outputs/runs/smoke_gemini_dry_run/input_clean_snapshot.csv
-outputs/runs/smoke_gemini_dry_run/normalization_changes.csv
-outputs/runs/smoke_gemini_dry_run/run_metadata.json
-outputs/runs/smoke_gemini_dry_run/stage1_requests.jsonl
-```
-
-## 7. Primeira chamada real
-
-Teste um registro:
+### 6.2 Execução real (sync)
 
 ```bash
-python run_pipeline.py run \
-  --input data/smoke/smoke_annotation_sample.csv \
+PYTHONPATH=. .venv/bin/python run_pipeline.py run \
+  --input data/pilot/pilot_annotation_sample.csv \
   --patterns blockchain_patterns_keywords_v3.csv \
   --mode sync \
-  --limit 1 \
-  --run-id smoke_gemini_probe_1
+  --limit 200 \
+  --output-dir outputs/runs/pilot_gemini_user \
+  --run-id pilot_sample_run
 ```
 
-Depois, teste três registros:
+### 6.3 Execução real (batch)
 
 ```bash
-python run_pipeline.py run \
-  --input data/smoke/smoke_annotation_sample.csv \
-  --patterns blockchain_patterns_keywords_v3.csv \
-  --mode sync \
-  --limit 3 \
-  --run-id smoke_gemini_probe_3
-```
-
-Não avance se houver `errored`, falha de autenticação, modelo inválido, bloqueio, JSON inválido ou `MAX_TOKENS`.
-
-## 8. Execução real dos 30 registros
-
-```bash
-python run_pipeline.py run \
-  --input data/smoke/smoke_annotation_sample.csv \
-  --patterns blockchain_patterns_keywords_v3.csv \
-  --mode sync \
-  --limit 30 \
-  --run-id smoke_gemini_30
-```
-
-Para o smoke test, use `sync`: o diagnóstico por registro é mais simples. O pipeline fará 30 chamadas no Stage 1 e uma chamada no Stage 2 para cada candidato gerado.
-
-Não use `--overwrite` para substituir uma execução científica. Use outro `--run-id`.
-
-## 9. Modo batch
-
-O modo batch usa requisições inline do Gemini Batch API, com divisão automática por quantidade e tamanho estimado abaixo de 20 MB.
-
-```bash
-python run_pipeline.py run \
-  --input data/evaluation/development.csv \
+PYTHONPATH=. .venv/bin/python run_pipeline.py run \
+  --input data/pilot/pilot_annotation_sample.csv \
   --patterns blockchain_patterns_keywords_v3.csv \
   --mode batch \
-  --run-id pilot_gemini
+  --output-dir outputs/runs \
+  --run-id pilot_batch_run
 ```
 
-Parâmetros opcionais:
-
-```text
---batch-size 250
---batch-max-bytes 18000000
---poll-seconds 30
-```
-
-O Batch API é adequado ao piloto/corpus por ser assíncrono e mais barato. Para 30 casos, prefira `sync`.
-
-## 10. Parâmetros configuráveis
+## 7. Avaliar contra anotações humanas
 
 ```bash
-python run_pipeline.py run --help
-```
-
-Exemplo explícito:
-
-```bash
-python run_pipeline.py run \
-  --input data/smoke/smoke_annotation_sample.csv \
-  --mode sync \
-  --limit 30 \
-  --stage1-model gemini-3.1-flash-lite \
-  --stage2-model gemini-3.5-flash \
-  --temperature 1.0 \
-  --seed 0 \
-  --stage1-thinking-level minimal \
-  --stage2-thinking-level low \
-  --stage1-max-tokens 2048 \
-  --stage2-max-tokens 2048 \
-  --max-input-chars 12000 \
-  --run-id smoke_gemini_30_explicit
-```
-
-## 11. Saídas por execução
-
-```text
-outputs/runs/<run_id>/
-├── input_raw_snapshot.csv
-├── input_clean_snapshot.csv
-├── pattern_catalog_raw_snapshot.csv
-├── pattern_catalog_clean_snapshot.csv
-├── normalization_report.json
-├── normalization_changes.csv
-├── pattern_catalog_full.txt
-├── pattern_catalog_compact.txt
-├── run_metadata.json
-├── request_manifest.json
-├── stage1_raw.jsonl
-├── stage1_results.csv
-├── stage2_pair_manifest.json
-├── stage2_raw.jsonl
-├── stage2_results.csv
-├── issue_results.csv
-└── run_summary.json
-```
-
-Em batch, também são gerados:
-
-```text
-stage1_batches.json
-stage2_batches.json
-```
-
-Falhas técnicas usam `request_status=errored` e resultam em `pipeline_error` na agregação. Nunca são convertidas em negativos.
-
-## 12. Avaliação contra anotação humana
-
-O conjunto-ouro correto deve ser produzido após A1 e A2 independentes, adjudicação e congelamento. O segundo anotador não deve consultar a saída da LLM antes de congelar sua anotação.
-
-```bash
-python evaluate_pipeline.py \
-  --human-issues smoke_annotation_adjudicated.csv \
-  --human-pairs smoke_pair_annotation_adjudicated.csv \
-  --stage1 outputs/runs/smoke_gemini_30/stage1_results.csv \
-  --stage2 outputs/runs/smoke_gemini_30/stage2_results.csv \
+PYTHONPATH=. .venv/bin/python evaluate_pipeline.py \
+  --human-issues data/human/human_issues_adjudicated.csv \
+  --human-pairs data/human/human_pairs_adjudicated.csv \
+  --stage1 outputs/runs/pilot_gemini_user/pilot_sample_run/stage1_results.csv \
+  --stage2 outputs/runs/pilot_gemini_user/pilot_sample_run/stage2_results.csv \
   --patterns blockchain_patterns_keywords_v3.csv \
-  --output-dir outputs/evaluation/smoke_gemini_30
+  --output-dir outputs/evaluation/smoke
 ```
 
-Pares gerados pelo Stage 1 sem rótulo humano são enviados para `pairs_requiring_human_review.csv`; eles não são assumidos como negativos.
+## 8. Estrutura de saída por execução
 
-## Documentação oficial usada na integração
+Cada run cria uma pasta `outputs/runs/<run_id>/` com artefatos como:
 
-- SDK Python: https://googleapis.github.io/python-genai/
-- Structured Outputs: https://ai.google.dev/gemini-api/docs/structured-output
-- Batch API: https://ai.google.dev/gemini-api/docs/batch-api
-- Modelos: https://ai.google.dev/gemini-api/docs/models
+- `input_raw_snapshot.csv`
+- `input_clean_snapshot.csv`
+- `normalization_report.json`
+- `normalization_changes.csv`
+- `request_manifest.json`
+- `run_metadata.json`
+- `stage1_raw.jsonl`
+- `stage1_results.csv`
+- `stage2_pair_manifest.json`
+- `stage2_raw.jsonl`
+- `stage2_results.csv`
+- `issue_results.csv`
+- `run_summary.json`
 
+## 9. Parâmetros úteis
 
-## Colunas de repositório no smoke test
+Ajuda completa:
 
-O CSV do smoke test pode manter as colunas originais do corpus:
-
-- `repository_full_name`: identificador completo do repositório e fonte preferida da chave;
-- `repository_category`: metadado preservado para análises posteriores.
-
-Também é aceito o nome legado `repository`. Durante a normalização, o pipeline
-cria/sincroniza internamente `repository` e `repository_full_name`. Se ambas
-existirem e tiverem valores diferentes, a execução é interrompida para evitar
-uma junção incorreta. `repository_category` não é enviada à LLM como evidência
-e não participa da chave composta.
-
-As colunas mínimas da entrada são, portanto:
-
-```text
-repository_full_name  # ou repository
-issue_number
-issue_title
-issue_body
+```bash
+PYTHONPATH=. .venv/bin/python run_pipeline.py run --help
 ```
+
+Flags comuns:
+
+- `--limit`: limita número de registros
+- `--run-id`: nome da execução
+- `--output-dir`: diretório base dos resultados
+- `--overwrite`: permite reutilizar diretório já existente
+- `--stage1-model`, `--stage2-model`
+- `--temperature`, `--seed`
+- `--stage1-thinking-level`, `--stage2-thinking-level`
+
+## 10. Referências rápidas
+
+- Arquitetura: `docs/ARCHITECTURE.md`
+- Contratos Stage 1/2: `docs/PIPELINE_STAGE1_STAGE2.md`
+- Testes de integração: `INTEGRATION_TESTS_README.md`
+- Documentação completa do projeto: `docs/PROJECT_DOCUMENTATION.md`
