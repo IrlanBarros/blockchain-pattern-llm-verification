@@ -140,3 +140,11 @@ def test_aggregate_issue_results_priority():
     assert out["patterns_confirmed"] == "Proxy contract"
     assert out["patterns_uncertain"] == "Oracle"
     assert out["adoption_status"] == "multiple"
+    assert out["stage1_candidate_count"] == 2
+    assert out["stage2_pair_count"] == 2
+    assert out["pipeline_error_count"] == 0
+    assert out["issue_summary"] == "summary"
+    assert out["challenge_categories"] == "reliability_or_availability"
+    assert out["annotator_id"] == ""
+    assert out["human_notes"] == ""
+    assert out["annotation_date"] == ""
