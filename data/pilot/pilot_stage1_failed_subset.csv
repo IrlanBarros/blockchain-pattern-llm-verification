@@ -1,0 +1,101 @@
+issue_id,repository_full_name,issue_number,type,state,created_at,closed_at,labels,repository_category,repository_category_canonical,data_source,issue_title,issue_body,concatenated_comments,comments_count,comments_count_filtered,commits_count,raw_text_sha256,sample_group,selection_trigger,annotator_id,relevant_to_pattern_study,patterns_present,adoption_status,issue_activity_type,challenge_categories,evidence_text,evidence_location,false_friend_detected,overlapping_patterns,insufficient_context,confidence,human_notes,annotation_date
+413895937,embarklabs/embark,1361,Pull Request,closed,2019-02-25T01:19:44+00:00,2019-02-25T20:06:24+00:00,,Development Platform / Framework,Development Platform / Framework,provider,fix(@embark/cockpit): Fix cockpit not suggesting console commands,"## NOTE 
+This is a recreation of https://github.com/embark-framework/embark/pull/1346, as somehow this commit got eliminated in a merge, and ultimately, never applied to master.
+
+## Fixes
+This PR fixes a number of issues relating to the cockpit console.
+
+#### Console commands display in cockpit console
+Fix cockpit console not displaying console usage commands that included “<usage option>”. For example “resolve <name>” would not display the “<name>” part, as it was attempting to write this in as HTML (ansi-to-html conversion).
+
+This was fixed by replacing any instances of “<usage>” with “[usage]”. Please note that future usage strings should not contain text wrapped in “<>”.
+
+#### Autosuggestions for “web.eth.” not appearing
+Fix “web3.eth.” not suggesting members of `web3.eth`. This was due to a `Object.keys(web3.eth)` throwing `'getOwnPropertyDescriptor' on proxy: trap returned descriptor for property 'defaultAccount' that is incompatible with the existing property in the proxy target` in the console. Changing `Object.keys` to `Object.getOwnPropertyDescriptor` solved the problem.
+
+#### Fix autosuggestion of known console commands (ie from plugins)
+Fix known console commands (ie from  plugins) not being autosuggested. For example, typing “web”, should autosuggest `webserver start/stop`,  `log webserver on`, and `log webserver off`.
+
+This PR adds in support for registered console commands (from plugins).",,0.0,0.0,1.0,7fdf621d78e6b1702e22810d05606947fa3ba7d2a0fbae0b8dcf8ae7df324d6f,pattern_enriched,proxy,,,,,,,,,,,,,,
+327392193,Consensys/quorum,387,Pull Request,closed,2018-05-29T16:14:47+00:00,2018-06-04T20:02:10+00:00,,Blockchain Core / Privacy Protocol,Blockchain Core / Privacy Protocol,provider,Feature/fix_some_tests,"Fixed test with error `insufficient balance for transfer`.
+It happened because chain id was set to be 1 in config.go.
+Since `v` becomes `38` and tx is regarded as private, recovered address is not the one specified in genesis.
+
+Cherry-picked below commits because `make test` did not run with Go 1.10.
+`go vet` failed for minor issues.
+
+- https://github.com/ethereum/go-ethereum/pull/15783/commits/eaf59f5e5f0b47a363e1971a798886a781c935b7
+- https://github.com/jpmorganchase/quorum/commit/bae67281d67b3e1f57cff993a32e325ea45ccfa9
+","@jpmsam thank you very much for approval! 
+Is this going to be merged? I would also want to fix other tests currently broken if I can find a way to fix it.",1.0,1.0,4.0,1e64181df8ccc38decb1004a6b865976a5a0ab9643bab1141096e14e547bb7f2,pattern_enriched,genesis,,,,,,,,,,,,,,
+600278800,smartcontractkit/chainlink,2681,Pull Request,closed,2020-04-15T12:59:44+00:00,2020-05-04T17:20:51+00:00,,Other,Other,provider,Add unique index on txes.hash,"The code assumes that the hash on txes is unique, but it isn't enforced. And
+there are duplicates in the wild. Enforcing this may cause the code to error
+out in some edge cases where it wouldn't have before, exposing whatever bug
+caused these duplicates to appear.
+
+Migration is fast. Timing information on utility node DB:
+
+```
+	DROP INDEX IF EXISTS idx_txs_hash;
+
+	WITH duplicate_txes_hash AS (
+		SELECT hash FROM txes GROUP BY hash HAVING count(hash) > 1
+	), txes_to_delete AS (
+		SELECT id
+		FROM txes
+		JOIN duplicate_txes_hash dups ON dups.hash = txes.hash
+		WHERE id NOT IN (
+			SELECT DISTINCT ON (txes.hash) id
+			FROM txes
+			JOIN duplicate_txes_hash dups ON dups.hash = txes.hash
+			ORDER BY txes.hash, id ASC
+		)
+	)
+	DELETE FROM txes WHERE id IN (SELECT id FROM txes_to_delete);
+
+	CREATE UNIQUE INDEX idx_txes_hash ON txes (hash);
+	 gormigrate.v1@v1.6.0/gormigrate.go:364 rows_affected=0 time=0.434967806
+```",@RyanRHall answered in the slack 👍 ,2.0,1.0,1.0,c7fe06a9482b13f700f4ec2d6bf141407342e256e9d3bdad751fa7da25072d68,pattern_enriched,Migration,,,,,,,,,,,,,,
+1841144705,MetaMask/metamask-extension,20424,Pull Request,closed,2023-08-08T11:43:28+00:00,2023-08-15T21:49:48+00:00,"release-blocker, team-extension-platform, release-10.34.5",Browser Extension,Browser Extension,provider,Log before and after each migration run,"## Explanation
+
+In order to get better breadcrumbs in our sentry error reports, we are adding logs to tell us when migrations are starting and when they have successfully completed.
+
+## Manual Testing Steps
+
+- [ ] We could verify this by committing some temporary code to throw and error around the end of the migrations (either during the last migration or just after), and connecting to a personal sentry account, and then creating the scenario where the migrations are run and then verifying that the correct logs show up in sentry breadcrumbs
+
+## Pre-merge author checklist
+
+- [ ] I've clearly explained:
+  - [ ] What problem this PR is solving
+  - [ ] How this problem was solved
+  - [ ] How reviewers can test my changes
+- [ ] Sufficient automated test coverage has been added
+
+## Pre-merge reviewer checklist
+
+- [ ] Manual testing (e.g. pull and build branch, run in browser, test code being changed)
+- [ ] PR is linked to the appropriate GitHub issue
+- [ ] **IF** this PR fixes a bug in the release milestone, add this PR to the release milestone
+
+If further QA is required (e.g. new feature, complex testing steps, large refactor), add the `Extension QA Board` label.
+
+In this case, a QA Engineer approval will be be required.
+",Relates to #20449,4.0,1.0,2.0,884640075e6236bc846a9f4535286c93753903eb440b09f0224a5773f3026f2f,pattern_enriched,migration,,,,,,,,,,,,,,
+3140404804,FuelLabs/sway,7228,Pull Request,closed,2025-06-12T13:55:01+00:00,2025-06-23T09:05:53+00:00,"dependencies, breaking",Programming Language / Compiler,Programming Language / Compiler,provider,Bump fuel deps,"## Description
+
+Bumps fuel-vm, fuel-core fuels-rs and forc-wallet to latest versions. Upgrades Rust to 2021 edition.
+
+## Checklist
+
+- [x] I have linked to any relevant issues.
+- [x] I have commented my code, particularly in hard-to-understand areas.
+- [x] I have updated the documentation where relevant (API docs, the reference, and the Sway book).
+   - [x] If my change requires substantial documentation changes, I have [requested support from the DevRel team](https://github.com/FuelLabs/devrel-requests/issues/new/choose)
+- [x] I have added tests that prove my fix is effective or that my feature works.
+- [ ] I have added (or requested a maintainer to add) the necessary `Breaking*` or `New Feature` labels where relevant.
+  - I believe this is non-breaking from user code perspective but I'm not too sure about that
+- [x] I have done my best to ensure that my PR adheres to [the Fuel Labs Code Review Standards](https://github.com/FuelLabs/rfcs/blob/master/text/code-standards/external-contributors.md).
+- [x] I have requested a review from the relevant team or maintainers.
+","All looks good!
+Converting to draft however since this release contains breaking changes; it will be blocked until https://github.com/FuelLabs/sway/pull/7235 is merged.",2.0,1.0,28.0,d907887334a7f877da1c18e32eda41e29643b8b8fc8c02666a8b60f0c8fbf0d6,random_control,,,,,,,,,,,,,,,
