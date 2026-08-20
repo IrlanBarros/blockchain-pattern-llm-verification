@@ -17,6 +17,9 @@ class PreparedIssue:
     original_char_count: int
     included_char_count: int
     input_truncated: bool
+    # P6: artifact_type tracks whether the artefact is a pull_request or issue so that
+    # evidence_location can be mapped to "pull_request_description" instead of "body".
+    artifact_type: str = ""
 
 
 @dataclass(frozen=True)

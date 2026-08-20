@@ -135,7 +135,12 @@ def normalize_unicode(value: Any, *, preserve_newlines: bool = True) -> str:
 
         category = unicodedata.category(char)
         if category == "Cf":
-            # BOM, zero-width space, word joiner e demais format controls.
+            # P10: Preserve characters essential for compound sequences.
+            # U+200D ZERO WIDTH JOINER (ZWJ) is used in multi-codepoint emoji (e.g. 👨\u200d💻).
+            # U+200C ZERO WIDTH NON-JOINER (ZWNJ) is used in Indic/Persian scripts.
+            # All other Cf characters (BOM, zero-width spaces, soft hyphens…) are stripped.
+            if char in ("\u200d", "\u200c"):
+                out.append(char)
             continue
         if category == "Cc":
             # Demais caracteres de controle não têm função útil em CSVs.
