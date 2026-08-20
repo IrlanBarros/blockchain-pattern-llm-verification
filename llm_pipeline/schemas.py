@@ -103,15 +103,52 @@ def stage2_schema(pattern_names: list[str]) -> dict[str, Any]:
             "verdict": {
                 "type": "string",
                 "enum": VERDICTS,
-                "description": "yes, no, uncertain ou insufficient_context conforme o manual.",
+                "description": (
+                    "yes=evidência suficiente com mechanism/scope/focus match; "
+                    "no=pattern ausente, falso-amigo ou menção superficial; "
+                    "uncertain=evidência parcial mas sem informação distintiva suficiente; "
+                    "insufficient_context=conteúdo ausente IMPEDE ativamente a decisão."
+                ),
+            },
+            "mechanism_match": {
+                "type": "boolean",
+                "description": (
+                    "P3: true quando o mecanismo DISTINTIVO do pattern está explicitamente "
+                    "discutido no artefato (não apenas mencionado como contexto). "
+                    "Obrigatório true para verdict=yes."
+                ),
+            },
+            "scope_match": {
+                "type": "boolean",
+                "description": (
+                    "P3: true quando o escopo de uso é compatível com o que o pattern "
+                    "endereça (ex.: on-chain vs. off-chain, token vs. contrato). "
+                    "Obrigatório true para verdict=yes."
+                ),
+            },
+            "focus_match": {
+                "type": "boolean",
+                "description": (
+                    "P3: true quando o artefato discute substantivamente o pattern, "
+                    "não apenas o cita superficialmente ou como tecnologia de fundo. "
+                    "Obrigatório true para verdict=yes."
+                ),
             },
             "evidence_text": {
                 "type": "string",
-                "description": "Trecho literal curto; obrigatório para yes/uncertain e útil para explicar negativos.",
+                "description": (
+                    "Trecho LITERAL e curto do artefato; obrigatório para yes/uncertain "
+                    "e útil para explicar negativos. Não reescreva nem parafraseie."
+                ),
             },
             "evidence_location": {
                 "type": "array",
-                "description": "Um ou mais locais onde a evidência aparece.",
+                "description": (
+                    "P6: Um ou mais locais onde a evidência aparece. "
+                    "Para pull requests use pull_request_description (não body). "
+                    "Para issues use issue_body ou body. "
+                    "Valores: title, body, issue_body, comment, pull_request_description."
+                ),
                 "items": {"type": "string", "enum": EVIDENCE_LOCATIONS},
             },
             "justification": {
@@ -130,13 +167,17 @@ def stage2_schema(pattern_names: list[str]) -> dict[str, Any]:
             },
             "pattern_challenge_categories": {
                 "type": "array",
-                "description": "Desafios explicitamente conectados ao mecanismo deste pattern.",
+                "description": (
+                    "P9: Desafios EXPLICITAMENTE conectados ao mecanismo deste pattern no texto. "
+                    "A presença do pattern NÃO implica desafio. "
+                    "Sem menção explícita, retorne [\"none_explicit\"]."
+                ),
                 "items": {"type": "string", "enum": CHALLENGE_CATEGORIES},
             },
             "confidence": {
                 "type": "string",
                 "enum": CONFIDENCE_LEVELS,
-                "description": "Confiança no veredito do par.",
+                "description": "Confiança no veredito do par (será recalculada pelo pipeline).",
             },
             "alternative_pattern": {
                 "type": "string",
@@ -151,6 +192,9 @@ def stage2_schema(pattern_names: list[str]) -> dict[str, Any]:
         },
         "required": [
             "verdict",
+            "mechanism_match",
+            "scope_match",
+            "focus_match",
             "evidence_text",
             "evidence_location",
             "justification",
@@ -258,8 +302,18 @@ def normalize_stage2(payload: dict[str, Any], catalog: PatternCatalog) -> dict[s
         if name not in normalized_overlaps:
             normalized_overlaps.append(name)
 
-    result = {
+    # P3: Extract mechanism/scope/focus match flags.
+    # Default True when absent to preserve backward compatibility with responses
+    # that predate this schema version.
+    mechanism_match: bool = bool(payload.get("mechanism_match", True))
+    scope_match: bool = bool(payload.get("scope_match", True))
+    focus_match: bool = bool(payload.get("focus_match", True))
+
+    result: dict[str, Any] = {
         "verdict": normalize_enum(clean_token(payload.get("verdict")), VERDICTS, "verdict"),
+        "mechanism_match": mechanism_match,
+        "scope_match": scope_match,
+        "focus_match": focus_match,
         "evidence_text": clean_text(payload.get("evidence_text")),
         "evidence_location": normalize_list(
             payload.get("evidence_location"), EVIDENCE_LOCATIONS, "evidence_location"
@@ -287,8 +341,34 @@ def normalize_stage2(payload: dict[str, Any], catalog: PatternCatalog) -> dict[s
 
     verdict = result["verdict"]
     status = result["adoption_status"]
+
     if not result["justification"]:
         raise ValueError("justification não pode ser vazia")
+
+    # P3: Downgrade yes → uncertain when any required match flag is False.
+    # The model's self-reported flags are used as a consistency check; if the model
+    # itself says mechanism/scope/focus is missing, accepting yes is contradictory.
+    if verdict == "yes" and not (mechanism_match and scope_match and focus_match):
+        missing = [
+            name for name, flag in (
+                ("mechanism_match", mechanism_match),
+                ("scope_match", scope_match),
+                ("focus_match", focus_match),
+            )
+            if not flag
+        ]
+        result["verdict"] = "uncertain"
+        result["justification"] = (
+            f"[auto-downgraded yes→uncertain: {', '.join(missing)} ausente] "
+            + result["justification"]
+        )
+        verdict = "uncertain"
+        # Adoption status must be compatible with uncertain
+        if status in {"superficial_mention", "not_related"}:
+            result["adoption_status"] = "conceptual_discussion"
+            status = "conceptual_discussion"
+
+    # Semantic consistency checks (P4)
     if verdict == "yes" and status in {"superficial_mention", "not_related", "insufficient_context"}:
         raise ValueError(f"Inconsistência: verdict=yes com adoption_status={status}")
     if verdict == "no" and status not in {"superficial_mention", "not_related"}:
@@ -301,8 +381,8 @@ def normalize_stage2(payload: dict[str, Any], catalog: PatternCatalog) -> dict[s
         raise ValueError(f"{verdict} exige evidence_text")
     if verdict in {"yes", "uncertain"} and not result["evidence_location"]:
         raise ValueError(f"{verdict} exige evidence_location")
+
     if verdict == "no":
-        # Não associa desafio ao pattern ausente.
         result["pattern_challenge_categories"] = []
     elif verdict in {"yes", "uncertain"} and not result["pattern_challenge_categories"]:
         result["pattern_challenge_categories"] = ["none_explicit"]

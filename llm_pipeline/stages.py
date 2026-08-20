@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
 from typing import Any
 
 import pandas as pd
 
+from .checkpoint import Checkpoint
 from .client import (
     batch_custom_id,
     batch_error_text,
@@ -20,6 +22,9 @@ from .client import (
     parse_response_payload,
     wait_for_batch,
 )
+from .confidence import compute_stage2_confidence
+from .evidence import is_literal_match
+from .lexical import detect_false_friend_signals
 from .models import PatternCatalog, PreparedIssue
 from .requests import stage1_request_params, stage2_request_params, to_inline_batch_request
 from .schemas import normalize_stage1, normalize_stage2
@@ -83,6 +88,9 @@ def flatten_stage2_result(
         "request_status": request_status,
         "error": error,
         "verdict": payload.get("verdict", ""),
+        "mechanism_match": payload.get("mechanism_match", ""),
+        "scope_match": payload.get("scope_match", ""),
+        "focus_match": payload.get("focus_match", ""),
         "evidence_text": payload.get("evidence_text", ""),
         "evidence_location": "|".join(payload.get("evidence_location", [])),
         "justification": payload.get("justification", ""),
@@ -117,9 +125,17 @@ def run_stage1_sync(
     thinking_level: str,
     run_dir: Path,
 ) -> pd.DataFrame:
+    # Feature 1: Initialize checkpoint for Stage 1.
+    checkpoint = Checkpoint(run_dir / "stage1_checkpoint.json", stage="stage1", run_id=run_dir.name)
+
     rows: list[dict[str, Any]] = []
     raw_path = run_dir / "stage1_raw.jsonl"
     for idx, prepared in enumerate(prepared_issues, 1):
+        # Feature 1: Skip already-completed items.
+        if checkpoint.is_completed(prepared.custom_id_stage1):
+            print(f"[stage1 sync] {idx}/{len(prepared_issues)} {prepared.issue_key} [checkpoint: retomado]")
+            continue
+
         print(f"[stage1 sync] {idx}/{len(prepared_issues)} {prepared.issue_key}")
         params = stage1_request_params(
             prepared,
@@ -136,7 +152,21 @@ def run_stage1_sync(
             append_jsonl(raw_path, {"custom_id": prepared.custom_id_stage1, "response": raw})
             payload, metadata = parse_response_payload(response)
             normalized = normalize_stage1(payload, catalog)
+
+            # P2: Detect lexical false friends for candidate patterns.
+            candidate_patterns = [c["pattern"] for c in normalized.get("candidates", [])]
+            false_friend_signals = detect_false_friend_signals(prepared.artifact_text, candidate_patterns)
+            # Annotate candidates with false friend signals for aggregation reporting.
+            for candidate in normalized["candidates"]:
+                signals_for_pattern = [s for s in false_friend_signals if s.pattern == candidate["pattern"]]
+                if signals_for_pattern:
+                    candidate["_lexical_false_friend_signals"] = [
+                        {"reason": s.reason} for s in signals_for_pattern
+                    ]
+
             rows.append(flatten_stage1_result(prepared, normalized, metadata))
+            # Feature 1: Mark as completed in checkpoint.
+            checkpoint.mark_completed(prepared.custom_id_stage1)
         except Exception as exc:
             append_jsonl(
                 raw_path,
@@ -147,6 +177,8 @@ def run_stage1_sync(
                 },
             )
             rows.append(flatten_stage1_result(prepared, {}, {}, "errored", str(exc)))
+            # Feature 1: Mark as failed (will be retried next time).
+            checkpoint.mark_failed(prepared.custom_id_stage1)
     return pd.DataFrame(rows)
 
 
@@ -178,10 +210,20 @@ def run_stage2_sync(
     thinking_level: str,
     run_dir: Path,
 ) -> pd.DataFrame:
+    # Feature 1: Initialize checkpoint for Stage 2.
+    checkpoint = Checkpoint(run_dir / "stage2_checkpoint.json", stage="stage2", run_id=run_dir.name)
+
     rows: list[dict[str, Any]] = []
     raw_path = run_dir / "stage2_raw.jsonl"
     for idx, (repository, issue_number, pattern) in enumerate(pairs, 1):
         prepared = prepared_by_key[(repository, issue_number)]
+        custom_id = stable_custom_id("s2", repository, issue_number, pattern)
+
+        # Feature 1: Skip already-completed pairs.
+        if checkpoint.is_completed(custom_id):
+            print(f"[stage2 sync] {idx}/{len(pairs)} {prepared.issue_key} / {pattern} [checkpoint: retomado]")
+            continue
+
         print(f"[stage2 sync] {idx}/{len(pairs)} {prepared.issue_key} / {pattern}")
         params = stage2_request_params(
             prepared,
@@ -193,14 +235,36 @@ def run_stage2_sync(
             seed,
             thinking_level,
         )
-        custom_id = stable_custom_id("s2", repository, issue_number, pattern)
         try:
             response = call_sync(client, params)
             raw = object_to_dict(response)
             append_jsonl(raw_path, {"custom_id": custom_id, "response": raw})
             payload, metadata = parse_response_payload(response)
             normalized = normalize_stage2(payload, catalog)
+
+            # P5: Verify evidence_text is a literal substring of the artifact.
+            evidence = normalized.get("evidence_text", "")
+            if evidence and not is_literal_match(evidence, prepared.artifact_text):
+                print(
+                    f"[warning P5] {custom_id}: evidence_text não é substring literal: {evidence[:80]!r}",
+                    file=sys.stderr,
+                )
+
+            # P6: If artifact is a PR and evidence_location contains "body", replace with "pull_request_description".
+            if prepared.artifact_type and prepared.artifact_type.lower() == "pull_request":
+                locations = normalized.get("evidence_location", [])
+                normalized["evidence_location"] = [
+                    "pull_request_description" if loc == "body" else loc
+                    for loc in locations
+                ]
+
+            # P1: Override confidence with deterministic computation based on evidence and validations.
+            computed_confidence = compute_stage2_confidence(normalized)
+            normalized["confidence"] = computed_confidence
+
             rows.append(flatten_stage2_result(prepared, pattern, normalized, metadata))
+            # Feature 1: Mark as completed in checkpoint.
+            checkpoint.mark_completed(custom_id)
         except Exception as exc:
             append_jsonl(
                 raw_path,
@@ -212,6 +276,8 @@ def run_stage2_sync(
                 },
             )
             rows.append(flatten_stage2_result(prepared, pattern, {}, {}, "errored", str(exc)))
+            # Feature 1: Mark as failed (will be retried next time).
+            checkpoint.mark_failed(custom_id)
     return pd.DataFrame(rows)
 
 
@@ -342,6 +408,17 @@ def run_stage1_batch(
             try:
                 payload, metadata = parse_response_payload(response)
                 normalized = normalize_stage1(payload, catalog)
+
+                # P2: Detect lexical false friends for candidate patterns (batch mode).
+                candidate_patterns = [c["pattern"] for c in normalized.get("candidates", [])]
+                false_friend_signals = detect_false_friend_signals(prepared.artifact_text, candidate_patterns)
+                for candidate in normalized["candidates"]:
+                    signals_for_pattern = [s for s in false_friend_signals if s.pattern == candidate["pattern"]]
+                    if signals_for_pattern:
+                        candidate["_lexical_false_friend_signals"] = [
+                            {"reason": s.reason} for s in signals_for_pattern
+                        ]
+
                 rows.append(flatten_stage1_result(prepared, normalized, metadata))
             except Exception as exc:
                 rows.append(flatten_stage1_result(prepared, {}, {}, "errored", str(exc)))
@@ -470,6 +547,27 @@ def run_stage2_batch(
             try:
                 payload, metadata = parse_response_payload(response)
                 normalized = normalize_stage2(payload, catalog)
+
+                # P5: Verify evidence_text is a literal substring of the artifact.
+                evidence = normalized.get("evidence_text", "")
+                if evidence and not is_literal_match(evidence, prepared.artifact_text):
+                    print(
+                        f"[warning P5] {custom_id}: evidence_text não é substring literal: {evidence[:80]!r}",
+                        file=sys.stderr,
+                    )
+
+                # P6: If artifact is a PR and evidence_location contains "body", replace with "pull_request_description".
+                if prepared.artifact_type and prepared.artifact_type.lower() == "pull_request":
+                    locations = normalized.get("evidence_location", [])
+                    normalized["evidence_location"] = [
+                        "pull_request_description" if loc == "body" else loc
+                        for loc in locations
+                    ]
+
+                # P1: Override confidence with deterministic computation based on evidence and validations.
+                computed_confidence = compute_stage2_confidence(normalized)
+                normalized["confidence"] = computed_confidence
+
                 rows.append(flatten_stage2_result(prepared, pattern, normalized, metadata))
             except Exception as exc:
                 rows.append(flatten_stage2_result(prepared, pattern, {}, {}, "errored", str(exc)))
