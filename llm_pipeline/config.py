@@ -19,6 +19,12 @@ DEFAULT_STAGE1_THINKING_LEVEL = "minimal"
 DEFAULT_STAGE2_THINKING_LEVEL = "low"
 THINKING_LEVELS = ["minimal", "low", "medium", "high"]
 
+# P11 — Reproducibility: use these settings for probe/full-run comparisons.
+# Note: even with temperature=0 and fixed seed, residual LLM non-determinism
+# exists at the server level and cannot be fully eliminated client-side.
+REPRODUCIBLE_TEMPERATURE = 0.0
+REPRODUCIBLE_SEED = 42
+
 DEFAULT_MAX_INPUT_CHARS = 12_000
 
 # O Batch API inline aceita no máximo 20 MB por job. O pipeline também divide
@@ -101,7 +107,9 @@ ADOPTION_STATUSES = [
 VERDICTS = ["yes", "no", "uncertain", "insufficient_context"]
 CONFIDENCE_LEVELS = ["high", "medium", "low"]
 FALSE_FRIEND_VALUES = ["yes", "no", "uncertain"]
-EVIDENCE_LOCATIONS = ["title", "body", "comment", "pull_request_description"]
+# P6: "pull_request_description" for PR bodies; "body"/"issue_body" for issue bodies.
+# Both "body" and "issue_body" are accepted as aliases for the issue body field.
+EVIDENCE_LOCATIONS = ["title", "body", "issue_body", "comment", "pull_request_description"]
 CONTEXT_STATUSES = ["sufficient", "insufficient_context"]
 
 KNOWN_OVERLAP_GROUPS = [

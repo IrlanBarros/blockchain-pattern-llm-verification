@@ -48,6 +48,9 @@ def _empty_stage2_dataframe() -> pd.DataFrame:
             "request_status",
             "error",
             "verdict",
+            "mechanism_match",
+            "scope_match",
+            "focus_match",
             "evidence_text",
             "evidence_location",
             "justification",
@@ -196,7 +199,7 @@ def run_command(args: argparse.Namespace) -> int:
     finally:
         close_client(client)
 
-    issue_df = aggregate_issue_results(stage1_df, stage2_df)
+    issue_df = aggregate_issue_results(stage1_df, stage2_df, input_df=df)
     issue_df.to_csv(run_dir / "issue_results.csv", index=False)
 
     summary = {

@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import math
 import re
 from pathlib import Path
 
@@ -10,6 +9,7 @@ import pandas as pd
 
 from .config import OPTIONAL_INPUT_COLUMNS, REQUIRED_INPUT_COLUMNS, REQUIRED_PATTERN_COLUMNS
 from .models import PatternCatalog, PreparedIssue
+from .truncation import head_tail_truncate
 from .normalization import (
     CanonicalLookup,
     NormalizationReport,
@@ -178,19 +178,6 @@ def load_patterns(path: Path) -> PatternCatalog:
     return catalog
 
 
-def head_tail(text: str, budget: int) -> str:
-    text = text.strip()
-    if len(text) <= budget:
-        return text
-    if budget <= 80:
-        return text[:budget]
-    marker = f"\n[... {len(text) - budget} caracteres omitidos ...]\n"
-    usable = max(1, budget - len(marker))
-    head = math.ceil(usable * 0.65)
-    tail = usable - head
-    return text[:head].rstrip() + marker + text[-tail:].lstrip()
-
-
 def prepare_issue(row: pd.Series, max_chars: int) -> PreparedIssue:
     repository = clean_token(row["repository"])
     issue_number = clean_token(row["issue_number"])
@@ -226,12 +213,17 @@ def prepare_issue(row: pd.Series, max_chars: int) -> PreparedIssue:
     body_budget = max(100, int(variable_budget * body_weight))
     comments_budget = max(0, variable_budget - body_budget)
 
-    body_prepared = head_tail(body, body_budget)
-    comments_prepared = head_tail(comments, comments_budget) if comments_budget else ""
+    # P7: head_tail_truncate returns (text, was_truncated) based on actual length reduction,
+    # not on whitespace stripping — prevents false positive truncation signals.
+    body_prepared, body_truncated = head_tail_truncate(body, body_budget)
+    if comments_budget:
+        comments_prepared, comments_truncated = head_tail_truncate(comments, comments_budget)
+    else:
+        comments_prepared, comments_truncated = "", False
 
     artifact_text = fixed + f"<body>{body_prepared}</body>\n" + f"<comments>{comments_prepared}</comments>"
     included_char_count = len(artifact_text)
-    input_truncated = body_prepared != body or comments_prepared != comments
+    input_truncated = body_truncated or comments_truncated
     issue_key = f"{repository}#{issue_number}"
 
     return PreparedIssue(
@@ -243,4 +235,6 @@ def prepare_issue(row: pd.Series, max_chars: int) -> PreparedIssue:
         original_char_count=original_char_count,
         included_char_count=included_char_count,
         input_truncated=input_truncated,
+        # P6: Stored so Stage 2 can correct evidence_location for pull requests.
+        artifact_type=artifact_type,
     )
