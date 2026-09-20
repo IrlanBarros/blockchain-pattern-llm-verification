@@ -6,7 +6,15 @@ from types import SimpleNamespace
 import pandas as pd
 
 from llm_pipeline.data import load_patterns, prepare_issue
-from llm_pipeline.stages import run_stage1_batch, run_stage1_sync, run_stage2_sync, stage2_pairs_from_stage1
+from llm_pipeline.checkpoint import CheckpointIntegrityError, ResultStore
+from llm_pipeline.stages import (
+    pipeline_integrity_report,
+    run_stage1_batch,
+    run_stage1_sync,
+    run_stage2_sync,
+    stage2_pairs_from_stage1,
+)
+from llm_pipeline.utils import stable_custom_id
 
 
 class EnumValue:
@@ -216,3 +224,144 @@ def test_stage1_inline_batch_uses_metadata_and_parses_result(tmp_path: Path):
     assert result.loc[0, "request_status"] == "succeeded"
     assert result.loc[0, "candidate_count"] == 1
     assert client.batches.created_src[0]["metadata"]["custom_id"] == prepared.custom_id_stage1
+
+
+def test_stage2_resume_regression_72_existing_51_only_calls_21(tmp_path: Path):
+    """Regression for the reported 72 -> 51 interruption -> resume case."""
+    catalog = make_catalog(tmp_path)
+    prepared = []
+    for number in range(1, 73):
+        item = make_prepared()
+        item = item.__class__(
+            repository="repo",
+            issue_number=str(number),
+            issue_key=f"repo#{number}",
+            custom_id_stage1=stable_custom_id("s1", "repo", str(number)),
+            artifact_text=item.artifact_text,
+            original_char_count=item.original_char_count,
+            included_char_count=item.included_char_count,
+            input_truncated=item.input_truncated,
+            artifact_type=item.artifact_type,
+        )
+        prepared.append(item)
+    stage1 = pd.DataFrame(
+        [
+            {"repository": item.repository, "issue_number": item.issue_number, "request_status": "succeeded", "candidates": '["Oracle"]'}
+            for item in prepared
+        ]
+    )
+    pairs = stage2_pairs_from_stage1(stage1)
+    assert len(pairs) == 72
+
+    existing = pd.DataFrame(
+        [
+            {
+                "repository": "repo", "issue_number": str(number), "pattern": "Oracle",
+                "custom_id": stable_custom_id("s2", "repo", str(number), "Oracle"),
+                "request_status": "succeeded", "verdict": "no",
+            }
+            for number in range(1, 52)
+        ]
+    )
+    existing.to_csv(tmp_path / "stage2_results.csv", index=False)
+    client = FakeSyncClient([response_for(stage2_json(), "gemini-3.5-flash") for _ in range(21)])
+    result = run_stage2_sync(
+        client, {(item.repository, item.issue_number): item for item in prepared}, pairs, catalog,
+        "gemini-3.5-flash", 1.0, 2048, 0, "low", tmp_path,
+    )
+    assert len(client.models.calls) == 21
+    assert len(result) == 72
+    assert not result.duplicated(["repository", "issue_number", "pattern"]).any()
+    integrity = pipeline_integrity_report(prepared, stage1, result)
+    assert integrity["expected_stage2_pairs"] == 72
+    assert integrity["completed_stage2_pairs"] == 72
+    assert integrity["status"] == "OK"
+
+
+def test_completed_run_is_idempotent_and_uses_no_new_calls(tmp_path: Path):
+    catalog = make_catalog(tmp_path)
+    prepared = make_prepared()
+    first_client = FakeSyncClient(
+        [response_for(stage1_json(), "gemini-3.1-flash-lite"), response_for(stage2_json(), "gemini-3.5-flash")]
+    )
+    stage1 = run_stage1_sync(first_client, [prepared], catalog, "gemini-3.1-flash-lite", 1, 2048, 0, "minimal", tmp_path)
+    pairs = stage2_pairs_from_stage1(stage1)
+    stage2 = run_stage2_sync(first_client, {(prepared.repository, prepared.issue_number): prepared}, pairs, catalog, "gemini-3.5-flash", 1, 2048, 0, "low", tmp_path)
+    resumed_client = FakeSyncClient([])
+    resumed_stage1 = run_stage1_sync(resumed_client, [prepared], catalog, "gemini-3.1-flash-lite", 1, 2048, 0, "minimal", tmp_path)
+    resumed_stage2 = run_stage2_sync(resumed_client, {(prepared.repository, prepared.issue_number): prepared}, pairs, catalog, "gemini-3.5-flash", 1, 2048, 0, "low", tmp_path)
+    assert len(resumed_client.models.calls) == 0
+    assert len(resumed_stage1) == len(stage1) == 1
+    assert len(resumed_stage2) == len(stage2) == 1
+
+
+def test_duplicate_persisted_pair_is_rejected_instead_of_silently_chosen(tmp_path: Path):
+    pd.DataFrame(
+        [
+            {"repository": "one", "issue_number": "7", "pattern": "Oracle", "request_status": "succeeded", "verdict": "no"},
+            {"repository": "one", "issue_number": "7", "pattern": "Oracle", "request_status": "succeeded", "verdict": "yes"},
+        ]
+    ).to_csv(tmp_path / "stage2_results.csv", index=False)
+    try:
+        ResultStore(tmp_path / "stage2_results.csv", stage="stage2")
+    except CheckpointIntegrityError:
+        pass
+    else:
+        raise AssertionError("artefato duplicado não foi rejeitado")
+
+
+def test_legacy_stage1_csv_is_reused_without_api_call(tmp_path: Path):
+    """Old results without request_status remain usable when structurally valid."""
+    catalog = make_catalog(tmp_path)
+    prepared = make_prepared()
+    pd.DataFrame(
+        [{"repository": "repo", "issue_number": "1", "candidates": '["Oracle"]', "candidate_count": 1}]
+    ).to_csv(tmp_path / "stage1_results.csv", index=False)
+    result = run_stage1_sync(
+        FakeSyncClient([]), [prepared], catalog, "gemini-3.1-flash-lite", 1, 2048, 0, "minimal", tmp_path
+    )
+    assert len(result) == 1
+    assert result.loc[0, "request_status"] == "succeeded"
+
+
+def test_invalid_checkpoint_is_rejected_instead_of_reset(tmp_path: Path):
+    (tmp_path / "stage1_checkpoint.json").write_text("not json", encoding="utf-8")
+    try:
+        run_stage1_sync(
+            FakeSyncClient([]), [], make_catalog(tmp_path), "gemini-3.1-flash-lite", 1, 2048, 0, "minimal", tmp_path
+        )
+    except CheckpointIntegrityError:
+        pass
+    else:
+        raise AssertionError("checkpoint inválido não foi rejeitado")
+
+
+def test_keyboard_interrupt_preserves_prior_stage1_result(tmp_path: Path):
+    catalog = make_catalog(tmp_path)
+    first, second = make_prepared(), make_prepared()
+    second = second.__class__(
+        repository="other", issue_number="1", issue_key="other#1", custom_id_stage1=stable_custom_id("s1", "other", "1"),
+        artifact_text=second.artifact_text, original_char_count=second.original_char_count,
+        included_char_count=second.included_char_count, input_truncated=second.input_truncated, artifact_type=second.artifact_type,
+    )
+
+    class InterruptingModels:
+        def __init__(self): self.calls = 0
+        def generate_content(self, **params):
+            self.calls += 1
+            if self.calls == 1:
+                return response_for(stage1_json(), "gemini-3.1-flash-lite")
+            raise KeyboardInterrupt()
+
+    interrupted = SimpleNamespace(models=InterruptingModels())
+    try:
+        run_stage1_sync(interrupted, [first, second], catalog, "gemini-3.1-flash-lite", 1, 2048, 0, "minimal", tmp_path)
+    except KeyboardInterrupt:
+        pass
+    else:
+        raise AssertionError("interrupção deveria propagar")
+    assert len(ResultStore(tmp_path / "stage1_results.csv", stage="stage1").completed_ids()) == 1
+    resumed = FakeSyncClient([response_for(stage1_json(), "gemini-3.1-flash-lite")])
+    result = run_stage1_sync(resumed, [first, second], catalog, "gemini-3.1-flash-lite", 1, 2048, 0, "minimal", tmp_path)
+    assert len(resumed.models.calls) == 1
+    assert len(result) == 2

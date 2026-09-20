@@ -9,7 +9,7 @@ from typing import Any
 
 import pandas as pd
 
-from .checkpoint import Checkpoint
+from .checkpoint import Checkpoint, CheckpointIntegrityError, ResultStore
 from .client import (
     batch_custom_id,
     batch_error_text,
@@ -19,6 +19,7 @@ from .client import (
     call_batch_create,
     call_sync,
     chunk_inline_requests,
+    is_global_api_error,
     parse_response_payload,
     wait_for_batch,
 )
@@ -125,15 +126,16 @@ def run_stage1_sync(
     thinking_level: str,
     run_dir: Path,
 ) -> pd.DataFrame:
-    # Feature 1: Initialize checkpoint for Stage 1.
     checkpoint = Checkpoint(run_dir / "stage1_checkpoint.json", stage="stage1", run_id=run_dir.name)
-
-    rows: list[dict[str, Any]] = []
+    store = ResultStore(run_dir / "stage1_results.csv", stage="stage1")
+    completed = store.completed_ids()
+    checkpoint.reconcile_completed(sorted(completed))
+    print(f"[stage1] total={len(prepared_issues)} completed={len(completed)} pending={len(prepared_issues) - len(completed)}")
     raw_path = run_dir / "stage1_raw.jsonl"
     for idx, prepared in enumerate(prepared_issues, 1):
-        # Feature 1: Skip already-completed items.
-        if checkpoint.is_completed(prepared.custom_id_stage1):
-            print(f"[stage1 sync] {idx}/{len(prepared_issues)} {prepared.issue_key} [checkpoint: retomado]")
+        # The validated CSV, not the JSON index, determines completion.
+        if prepared.custom_id_stage1 in completed:
+            print(f"[stage1 sync] {idx}/{len(prepared_issues)} {prepared.issue_key} [skip: resultado persistido]")
             continue
 
         print(f"[stage1 sync] {idx}/{len(prepared_issues)} {prepared.issue_key}")
@@ -164,9 +166,14 @@ def run_stage1_sync(
                         {"reason": s.reason} for s in signals_for_pattern
                     ]
 
-            rows.append(flatten_stage1_result(prepared, normalized, metadata))
-            # Feature 1: Mark as completed in checkpoint.
+            # Persist the complete semantic result before marking its index done.
+            store.upsert(flatten_stage1_result(prepared, normalized, metadata))
             checkpoint.mark_completed(prepared.custom_id_stage1)
+            completed.add(prepared.custom_id_stage1)
+        except (CheckpointIntegrityError, OSError):
+            # Storage/integrity failures are operational failures of the run,
+            # never a semantic "errored" LLM result to be overwritten later.
+            raise
         except Exception as exc:
             append_jsonl(
                 raw_path,
@@ -176,26 +183,92 @@ def run_stage1_sync(
                     "issue_key": prepared.issue_key,
                 },
             )
-            rows.append(flatten_stage1_result(prepared, {}, {}, "errored", str(exc)))
-            # Feature 1: Mark as failed (will be retried next time).
+            store.upsert(flatten_stage1_result(prepared, {}, {}, "errored", str(exc)))
             checkpoint.mark_failed(prepared.custom_id_stage1)
-    return pd.DataFrame(rows)
+            if is_global_api_error(exc):
+                raise
+    return store.dataframe.copy()
 
 
 def stage2_pairs_from_stage1(stage1_df: pd.DataFrame) -> list[tuple[str, str, str]]:
+    required = {"repository", "issue_number", "candidates"}
+    missing = required - set(stage1_df.columns)
+    if missing:
+        raise CheckpointIntegrityError(f"Stage 1 sem colunas necessárias para reconstruir pares: {sorted(missing)}")
+    successful = stage1_df.get("request_status", pd.Series("succeeded", index=stage1_df.index)) == "succeeded"
+    completed = stage1_df.loc[successful].copy()
+    if completed.duplicated(["repository", "issue_number"], keep=False).any():
+        raise CheckpointIntegrityError("Stage 1 contém issues concluídas duplicadas")
     pairs: list[tuple[str, str, str]] = []
-    for row in stage1_df.to_dict("records"):
-        if row.get("request_status") != "succeeded":
-            continue
+    seen: set[tuple[str, str, str]] = set()
+    for row in completed.to_dict("records"):
         try:
             candidates = json.loads(row.get("candidates") or "[]")
-        except json.JSONDecodeError:
-            continue
+        except json.JSONDecodeError as exc:
+            raise CheckpointIntegrityError(f"Stage 1 contém candidates inválido para {row.get('repository')}#{row.get('issue_number')}") from exc
+        if not isinstance(candidates, list) or not all(isinstance(pattern, str) and pattern.strip() for pattern in candidates):
+            raise CheckpointIntegrityError("Stage 1 contém lista de candidates inválida")
         for pattern in candidates:
-            pairs.append(
-                (clean_scalar(row["repository"]), clean_scalar(row["issue_number"]), pattern)
-            )
+            pair = (clean_scalar(row["repository"]), clean_scalar(row["issue_number"]), clean_scalar(pattern))
+            if pair in seen:
+                raise CheckpointIntegrityError(f"Stage 1 produz par Stage 2 duplicado: {pair}")
+            seen.add(pair)
+            pairs.append(pair)
     return pairs
+
+
+def pipeline_integrity_report(
+    prepared_issues: list[PreparedIssue], stage1_df: pd.DataFrame, stage2_df: pd.DataFrame
+) -> dict[str, Any]:
+    """Compare the explicit Stage 2 pair set with valid persisted results."""
+    input_keys = {(item.repository, item.issue_number) for item in prepared_issues}
+    successful_stage1 = stage1_df.loc[
+        stage1_df.get("request_status", pd.Series("succeeded", index=stage1_df.index)) == "succeeded"
+    ] if not stage1_df.empty else pd.DataFrame()
+    completed_stage1 = {
+        (clean_scalar(row["repository"]), clean_scalar(row["issue_number"]))
+        for row in successful_stage1.to_dict("records")
+    }
+    expected = set(stage2_pairs_from_stage1(stage1_df)) if not stage1_df.empty else set()
+    if stage2_df.empty:
+        completed, failed, duplicates = set(), set(), []
+    else:
+        key_columns = ["repository", "issue_number", "pattern"]
+        missing = set(key_columns) - set(stage2_df.columns)
+        if missing:
+            raise CheckpointIntegrityError(f"Stage 2 sem colunas-chave: {sorted(missing)}")
+        statuses = stage2_df.get("request_status", pd.Series("succeeded", index=stage2_df.index))
+        succeeded = stage2_df.loc[statuses == "succeeded"]
+        duplicated = succeeded.duplicated(key_columns, keep=False)
+        duplicates = succeeded.loc[duplicated, key_columns].drop_duplicates().to_dict("records")
+        if duplicates:
+            raise CheckpointIntegrityError(f"Stage 2 contém pares concluídos duplicados: {duplicates[:10]}")
+        completed = {
+            tuple(clean_scalar(row[column]) for column in key_columns)
+            for row in succeeded.to_dict("records")
+        }
+        failed = {
+            tuple(clean_scalar(row[column]) for column in key_columns)
+            for row in stage2_df.loc[statuses != "succeeded"].to_dict("records")
+        }
+    missing_pairs = expected - completed
+    extra_pairs = completed - expected
+    report = {
+        "total_stage1_issues": len(input_keys),
+        "completed_stage1_issues": len(completed_stage1 & input_keys),
+        "issues_with_candidates": sum(1 for repository, issue_number in completed_stage1 if any(pair[:2] == (repository, issue_number) for pair in expected)),
+        "total_candidates": len(expected),
+        "expected_stage2_pairs": len(expected),
+        "completed_stage2_pairs": len(completed & expected),
+        "missing_stage2_pairs": [dict(zip(["repository", "issue_number", "pattern"], pair)) for pair in sorted(missing_pairs)],
+        "extra_stage2_pairs": [dict(zip(["repository", "issue_number", "pattern"], pair)) for pair in sorted(extra_pairs)],
+        "duplicate_stage2_pairs": duplicates,
+        "failed_stage2_pairs": len(failed & expected),
+    }
+    report["stage1_complete"] = report["completed_stage1_issues"] == report["total_stage1_issues"]
+    report["stage2_complete"] = not missing_pairs and not extra_pairs and not duplicates
+    report["status"] = "OK" if report["stage1_complete"] and report["stage2_complete"] else "FAILED"
+    return report
 
 
 def run_stage2_sync(
@@ -210,18 +283,22 @@ def run_stage2_sync(
     thinking_level: str,
     run_dir: Path,
 ) -> pd.DataFrame:
-    # Feature 1: Initialize checkpoint for Stage 2.
     checkpoint = Checkpoint(run_dir / "stage2_checkpoint.json", stage="stage2", run_id=run_dir.name)
-
-    rows: list[dict[str, Any]] = []
+    store = ResultStore(run_dir / "stage2_results.csv", stage="stage2")
+    completed = store.completed_ids()
+    expected_ids = {stable_custom_id("s2", repository, issue_number, pattern) for repository, issue_number, pattern in pairs}
+    unknown = store.completed_ids() - expected_ids
+    if unknown:
+        print(f"[stage2] aviso: {len(unknown)} resultados concluídos não pertencem aos pares atuais")
+    checkpoint.reconcile_completed(sorted(completed))
+    print(f"[stage2] expected={len(pairs)} completed={len(expected_ids & completed)} pending={len(expected_ids - completed)}")
     raw_path = run_dir / "stage2_raw.jsonl"
     for idx, (repository, issue_number, pattern) in enumerate(pairs, 1):
         prepared = prepared_by_key[(repository, issue_number)]
         custom_id = stable_custom_id("s2", repository, issue_number, pattern)
 
-        # Feature 1: Skip already-completed pairs.
-        if checkpoint.is_completed(custom_id):
-            print(f"[stage2 sync] {idx}/{len(pairs)} {prepared.issue_key} / {pattern} [checkpoint: retomado]")
+        if custom_id in completed:
+            print(f"[stage2 sync] {idx}/{len(pairs)} {prepared.issue_key} / {pattern} [skip: resultado persistido]")
             continue
 
         print(f"[stage2 sync] {idx}/{len(pairs)} {prepared.issue_key} / {pattern}")
@@ -262,9 +339,11 @@ def run_stage2_sync(
             computed_confidence = compute_stage2_confidence(normalized)
             normalized["confidence"] = computed_confidence
 
-            rows.append(flatten_stage2_result(prepared, pattern, normalized, metadata))
-            # Feature 1: Mark as completed in checkpoint.
+            store.upsert(flatten_stage2_result(prepared, pattern, normalized, metadata))
             checkpoint.mark_completed(custom_id)
+            completed.add(custom_id)
+        except (CheckpointIntegrityError, OSError):
+            raise
         except Exception as exc:
             append_jsonl(
                 raw_path,
@@ -275,10 +354,11 @@ def run_stage2_sync(
                     "pattern": pattern,
                 },
             )
-            rows.append(flatten_stage2_result(prepared, pattern, {}, {}, "errored", str(exc)))
-            # Feature 1: Mark as failed (will be retried next time).
+            store.upsert(flatten_stage2_result(prepared, pattern, {}, {}, "errored", str(exc)))
             checkpoint.mark_failed(custom_id)
-    return pd.DataFrame(rows)
+            if is_global_api_error(exc):
+                raise
+    return store.dataframe.copy()
 
 
 def _record_failed_stage1_chunk(
@@ -305,6 +385,25 @@ def _record_failed_stage2_chunk(
         rows.append(flatten_stage2_result(prepared, pattern, {}, {}, "errored", error))
 
 
+class _DurableRows(list[dict[str, Any]]):
+    """Compatibility collector that persists every batch response immediately."""
+
+    def __init__(self, store: ResultStore, checkpoint: Checkpoint) -> None:
+        super().__init__()
+        self.store = store
+        self.checkpoint = checkpoint
+
+    def append(self, row: dict[str, Any]) -> None:
+        self.store.upsert(row)
+        custom_id = clean_scalar(row.get("custom_id"))
+        if custom_id:
+            if row.get("request_status") == "succeeded":
+                self.checkpoint.mark_completed(custom_id)
+            else:
+                self.checkpoint.mark_failed(custom_id)
+        super().append(row)
+
+
 def run_stage1_batch(
     client: Any,
     prepared_issues: list[PreparedIssue],
@@ -319,13 +418,19 @@ def run_stage1_batch(
     poll_seconds: int,
     run_dir: Path,
 ) -> pd.DataFrame:
-    manifest = {item.custom_id_stage1: item for item in prepared_issues}
-    rows: list[dict[str, Any]] = []
+    checkpoint = Checkpoint(run_dir / "stage1_checkpoint.json", stage="stage1", run_id=run_dir.name)
+    store = ResultStore(run_dir / "stage1_results.csv", stage="stage1")
+    completed = store.completed_ids()
+    checkpoint.reconcile_completed(sorted(completed))
+    pending_issues = [item for item in prepared_issues if item.custom_id_stage1 not in completed]
+    print(f"[stage1] total={len(prepared_issues)} completed={len(completed)} pending={len(pending_issues)}")
+    manifest = {item.custom_id_stage1: item for item in pending_issues}
+    rows: list[dict[str, Any]] = _DurableRows(store, checkpoint)
     raw_path = run_dir / "stage1_raw.jsonl"
     batch_meta: list[dict[str, Any]] = []
 
     requests = []
-    for item in prepared_issues:
+    for item in pending_issues:
         params = stage1_request_params(
             item,
             catalog,
@@ -366,6 +471,8 @@ def run_stage1_batch(
             error = f"Falha no job batch: {exc}"
             append_jsonl(raw_path, {"batch_index": batch_index, "error": error})
             _record_failed_stage1_chunk(rows, manifest, request_chunk, error)
+            if is_global_api_error(exc):
+                raise
             continue
 
         state = batch_state_name(final_batch)
@@ -435,7 +542,7 @@ def run_stage1_batch(
                         "Resposta ausente no resultado inline do Batch API",
                     )
                 )
-    return pd.DataFrame(rows)
+    return store.dataframe.copy()
 
 
 def run_stage2_batch(
@@ -453,11 +560,17 @@ def run_stage2_batch(
     poll_seconds: int,
     run_dir: Path,
 ) -> pd.DataFrame:
+    checkpoint = Checkpoint(run_dir / "stage2_checkpoint.json", stage="stage2", run_id=run_dir.name)
+    store = ResultStore(run_dir / "stage2_results.csv", stage="stage2")
+    completed = store.completed_ids()
+    checkpoint.reconcile_completed(sorted(completed))
     manifest: dict[str, tuple[PreparedIssue, str]] = {}
     requests: list[dict[str, Any]] = []
     for repository, issue_number, pattern in pairs:
         prepared = prepared_by_key[(repository, issue_number)]
         custom_id = stable_custom_id("s2", repository, issue_number, pattern)
+        if custom_id in completed:
+            continue
         manifest[custom_id] = (prepared, pattern)
         params = stage2_request_params(
             prepared,
@@ -471,7 +584,8 @@ def run_stage2_batch(
         )
         requests.append(to_inline_batch_request(custom_id, params))
 
-    rows: list[dict[str, Any]] = []
+    print(f"[stage2] expected={len(pairs)} completed={len(completed)} pending={len(requests)}")
+    rows: list[dict[str, Any]] = _DurableRows(store, checkpoint)
     raw_path = run_dir / "stage2_raw.jsonl"
     batch_meta: list[dict[str, Any]] = []
     chunks = list(
@@ -504,6 +618,8 @@ def run_stage2_batch(
             error = f"Falha no job batch: {exc}"
             append_jsonl(raw_path, {"batch_index": batch_index, "error": error})
             _record_failed_stage2_chunk(rows, manifest, request_chunk, error)
+            if is_global_api_error(exc):
+                raise
             continue
 
         state = batch_state_name(final_batch)
@@ -585,4 +701,4 @@ def run_stage2_batch(
                         "Resposta ausente no resultado inline do Batch API",
                     )
                 )
-    return pd.DataFrame(rows)
+    return store.dataframe.copy()
