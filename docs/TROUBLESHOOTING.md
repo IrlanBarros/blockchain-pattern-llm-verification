@@ -31,12 +31,16 @@ Error 429: "RESOURCE_EXHAUSTED: The resource has been exhausted."
      --run-id pilot_sample_run
    ```
 
-2. **Verificar checkpoint criado**:
+2. **Verificar o estado persistido**:
    ```bash
-   ls -lh outputs/runs/pilot_gemini_user/pilot_sample_run/stage*_checkpoint.json
+   ls -lh outputs/runs/pilot_gemini_user/pilot_sample_run/stage*_results.csv \
+          outputs/runs/pilot_gemini_user/pilot_sample_run/stage*_checkpoint.json
    ```
-   
-   Se arquivo existe: checkpoint pronto. Re-execute acima.
+
+   Os CSVs são a fonte de verdade: cada linha concluída é escrita por
+   substituição atômica antes de o checkpoint JSON ser marcado. Depois de
+   trocar a API key, execute o mesmo comando e o mesmo `--run-id`; não é
+   necessário `--overwrite`.
 
 3. **Usar quota monitoring**:
    ```bash
@@ -112,7 +116,9 @@ print('✓ API key OK' if key else '✗ Missing key')
 
 **Sintoma**: Ao re-executar após falha, pipeline começa do zero (não retoma).
 
-**Causa**: Checkpoint JSON não foi salvo ou está corrompido.
+**Causa**: artefato de execução inválido ou comando executado com entrada e
+parâmetros diferentes. O CSV de resultados é a fonte de verdade; o JSON é
+apenas um índice de progresso.
 
 **Solução**:
 
@@ -123,27 +129,24 @@ print('✓ API key OK' if key else '✗ Missing key')
    
    Se não existe: pipeline não criou checkpoint. Ver seção "Checkpoint não criado" abaixo.
 
-2. **Verificar integridade do JSON**:
+2. **Verificar integridade dos artefatos**:
    ```bash
    python -m json.tool outputs/runs/<run_id>/stage1_checkpoint.json > /dev/null
-   ```
-   
-   Se erro: JSON corrompido. Deletar e re-executar:
-   ```bash
-   rm outputs/runs/<run_id>/stage*_checkpoint.json
-   # Re-executar run com --overwrite
+   PYTHONPATH=. python -c "from llm_pipeline.checkpoint import ResultStore; from pathlib import Path; ResultStore(Path('outputs/runs/<run_id>/stage1_results.csv'), stage='stage1')"
    ```
 
-3. **Forçar retomada**:
+   Se houver checkpoint inválido ou chaves duplicadas, o pipeline para
+   deliberadamente. Não apague resultados válidos: corrija/migre o artefato
+   ambíguo e reexecute.
+
+3. **Retomar**:
    ```bash
-   # Usar --overwrite para permitir reutilizar diretório
    PYTHONPATH=. .venv/bin/python run_pipeline.py run \
      --input data/pilot/pilot_annotation_sample.csv \
      --patterns blockchain_patterns_keywords_v3.csv \
      --mode sync \
      --output-dir outputs/runs/pilot_gemini_user \
-     --run-id pilot_sample_run \
-     --overwrite
+     --run-id pilot_sample_run
    ```
 
 ---
@@ -183,6 +186,33 @@ print('✓ API key OK' if key else '✗ Missing key')
    Se menos de 1GB livre: liberar espaço (deletar runs antigos).
 
 ---
+
+### Como o resume determina completude
+
+- `stage1_results.csv` contém uma única linha por `(repository, issue_number)`;
+  apenas linhas com `request_status=succeeded` e `candidates` JSON válidos são
+  concluídas.
+- `stage2_results.csv` contém uma única linha por `(repository, issue_number,
+  pattern)`; somente linhas bem-formadas com `request_status=succeeded` são
+  concluídas.
+- Linhas `errored` registram falha operacional, não um veredito da LLM, e são
+  retomadas. O pipeline reconstrói os pares esperados do Stage 1 e grava
+  `integrity_report.json`; pares ausentes deixam o status como `FAILED`.
+
+Exemplo após trocar a chave por quota:
+
+```bash
+export GEMINI_API_KEY="new-key"
+PYTHONPATH=. python run_pipeline.py run \
+  --input data/pilot/pilot_annotation_sample.csv \
+  --patterns blockchain_patterns_keywords_v3.csv \
+  --mode sync --output-dir outputs/runs/pilot_gemini_user \
+  --run-id pilot_sample_run
+```
+
+Os logs mostram `total/completed/pending` para Stage 1 e
+`expected/completed/pending` para Stage 2. Uma entrada, catálogo ou parâmetro
+metodológico divergente é rejeitado para não misturar resultados de runs.
 
 ## 🔴 Input & Data Errors
 

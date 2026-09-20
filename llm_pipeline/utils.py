@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
+import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Mapping, Sequence
@@ -46,14 +48,48 @@ def clean_scalar(value: Any) -> str:
 def json_dumps(value: Any) -> str:
     return json.dumps(value, ensure_ascii=False, sort_keys=True)
 
+def _atomic_replace(path: Path, content: str) -> None:
+    """Write text durably, then atomically replace *path*."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, temporary_name = tempfile.mkstemp(prefix=f".{path.name}.", suffix=".tmp", dir=path.parent)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8", newline="") as f:
+            f.write(content)
+            f.flush()
+            os.fsync(f.fileno())
+        os.replace(temporary_name, path)
+        try:
+            directory_fd = os.open(path.parent, os.O_RDONLY)
+            try:
+                os.fsync(directory_fd)
+            finally:
+                os.close(directory_fd)
+        except OSError:
+            # Directory fsync is not available on every supported platform.
+            pass
+    except BaseException:
+        try:
+            os.unlink(temporary_name)
+        except FileNotFoundError:
+            pass
+        raise
+
+
 def write_json(path: Path, value: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(value, ensure_ascii=False, indent=2, sort_keys=True), encoding="utf-8")
+    _atomic_replace(path, json.dumps(value, ensure_ascii=False, indent=2, sort_keys=True))
+
+
+def write_dataframe_csv(path: Path, dataframe: pd.DataFrame) -> None:
+    """Persist a CSV using atomic replacement rather than append-only writes."""
+    _atomic_replace(path, dataframe.to_csv(index=False))
 
 def append_jsonl(path: Path, value: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("a", encoding="utf-8") as f:
         f.write(json.dumps(value, ensure_ascii=False, default=str) + "\n")
+        f.flush()
+        os.fsync(f.fileno())
 
 def object_to_dict(value: Any) -> Any:
     if value is None or isinstance(value, (str, int, float, bool)):

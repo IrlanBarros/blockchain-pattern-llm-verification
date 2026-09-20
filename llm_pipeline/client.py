@@ -20,6 +20,22 @@ _TERMINAL_BATCH_STATES = {
 }
 
 
+def is_retryable_api_error(exc: Exception) -> bool:
+    """Conservatively retry transient transport/service failures only."""
+    text = str(exc).casefold()
+    permanent = ("unauthenticated", "invalid api key", "permission denied", "forbidden", "invalid argument", "bad request", " 400", " 401", " 403")
+    if any(marker in text for marker in permanent):
+        return False
+    transient = ("resource_exhausted", "rate limit", "too many requests", "timeout", "timed out", "connection", "network", "unavailable", "temporar", " 429", " 500", " 502", " 503", " 504")
+    return any(marker in text for marker in transient)
+
+
+def is_global_api_error(exc: Exception) -> bool:
+    """Errors unlikely to improve for later records in the same invocation."""
+    text = str(exc).casefold()
+    return any(marker in text for marker in ("resource_exhausted", "quota", "rate limit", "too many requests", "unauthenticated", "invalid api key", "permission denied", "forbidden"))
+
+
 def _get(value: Any, *names: str, default: Any = None) -> Any:
     if isinstance(value, Mapping):
         for name in names:
@@ -183,7 +199,7 @@ def call_sync(client: Any, params: dict[str, Any], attempts: int = 4) -> Any:
             return client.models.generate_content(**params)
         except Exception as exc:  # SDK expõe subclasses diferentes por versão
             last_error = exc
-            if attempt == attempts:
+            if attempt == attempts or not is_retryable_api_error(exc):
                 break
             print(f"[retry] tentativa {attempt}/{attempts} falhou: {exc}", file=sys.stderr)
             time.sleep(delay)
@@ -211,7 +227,7 @@ def call_batch_create(
             )
         except Exception as exc:
             last_error = exc
-            if attempt == attempts:
+            if attempt == attempts or not is_retryable_api_error(exc):
                 break
             print(
                 f"[batch retry] tentativa {attempt}/{attempts} falhou: {exc}",

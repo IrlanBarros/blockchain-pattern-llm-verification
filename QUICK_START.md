@@ -76,10 +76,10 @@ PYTHONPATH=. .venv/bin/python run_pipeline.py run \
 ## Checkpoint Integration Details
 
 ### **How It Works**:
-1. **First run**: Creates `stage1_checkpoint.json` and `stage2_checkpoint.json`
-2. **Tracks**: Which items completed (no retry) vs failed (retry eligible)
-3. **Resume**: Skips completed items, retries failed ones
-4. **Output**: `[checkpoint: resumed with X/Y already completed]`
+1. **First run**: Creates `stage1_results.csv` / `stage2_results.csv` and their JSON checkpoint indexes.
+2. **Durability**: Each completed row is atomically persisted to its CSV before the index is marked complete.
+3. **Resume**: The CSV is validated and is the source of truth. Stage 1 skips completed `(repository, issue_number)` rows; Stage 2 skips completed `(repository, issue_number, pattern)` rows and retries explicitly errored rows.
+4. **Integrity**: `integrity_report.json` compares the pair set reconstructed from Stage 1 with Stage 2 and reports missing/extra/duplicate pairs.
 
 ### **File Format** (JSON):
 ```json
@@ -100,7 +100,7 @@ from pathlib import Path
 run_dir = Path("outputs/runs/my_run")
 checkpoint = Checkpoint(run_dir / "stage1_checkpoint.json", stage="stage1", run_id=run_dir.name)
 
-# Skip already-processed items
+# Skip only rows that have a validated, persisted result
 for custom_id in items:
     if checkpoint.is_completed(custom_id):
         continue
@@ -113,7 +113,7 @@ for custom_id in items:
     else:
         checkpoint.mark_completed(custom_id)
 
-# On re-run: prior checkpoint auto-loaded, skips already-done items
+# On re-run: validated prior CSV is loaded and already-done items are skipped
 ```
 
 ---
