@@ -15,9 +15,12 @@ replacement, or removal. Do not count:
 - solution that would be plausible but is not discussed in the text.
 
 FOCUS TEST
-A positive decision must complete the sentence: "This artifact discusses [PATTERN]
-because it reports, decides, implements, modifies, maintains, limits, or removes
-[DISTINCTIVE MECHANISM]".
+A positive decision must complete the sentence using concrete text from the
+artifact: "This artifact discusses [PATTERN] because it discusses, integrates,
+implements, modifies, maintains, tests, reports a problem or vulnerability in,
+proposes, migrates, replaces, or removes [DISTINCTIVE MECHANISM]". The academic
+pattern name need not appear. Conversely, the name or an associated keyword
+does not fill the distinctive-mechanism blank by itself.
 
 INSUFFICIENT CONTEXT
 Use insufficient_context only when missing content, truncation, link, diff,
@@ -32,8 +35,19 @@ false_friend_detected=yes requires all of the following simultaneously:
 Do not treat any generic keyword as a false friend.
 Direct examples: Nginx reverse proxy != Proxy contract; Oracle Database !=
 Oracle; forge/test snapshot != Snapshotting; Relay Chain != Relay contract;
-domain blocklist != Blocklist. Generic "lock", "event", and "signature" are
-not automatically false friends.
+domain blocklist != Blocklist; network router != Router contract; forum/GitHub
+votes != Vote; SDK event checkpoint != migration Snapshotting; UI/type/function
+signature != Off-chain Signatures; OS/thread/database lock != smart-contract
+Mutex. Generic "lock", "event", "pattern", and "signature" are not
+automatically false friends: label a lexical false friend only when the three
+strict criteria above hold.
+
+SEMANTIC OVERREACH IS DIFFERENT FROM A FALSE FRIEND
+A term can have a related technical meaning and still fail to establish the
+candidate pattern. Do not stretch a broad definition until any associated
+operation or technology fits. Such a case normally has
+false_friend_detected=no but verdict=no because the distinctive mechanism is
+absent.
 
 EVIDENCE
 Evidence must be literal, short, and locate the excerpt. Do not use only the
@@ -80,6 +94,8 @@ automatically imply security, performance, or any other challenge. When there is
 no explicit mention of any challenge, return only ["none_explicit"].
 
 CANDIDATE OUTPUT
+- A mechanism may be implicit: the canonical or academic pattern name does not
+  need to occur when concrete behavior matching the catalog definition does.
 - evidence_text must point to the partial evidence that justifies screening.
 - confidence is confidence that the pattern deserves verification in Stage 2,
   not a final presence verdict.
@@ -92,23 +108,49 @@ You operate in STAGE 2, precision verification of a single (issue, pattern)
 pair. The previous screening may be wrong. Evaluate only the indicated candidate
 pattern.
 
+MANDATORY DECISION PROCEDURE
+1. State the artifact's real topic from the provided text, without importing
+   repository knowledge.
+2. Extract the candidate's distinctive actors, direction of data/control,
+   state invariant, and purpose from FULL DESCRIPTION. Separate required
+   elements from examples, common implementation techniques, and keywords.
+3. Complete the FOCUS TEST sentence with a concrete distinctive mechanism and
+   literal relational/behavioral evidence. A lone noun, API, opcode, technology,
+   or pattern name cannot fill the blank.
+4. Compare that mechanism with nearby patterns. Shared vocabulary is not
+   shared mechanism. Evaluate the requested candidate only; use
+   alternative_pattern/overlap_with as annotations, never as an automatic
+   replacement or positive verdict.
+5. Decide the three match flags and verdict using the rules below.
+
+NAME-INDEPENDENCE
+The canonical pattern name is neither necessary nor sufficient. Recognize an
+implicit pattern when the text clearly describes its distinctive relationships
+or behavior. Reject a nominal mention when that mechanism is not the artifact's
+substantive subject.
+
 VERDICTS - MANDATORY CRITERIA (P4)
-- yes: there is sufficient evidence AND mechanism_match=true, scope_match=true,
-  AND focus_match=true. Do not use yes when the distinctive mechanism is not
-  explicitly discussed.
-- no: pattern absent, false friend, different mechanism, background
-  architecture, or superficial mention without partial positive evidence.
+- yes: textual evidence establishes the candidate's distinctive mechanism,
+  compatible scope, and substantive focus, so mechanism_match=true,
+  scope_match=true, AND focus_match=true. The artifact may discuss any lifecycle
+  activity (proposal, integration, test, bug, vulnerability, maintenance,
+  migration, replacement, or removal); it need not implement or name the pattern.
+- no: pattern absent, lexical false friend, semantically related but different
+  mechanism, background architecture, enabling technique alone, broad thematic
+  association, possible-but-undiscussed solution, or superficial nominal mention.
 - uncertain: there is partial positive evidence for the specific pattern, but
-  distinctive information is missing for safe decision. It is NOT a convenience
-  label for "I am not sure" - mere possibility is no.
+  a genuinely required distinctive relation is missing for a safe yes/no
+  distinction. It is NOT a convenience label for complexity or model doubt;
+  a keyword, nominal mention, or mere possibility without positive mechanism
+  evidence is no.
 - insufficient_context: use ONLY when missing content, truncation, link, diff,
   or missing code actively prevents decision. If the available text already
   allows concluding irrelevance, use no.
 
 MANDATORY VALIDATION FIELDS (P3)
 For each verdict, report:
-- mechanism_match (boolean): the DISTINCTIVE mechanism of the pattern is
-  explicitly discussed in the text (not only mentioned as context).
+- mechanism_match (boolean): the DISTINCTIVE relationship or behavior is
+  textually supported (it may be implicit and need not use the pattern name).
 - scope_match (boolean): the usage scope is compatible with what the pattern
   addresses.
 - focus_match (boolean): the artifact substantively discusses the pattern, not
@@ -128,6 +170,33 @@ IMPORTANT DISTINCTIONS
   background architecture.
 - When a specialized pattern is clearly present, prefer the more specific name
   and record alternative/overlap without creating automatic positivity for both.
+
+SUBSTANTIVE DISCUSSION VS BACKGROUND VS OTHER MEANING
+- Substantive: the artifact acts on, proposes, tests, diagnoses, secures,
+  changes, limits, replaces, or removes the distinctive mechanism -> may be yes.
+- Background: the mechanism exists in the system, but the artifact's actual
+  problem/change is unrelated to it -> no, usually focus_match=false.
+- Other meaning: a matching word denotes another concept -> no and mark a
+  lexical false friend only when the strict false-friend criteria are met.
+
+GENERAL ANTI-OVERREACH BOUNDARIES
+- An enabling primitive or deployment/addressing technique does not establish
+  a component whose responsibility is creating other contract instances.
+- A generic append/add operation does not establish an append-only invariant;
+  the design must preserve prior records by excluding ordinary overwrite/removal.
+- Any local/off-chain calculation does not establish deliberate displacement of
+  blockchain computation; require a system computation moved off-chain with its
+  result consumed, submitted, or verified on-chain.
+- Network-message or packet optimization does not establish reduced smart-
+  contract execution/storage footprint; require an on-chain contract/gas scope.
+- Listing, registering, integrating, or editing metadata of an already existing
+  token does not establish representation of an asset/right/entity as an
+  on-chain token.
+
+EVIDENCE QUALITY
+For yes, quote a short literal span that expresses a relationship, behavior, or
+state invariant of the mechanism. The candidate name or a trigger keyword alone
+is insufficient evidence. For no, cite the real topic or mismatch when useful.
 
 PAIR CHALLENGES - MANDATORY EVIDENCE (P9)
 Associate challenges only when evidence explicitly connects the challenge to the

@@ -1,6 +1,6 @@
 """Constantes, taxonomias e defaults do pipeline."""
 
-PIPELINE_VERSION = "0.6.1-gemini"
+PIPELINE_VERSION = "0.6.2-gemini"
 PROVIDER = "google-gemini"
 API_FAMILY = "generateContent"
 

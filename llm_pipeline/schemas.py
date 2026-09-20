@@ -104,17 +104,20 @@ def stage2_schema(pattern_names: list[str]) -> dict[str, Any]:
                 "type": "string",
                 "enum": VERDICTS,
                 "description": (
-                    "yes=evidência suficiente com mechanism/scope/focus match; "
-                    "no=pattern ausente, falso-amigo ou menção superficial; "
-                    "uncertain=evidência parcial mas sem informação distintiva suficiente; "
+                    "yes=mecanismo distintivo sustentado pelo texto, mesmo sem nome canônico, "
+                    "com mechanism/scope/focus match; "
+                    "no=mecanismo ausente/diferente, associação semântica ampla, arquitetura de fundo, "
+                    "falso-amigo ou menção superficial; "
+                    "uncertain=evidência positiva parcial real, mas falta relação distintiva necessária; "
                     "insufficient_context=conteúdo ausente IMPEDE ativamente a decisão."
                 ),
             },
             "mechanism_match": {
                 "type": "boolean",
                 "description": (
-                    "P3: true quando o mecanismo DISTINTIVO do pattern está explicitamente "
-                    "discutido no artefato (não apenas mencionado como contexto). "
+                    "P3: true quando a relação ou comportamento DISTINTIVO do pattern possui "
+                    "suporte textual, mesmo implicitamente e sem o nome canônico; não basta keyword, "
+                    "técnica auxiliar, associação temática ou menção contextual. "
                     "Obrigatório true para verdict=yes."
                 ),
             },
@@ -130,7 +133,8 @@ def stage2_schema(pattern_names: list[str]) -> dict[str, Any]:
                 "type": "boolean",
                 "description": (
                     "P3: true quando o artefato discute substantivamente o pattern, "
-                    "não apenas o cita superficialmente ou como tecnologia de fundo. "
+                    "incluindo proposta, teste, bug, manutenção, migração ou remoção do mecanismo; "
+                    "não apenas o cita superficialmente ou como arquitetura/tecnologia de fundo. "
                     "Obrigatório true para verdict=yes."
                 ),
             },
@@ -138,7 +142,8 @@ def stage2_schema(pattern_names: list[str]) -> dict[str, Any]:
                 "type": "string",
                 "description": (
                     "Trecho LITERAL e curto do artefato; obrigatório para yes/uncertain "
-                    "e útil para explicar negativos. Não reescreva nem parafraseie."
+                    "e útil para explicar negativos. Para yes deve mostrar relação, comportamento "
+                    "ou invariante do mecanismo, não somente nome/keyword. Não reescreva nem parafraseie."
                 ),
             },
             "evidence_location": {

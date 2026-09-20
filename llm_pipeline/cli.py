@@ -24,10 +24,14 @@ from .config import (
     DEFAULT_STAGE2_MODEL,
     DEFAULT_STAGE2_THINKING_LEVEL,
     DEFAULT_TEMPERATURE,
+    PIPELINE_VERSION,
     THINKING_LEVELS,
 )
 from .data import load_input, load_patterns_with_report, prepare_issue
 from .normalization import merge_reports
+from .models import PatternCatalog
+from .prompts import COMMON_METHOD_RULES, STAGE1_RULES, STAGE2_RULES
+from .schemas import stage1_schema, stage2_schema
 from .stages import (
     run_stage1_batch,
     run_stage1_sync,
@@ -36,7 +40,15 @@ from .stages import (
     pipeline_integrity_report,
     stage2_pairs_from_stage1,
 )
-from .utils import sha256_file, stable_custom_id, utc_run_id, write_dataframe_csv, write_json
+from .utils import (
+    json_dumps,
+    sha256_file,
+    sha256_text,
+    stable_custom_id,
+    utc_run_id,
+    write_dataframe_csv,
+    write_json,
+)
 
 
 def _empty_stage2_dataframe() -> pd.DataFrame:
@@ -75,7 +87,13 @@ def _empty_stage2_dataframe() -> pd.DataFrame:
     )
 
 
-def _validate_resume_metadata(run_dir: Path, input_path: Path, patterns_path: Path, args: argparse.Namespace) -> None:
+def _validate_resume_metadata(
+    run_dir: Path,
+    input_path: Path,
+    patterns_path: Path,
+    catalog: PatternCatalog,
+    args: argparse.Namespace,
+) -> None:
     """Reject accidental reuse of a run with a different methodological input."""
     metadata_path = run_dir / "run_metadata.json"
     known_artifacts = {"stage1_results.csv", "stage2_results.csv", "stage1_checkpoint.json", "stage2_checkpoint.json"}
@@ -89,6 +107,7 @@ def _validate_resume_metadata(run_dir: Path, input_path: Path, patterns_path: Pa
     except (OSError, json.JSONDecodeError) as exc:
         raise CheckpointIntegrityError(f"run_metadata inválido em {metadata_path}: {exc}") from exc
     expected = {
+        "pipeline_version": PIPELINE_VERSION,
         "input_sha256": sha256_file(input_path),
         "patterns_sha256": sha256_file(patterns_path),
         "max_input_chars": args.max_input_chars,
@@ -101,6 +120,11 @@ def _validate_resume_metadata(run_dir: Path, input_path: Path, patterns_path: Pa
         "stage1_max_tokens": args.stage1_max_tokens,
         "stage2_max_tokens": args.stage2_max_tokens,
         "limit": args.limit,
+        "stage1_schema_sha256": sha256_text(json_dumps(stage1_schema(catalog.names))),
+        "stage2_schema_sha256": sha256_text(json_dumps(stage2_schema(catalog.names))),
+        "common_rules_sha256": sha256_text(COMMON_METHOD_RULES),
+        "stage1_rules_sha256": sha256_text(STAGE1_RULES),
+        "stage2_rules_sha256": sha256_text(STAGE2_RULES),
     }
     mismatches = {key: (metadata.get(key), value) for key, value in expected.items() if key in metadata and metadata[key] != value}
     if mismatches:
@@ -128,7 +152,7 @@ def run_command(args: argparse.Namespace) -> int:
     run_dir = Path(args.output_dir) / run_id
     existing_run = run_dir.exists() and any(run_dir.iterdir())
     if existing_run:
-        _validate_resume_metadata(run_dir, input_path, patterns_path, args)
+        _validate_resume_metadata(run_dir, input_path, patterns_path, catalog, args)
         print(f"[resume] reutilizando run existente: {run_dir}")
     else:
         run_dir.mkdir(parents=True, exist_ok=True)
