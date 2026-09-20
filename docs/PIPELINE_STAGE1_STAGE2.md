@@ -1,4 +1,4 @@
-# Prompts e contrato de saída — Pipeline Gemini v0.6.0
+# Prompts e contrato de saída — Pipeline Gemini v0.6.2
 
 **Referência metodológica:** Manual de Anotação Humana v0.2  
 **Objetivo:** triagem de candidatos com alto recall seguida de verificação por par com alta precisão.
@@ -83,10 +83,39 @@ Isso corrige uma limitação do protótipo anterior: ele solicitava `padrao_alte
 
 ### Vereditos
 
-- `yes`: discussão substantiva confirmada.
-- `no`: pattern ausente, falso-amigo, mecanismo diferente, arquitetura de fundo ou menção superficial sem evidência positiva parcial.
-- `uncertain`: evidência positiva parcial, porém falta informação distintiva.
+- `yes`: o texto sustenta o mecanismo distintivo, o escopo compatível e o foco substantivo. O nome acadêmico pode estar ausente; propostas, testes, bugs, vulnerabilidades, manutenção, migração e remoção também contam quando atuam sobre o mecanismo.
+- `no`: pattern ausente, falso-amigo, mecanismo diferente, técnica auxiliar isolada, extrapolação semântica, arquitetura de fundo ou menção superficial sem evidência positiva parcial.
+- `uncertain`: existe evidência positiva parcial real, porém falta uma relação distintiva necessária. Não é saída para keyword isolada, texto complexo ou dúvida genérica do modelo.
 - `insufficient_context`: conteúdo ausente impede decidir.
+
+### Procedimento de comparação por mecanismo
+
+O Stage 2 deve primeiro identificar o tema real do artefato e extrair da
+descrição do catálogo os atores, direção de dados/controle, invariantes e
+finalidade que distinguem o candidato. Em seguida, deve completar com suporte
+textual a frase:
+
+> Este artefato discute o candidato porque discute, integra, implementa,
+> modifica, mantém, testa, relata um problema, propõe, migra, substitui ou
+> remove o seguinte mecanismo distintivo: ____.
+
+O nome do pattern não é necessário nem suficiente. Um mecanismo implícito pode
+ser positivo; a presença nominal em arquitetura de fundo continua negativa.
+Falso-amigo lexical (`Oracle Database`) é separado de extrapolação semântica:
+uma técnica relacionada pode ter o sentido técnico correto e ainda não conter
+o mecanismo completo do candidato.
+
+Limites de regressão derivados da revisão humana incluem:
+
+- primitivas de deployment/endereço não demonstram por si um contrato criador;
+- `append` não demonstra o invariante append-only se há overwrite/remoção;
+- cálculo local genérico não demonstra deslocamento deliberado de computação
+  on-chain com consumo/verificação on-chain do resultado;
+- otimização de pacotes de rede não demonstra footprint de smart contract;
+- listar/integrar token existente não demonstra representar um ativo como token.
+
+Esses limites são regras de mecanismo generalizáveis, não decisões codificadas
+por keyword.
 
 ### Contrato de saída
 

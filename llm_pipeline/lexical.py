@@ -57,6 +57,37 @@ _FALSE_FRIEND_REGEXES: list[tuple[str, re.Pattern[str], str]] = [
         re.compile(r"\bip\s+router\b|\bnetwork\s+router\b|\bwifi\s+router\b", re.IGNORECASE),
         "network_router",
     ),
+    (
+        "Vote",
+        re.compile(
+            r"\b(?:forum|github|community)\s+(?:vote|votes|voting)\b|"
+            r"\b(?:upvote|downvote)s?\b",
+            re.IGNORECASE,
+        ),
+        "forum_or_reaction_vote",
+    ),
+    (
+        "Snapshotting",
+        re.compile(r"\b(?:event|sdk|sync|resume)\s+checkpoint(?:er|ing)?\b", re.IGNORECASE),
+        "operational_event_checkpoint",
+    ),
+    (
+        "Mutex",
+        re.compile(
+            r"\b(?:thread|process|file|database|db)\s+(?:mutex|lock)\b|\blockfile\b",
+            re.IGNORECASE,
+        ),
+        "off_chain_concurrency_lock",
+    ),
+    (
+        "Off-chain Signatures",
+        re.compile(
+            r"\b(?:function|type|method|ui|component)\s+signature\b|"
+            r"\bSignatureRequest\s+component\b",
+            re.IGNORECASE,
+        ),
+        "programming_or_ui_signature",
+    ),
 ]
 
 
