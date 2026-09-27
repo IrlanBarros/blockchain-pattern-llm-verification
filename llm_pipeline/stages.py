@@ -1,4 +1,4 @@
-"""Execução dos Stages 1 e 2 com Gemini em modo síncrono ou batch."""
+"""Execução provider-neutral dos Stages 1 e 2; batch remoto é capability-gated."""
 
 from __future__ import annotations
 

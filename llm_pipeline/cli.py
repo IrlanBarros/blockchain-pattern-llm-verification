@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import replace
 import argparse
 import json
+import os
 import sys
 import time
 from pathlib import Path
@@ -12,7 +13,7 @@ from pathlib import Path
 import pandas as pd
 
 from .aggregation import aggregate_issue_results
-from .artifacts import build_dry_run_artifacts, save_manifest
+from .artifacts import build_dry_run_artifacts, persist_provider_runtime, save_manifest
 from .checkpoint import CheckpointIntegrityError, ResultStore
 from .client import close_client, create_client
 from .config import (
@@ -32,6 +33,7 @@ from .config import (
 from .data import load_input, load_patterns_with_report, prepare_issue
 from .normalization import merge_reports
 from .models import PatternCatalog
+from .providers import ProviderConfig
 from .optimization import OptimizationConfig
 from .context import prepare_optimized
 from .retrieval import HybridRetriever
@@ -115,6 +117,7 @@ def _validate_resume_metadata(
         metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
         raise CheckpointIntegrityError(f"run_metadata inválido em {metadata_path}: {exc}") from exc
+    provider_config = getattr(args, "provider_config", None) or ProviderConfig.from_environment(getattr(args, "provider", None))
     expected = {
         "pipeline_version": PIPELINE_VERSION,
         "input_sha256": sha256_file(input_path),
@@ -134,14 +137,50 @@ def _validate_resume_metadata(
         "common_rules_sha256": sha256_text(COMMON_METHOD_RULES),
         "stage1_rules_sha256": sha256_text(STAGE1_RULES),
         "stage2_rules_sha256": sha256_text(STAGE2_RULES),
+        "provider": provider_config.provider,
+        "backend": provider_config.backend,
+        "provider_fingerprint": provider_config.fingerprint,
+        "model_fingerprint": provider_config.model_sha256 or provider_config.model,
+        "top_p": provider_config.top_p,
+        "stop_sequences": list(provider_config.stop),
     }
-    mismatches = {key: (metadata.get(key), value) for key, value in expected.items() if key in metadata and metadata[key] != value}
+    def equivalent(key, actual, wanted):
+        if key == "provider":
+            aliases = {"google-gemini": "gemini", "local": "openai_compatible"}
+            return aliases.get(actual, actual) == aliases.get(wanted, wanted)
+        return actual == wanted
+
+    mismatches = {
+        key: (metadata.get(key), value)
+        for key, value in expected.items()
+        if key in metadata and not equivalent(key, metadata[key], value)
+    }
     if mismatches:
         raise ValueError(f"Não é seguro retomar {run_dir}: parâmetros/metadados divergentes: {mismatches}")
 
 
 def run_command(args: argparse.Namespace) -> int:
     session_started = time.perf_counter()
+    provider_config = ProviderConfig.from_environment(args.provider)
+    if args.top_p is not None or args.stop:
+        provider_config = replace(
+            provider_config,
+            top_p=args.top_p if args.top_p is not None else provider_config.top_p,
+            stop=tuple(args.stop) if args.stop else provider_config.stop,
+        )
+    args.provider_config = provider_config
+    if args.stage1_model is None:
+        args.stage1_model = provider_config.model if provider_config.provider == "openai_compatible" else DEFAULT_STAGE1_MODEL
+    if args.stage2_model is None:
+        args.stage2_model = provider_config.model if provider_config.provider == "openai_compatible" else DEFAULT_STAGE2_MODEL
+    if args.temperature is None:
+        args.temperature = 0.0 if provider_config.provider == "openai_compatible" else DEFAULT_TEMPERATURE
+    if args.seed is None:
+        args.seed = 42 if provider_config.provider == "openai_compatible" else DEFAULT_SEED
+    if args.mode == "batch" and not provider_config.capabilities.supports_remote_batch:
+        raise ValueError(
+            f"Provider {provider_config.provider}/{provider_config.backend} não suporta remote batch; use --mode sync."
+        )
     input_path = Path(args.input)
     patterns_path = Path(args.patterns)
     if not input_path.exists():
@@ -187,7 +226,8 @@ def run_command(args: argparse.Namespace) -> int:
     def get_client():
         nonlocal client
         if client is None:
-            client = create_client()
+            client = create_client() if provider_config.provider == "gemini" else create_client(provider_config)
+            persist_provider_runtime(run_dir, client)
         return client
 
     try:
@@ -385,10 +425,41 @@ def validate_command(args: argparse.Namespace) -> int:
     return 0
 
 
+def status_command(args: argparse.Namespace) -> int:
+    """Summarize one persisted run without contacting its provider."""
+    run_dir = Path(args.run_dir)
+    metadata_path = run_dir / "run_metadata.json"
+    if not metadata_path.exists():
+        raise FileNotFoundError(metadata_path)
+    metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+    stage1 = ResultStore(run_dir / "stage1_results.csv", stage="stage1").dataframe
+    stage2 = ResultStore(run_dir / "stage2_results.csv", stage="stage2").dataframe
+    manifest_path = run_dir / "request_manifest.json"
+    stage2_manifest_path = run_dir / "stage2_pair_manifest.json"
+    expected1 = len(json.loads(manifest_path.read_text())) if manifest_path.exists() else None
+    expected2 = len(json.loads(stage2_manifest_path.read_text())) if stage2_manifest_path.exists() else None
+    token_path = run_dir / "token_summary.json"
+    tokens = json.loads(token_path.read_text()) if token_path.exists() else {}
+    s1_ok = int((stage1.get("request_status", pd.Series(dtype=str)) == "succeeded").sum()) if not stage1.empty else 0
+    s2_ok = int((stage2.get("request_status", pd.Series(dtype=str)) == "succeeded").sum()) if not stage2.empty else 0
+    report = {
+        "run_dir": str(run_dir.resolve()), "provider": metadata.get("provider"),
+        "backend": metadata.get("backend"),
+        "models": [metadata.get("stage1_model"), metadata.get("stage2_model")],
+        "stage1_completed": s1_ok, "stage1_pending": max(0, expected1 - s1_ok) if expected1 is not None else None,
+        "stage2_completed": s2_ok, "stage2_pending": max(0, expected2 - s2_ok) if expected2 is not None else None,
+        "errors": int((stage1.get("request_status", pd.Series(dtype=str)) == "errored").sum()) + int((stage2.get("request_status", pd.Series(dtype=str)) == "errored").sum()),
+        "elapsed_seconds": tokens.get("run_wall_seconds"), "total_tokens": tokens.get("total_tokens"),
+        "issues_per_hour": tokens.get("issues_per_hour"), "requests_per_hour": tokens.get("requests_per_hour"),
+    }
+    print(json.dumps(report, ensure_ascii=False, indent=2))
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description=(
-            "Pipeline Gemini Stage 1 + Stage 2 alinhado ao Manual de Anotação Humana v0.2."
+            "Pipeline Stage 1 + Stage 2 com providers Gemini e OpenAI-compatible."
         )
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -406,7 +477,11 @@ def build_parser() -> argparse.ArgumentParser:
     )
     validate.set_defaults(func=validate_command)
 
-    run = subparsers.add_parser("run", help="Executa o pipeline Gemini ou gera dry-run.")
+    status = subparsers.add_parser("status", help="Mostra progresso e telemetria de um run persistido.")
+    status.add_argument("--run-dir", required=True)
+    status.set_defaults(func=status_command)
+
+    run = subparsers.add_parser("run", help="Executa o pipeline com provider configurável ou gera dry-run.")
     run.add_argument("--input", required=True)
     run.add_argument('--profile', choices=['legacy', 'optimized'], default='legacy',
                      help='Optimized is experimental until a labeled live A/B benchmark passes.')
@@ -421,10 +496,13 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Legado: um --run-id existente agora é retomado automaticamente após validação.",
     )
-    run.add_argument("--stage1-model", default=DEFAULT_STAGE1_MODEL)
-    run.add_argument("--stage2-model", default=DEFAULT_STAGE2_MODEL)
-    run.add_argument("--temperature", type=float, default=DEFAULT_TEMPERATURE)
-    run.add_argument("--seed", type=int, default=DEFAULT_SEED)
+    run.add_argument("--provider", choices=["gemini", "local", "openai_compatible"], default=os.environ.get("LLM_PROVIDER", "gemini"))
+    run.add_argument("--stage1-model", default=None)
+    run.add_argument("--stage2-model", default=None)
+    run.add_argument("--temperature", type=float, default=None)
+    run.add_argument("--top-p", type=float, default=None)
+    run.add_argument("--stop", action="append", default=[], help="Sequência de parada; pode ser repetida.")
+    run.add_argument("--seed", type=int, default=None)
     run.add_argument(
         "--stage1-thinking-level",
         choices=THINKING_LEVELS,

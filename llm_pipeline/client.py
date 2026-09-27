@@ -1,4 +1,4 @@
-"""Integração isolada com o SDK oficial Google Gen AI."""
+"""Canonical response parsing, retries, and provider client creation."""
 
 from __future__ import annotations
 
@@ -22,6 +22,9 @@ _TERMINAL_BATCH_STATES = {
 
 def is_retryable_api_error(exc: Exception) -> bool:
     """Conservatively retry transient transport/service failures only."""
+    from .providers import ProviderError
+    if isinstance(exc, ProviderError):
+        return exc.retryable
     text = str(exc).casefold()
     permanent = ("unauthenticated", "invalid api key", "permission denied", "forbidden", "invalid argument", "bad request", " 400", " 401", " 403")
     if any(marker in text for marker in permanent):
@@ -32,6 +35,9 @@ def is_retryable_api_error(exc: Exception) -> bool:
 
 def is_global_api_error(exc: Exception) -> bool:
     """Errors unlikely to improve for later records in the same invocation."""
+    from .providers import ProviderError
+    if isinstance(exc, ProviderError):
+        return exc.global_error
     text = str(exc).casefold()
     return any(marker in text for marker in ("resource_exhausted", "quota", "rate limit", "too many requests", "unauthenticated", "invalid api key", "permission denied", "forbidden"))
 
@@ -101,7 +107,7 @@ def _parse_json_text(text: str) -> dict[str, Any]:
 
 
 def parse_response_payload(response: Any) -> tuple[dict[str, Any], dict[str, Any]]:
-    """Extrai JSON, metadados de uso e motivo de término da resposta Gemini."""
+    """Extract the provider-neutral JSON payload, usage, and stop metadata."""
     candidates = _get(response, "candidates", default=[]) or []
     candidate = candidates[0] if candidates else None
     finish_reason = _enum_text(_get(candidate, "finish_reason", "finishReason"))
@@ -113,7 +119,7 @@ def parse_response_payload(response: Any) -> tuple[dict[str, Any], dict[str, Any
 
     if block_reason:
         raise ValueError(
-            "Prompt bloqueado pelo Gemini API: "
+            "Prompt bloqueado pelo provider: "
             f"block_reason={block_reason}; detalhe={block_message or 'não informado'}"
         )
     if finish_reason not in _SUCCESS_FINISH_REASONS:
@@ -124,7 +130,7 @@ def parse_response_payload(response: Any) -> tuple[dict[str, Any], dict[str, Any
 
     text = _response_text(response)
     if not text:
-        raise ValueError("Resposta Gemini sem conteúdo textual")
+        raise ValueError("Resposta do provider sem conteúdo textual")
 
     usage = _get(response, "usage_metadata", "usageMetadata")
     usage_dict = object_to_dict(usage) if usage is not None else {}
@@ -169,7 +175,11 @@ def import_genai() -> Any:
     return genai
 
 
-def create_client() -> Any:
+def create_client(provider_config: Any = None) -> Any:
+    from .providers import OpenAICompatibleClient, ProviderConfig
+    config = provider_config or ProviderConfig.from_environment()
+    if config.provider == "openai_compatible":
+        return OpenAICompatibleClient(config)
     gemini_key = os.environ.get("GEMINI_API_KEY")
     google_key = os.environ.get("GOOGLE_API_KEY")
     if not gemini_key and not google_key:
@@ -191,7 +201,9 @@ def close_client(client: Any) -> None:
         close()
 
 
-def call_sync(client: Any, params: dict[str, Any], attempts: int = 4) -> Any:
+def call_sync(client: Any, params: dict[str, Any], attempts: int | None = None) -> Any:
+    if attempts is None:
+        attempts = getattr(getattr(client, "provider_config", None), "max_attempts", 4)
     delay = 2.0
     last_error: Exception | None = None
     from .telemetry import ATTEMPT_OBSERVER
@@ -202,7 +214,7 @@ def call_sync(client: Any, params: dict[str, Any], attempts: int = 4) -> Any:
         except Exception as exc:  # SDK expõe subclasses diferentes por versão
             observer = ATTEMPT_OBSERVER.get()
             if observer:
-                observer(None, exc, time.perf_counter() - start)
+                observer(getattr(exc, "response", None), exc, time.perf_counter() - start)
             last_error = exc
             if attempt == attempts or not is_retryable_api_error(exc):
                 break

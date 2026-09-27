@@ -1,4 +1,4 @@
-"""Pipeline Gemini de verificação de blockchain design patterns."""
+"""Pipeline multi-provider de verificação de blockchain design patterns."""
 
 from .config import PIPELINE_VERSION
 

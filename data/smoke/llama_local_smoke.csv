@@ -1,0 +1,366 @@
+issue_id,repository_full_name,issue_number,type,state,created_at,closed_at,labels,repository_category,repository_category_canonical,data_source,issue_title,issue_body,concatenated_comments,comments_count,comments_count_filtered,commits_count,raw_text_sha256,sample_group,selection_trigger,annotator_id,relevant_to_pattern_study,patterns_present,adoption_status,issue_activity_type,challenge_categories,evidence_text,evidence_location,false_friend_detected,overlapping_patterns,insufficient_context,confidence,human_notes,annotation_date
+1388627487,OpenZeppelin/openzeppelin-contracts,3735,Issue,closed,2022-09-28T02:30:57+00:00,2022-12-28T21:09:14+00:00,,Smart Contract Library,Smart Contract Library,provider,EIP-4907 support,"**🧐 Motivation**
+<!-- Is your feature request related to a specific problem? Is it just a crazy idea? Tell us about it! -->
+
+There is a number of games with gene sequences mechanism like CryptoKitties, DeRace, and Axie. Imagine I have a Kitty with rare genes and I want to breed it with others for profit. There is no easy way of doing so because all games have different interfaces and thus It is difficult for exchanges to implement lend/borrow mechanics. ERC4907 will standardize the way how it is done without implementing a flash-borrower and magic tricks
+
+**📝 Details**
+<!-- Please describe your feature request in detail. -->
+Here is ready to use implementation
+https://thirdweb.com/doubledev.eth/ERC4907
+
+<!-- Make sure that you have reviewed the OpenZeppelin Contracts Contributor Guidelines. -->
+<!-- https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/CONTRIBUTING.md -->
+","I've left [a comment](https://ethereum-magicians.org/t/eip4907-erc-721-user-and-expires-extension/8572/26?u=frangio) at Ethereum Magicians.
+
+At this point I don't think we should include this feature in OpenZeppelin Contracts due to unaddressed concerns and competing standards without a clear community favorite. | @frangio you are right about that comment. it totally makes sense. Unfortunately, this is what we have now. no better standard for temporary ownership was introduced. 
+
+Let's talk about how this can be done securely and in the proper way.
+here is a Kitties code for breeding
+https://github.com/dapperlabs/cryptokitties-bounty/blob/master/contracts/KittyBreeding.sol#L200
+3rd party platforms can prepare for sign such a set of transactions
+
+- transfer token#1 to from walletA to walletB
+- call breed function(token#1, token#?)
+- transfer token#1 to from walletB to walletA
+- transfer erc20fee to from walletB to walletA
+
+In fact this is what wyvern protocol does
+Instead, I offer to add AccessControl to the token class and assign a new role to exchange (but not owner). Now exchange can assign USER role to anyone to breed as much as he can during subscription time. 
+
+Now as I write this it seems like a bad standard for this purpose to me. It does not restrict usage amount and does not take into account breading limit and cooldown. As well as there is no way to add new exchanges or the owner can discard all usages. I have to think about this more.
+
+Anyways this standard can be added now and replaced later with a better one. | > Anyways this standard can be added now and replaced later with a better one.
+
+Unfortunately it's not so simple. Adding code to the library has real maintenance costs and security risks associated. | > I've left [a comment](https://ethereum-magicians.org/t/eip4907-erc-721-user-and-expires-extension/8572/26?u=frangio) at Ethereum Magicians.
+> 
+> At this point I don't think we should include this feature in OpenZeppelin Contracts due to unaddressed concerns and competing standards without a clear community favorite.
+
+I've left a reply at Ethereum Magicians:  https://ethereum-magicians.org/t/eip4907-erc-721-user-and-expires-extension/8572/29 | @0xanders This looks like a workaround for the EIP's issues with respect to user protection, but the issue itself remains in the EIP... I don't think it's a good candidate for inclusion here. | > @0xanders This looks like a workaround for the EIP's issues with respect to user protection, but the issue itself remains in the EIP... I don't think it's a good candidate for inclusion here.
+
+For ENS, there is a Controller role(who can change the data of ENS but can not transfer the NFT), and the owner of the ENS NFT can change the Controller at any time. 
+
+For Decentraland LAND and ESTATE NFT, there is an Operator role(who can update material to Decentraland but can not transfer the NFT ), the  owner of the LAND or ESTATE NFT can change the Operator at any time. | Those are interesting data points, though I would argue that the Controller and the Operator are not ""users"" of the NFT, in fact they are more like ""service providers"" for the NFT owner.",7.0,7.0,0.0,725d56c78252e42639b50ea464d5058418deec353f90f055ecfeddcf9384b95d,pattern_enriched,erc-721,,,,,,,,,,,,,,
+384311716,web3swift-team/web3swift,103,Issue,closed,2018-11-26T12:37:44+00:00,2019-03-18T20:59:24+00:00,"enhancement, wait for reply",SDK / Library,SDK / Library,provider,Support ST-20,"ST-20 token is an Ethereum-based token implemented on top of the ERC-20 protocol that adds the ability for tokens to control transfers based on specific rules. 
+Its description: https://github.com/PolymathNetwork/polymath-core.
+Look at how there are implemented ERC-20 and ERC-721 in https://github.com/matterinc/web3swift/tree/develop/web3swift/PrecompiledContracts.","I have submitted a WIP PR -> https://github.com/matterinc/web3swift/pull/116. Will be updating it. | Sorry for the delay. I am working on it :+1:  | @BaldyAsh I have submitted a WIP PR https://github.com/matterinc/web3swift/pull/116. How do I test it? | @srisankethu hi! Sorry for so long answer, hard days. Currently I can't find any ST-20 token, will try in next few days. But you can create token that quasi-supports ST-20 on test network and use it for testing. If it will be too hard, I'll find another solution | @BaldyAsh Am I in the right direction #116 ? | @srisankethu yes, looks fine | @BaldyAsh  But how do I test my changes? I think this PR is going nowhere :( | @srisankethu There is only way - create your mocked ST-20 token and use it for tests. Sorry, but I can't find any ST-20 token for testing, sent the message to Polymath but still no answer. | @BaldyAsh Should I leave this task then!? This PR is going nowhere. Wasted my time on this | @srisankethu sure, leave it. Thank you for trying to complete it | @ceresstation please, approve | Made #130 that should close it | @ceresstation thank you, received the tip!",25.0,13.0,0.0,2942461f24c4803314ce8532a4f7a792155a90010cbceb9717e32927dc2c432e,pattern_enriched,ERC-20,,,,,,,,,,,,,,
+1897277157,ethereum/pm,867,Issue,closed,2023-09-14T20:41:06+00:00,2023-09-28T15:47:47+00:00,"ACD, Execution",Documentation,Documentation,provider,Execution Layer Meeting 171,"### Meeting Info
+* [Sept 28, 2023, 14:00-15:30 UTC](https://savvytime.com/converter/utc-to-germany-berlin-united-kingdom-london-ny-new-york-city-ca-san-francisco-china-shanghai-japan-tokyo-australia-sydney/sep-28-2023/2pm)
+* Youtube Stream: https://youtube.com/live/CPt3f3ughFM
+* Zoom: shared on `#allcoredevs` Discord channel shortly before the call 
+* [Ethereum Protocol Calls Calendar subscription](https://calendar.google.com/calendar/u/0?cid=Y191cGFvZm9uZzhtZ3JtcmtlZ243aWM3aGs1c0Bncm91cC5jYWxlbmRhci5nb29nbGUuY29t)
+
+### Agenda
+
+* Dencun Updates
+    * [devnet-9](https://notes.ethereum.org/@ethpandaops/dencun-devnet-9)
+    * 4788 audits review
+        * [Chainsecurity](https://chainsecurity.com/security-audit/eip-4788-contract/)
+        * [Trail of Bits](https://github.com/ethereum/pm/files/12749877/Ethereum.Foundation.EIP-4788.Smart.Contract.Summary.Report.pdf)
+        * Dedaub
+* Holesky launch 
+* [EIP-7503](https://eips.ethereum.org/EIPS/eip-7503) overview 
+* Post-Verkle SELFDESTRUCT behavior ","If possible, I would like to discuss [EIP-7503](https://eips.ethereum.org/EIPS/eip-7503) and present the way it can be implemented on Ethereum clients. | Added to the agenda, @keyvank !  | I would like to discuss a small update to 6780: after the verkle fork, the creation+deletion of a contract in the same transaction should leave the tree unchanged (as opposed to the current spec, in which a balance of `0` is written to the tree) | Couter-proposal: ban SELFDESTRUCT post verkle, even within a transaction.  Change it to SWEEP, where all current balance is swept out to the beneficiary.
+
+(either is OK for me, but if we are going to totally ban SELFDESTRUCT I think the verkle trie transition is our best opportunity) | Added @gballet @shemnon :+1:  | The @ChainSecurity audit report for EIP-4788: https://chainsecurity.com/security-audit/eip-4788-contract/ | Devnet 9 spec sheet: https://notes.ethereum.org/@ethpandaops/dencun-devnet-9 | Closed in favor of https://github.com/ethereum/pm/issues/879",8.0,8.0,0.0,af8fd086b2cbe92b662f3792dfd8914e9a6deaba0910885d692a0958ecc6327b,pattern_enriched,SELFDESTRUCT,,,,,,,,,,,,,,
+1173822522,graphprotocol/graph-node,3373,Pull Request,closed,2022-03-18T17:11:04+00:00,2022-03-31T00:29:34+00:00,,Indexing Protocol / Tool,Indexing Protocol / Tool,provider,Ethereum Transaction Receipts in Event Handlers,"This PR allows Ethereum event handlers to access the receipt for the transaction which emitted it.
+
+To support this, we introduce:
+- a new type hierarchy to the runtime 
+- a new `specVersion: 0.0.6`
+- a new `apiVersion: 0.0.7`
+
+
+#### 1. Usage in Mappings
+
+An event handler will receive an `Event` containing a receipt whenever it is declared in the subgraph manifest with the new `receipt: true` key, which is optional and defaults to false.
+
+```
+eventHandlers:
+  - event: NewGravatar(uint256,address,string,string)
+    handler: handleNewGravatar
+    receipt: true
+```
+Inside the handler function, the receipt can be accessed in the `Event.receipt` field.
+When the `receipt` key is set to `false` or omitted in the manifest, a `null` value will be returned instead.
+
+#### 2. New runtime data types
+
+_|Type|Description
+--- | --- | ---
+A|`AscEthereumEventWithReceipt`| Contains all data for a `Event` plus a non-nullable `receipt` field, containing **[B]**
+B| `AscEthereumTransactionReceipt`| A receipt for the transaction that emitted this event, which contains a `logs` field with an array of **[C]**, containing all the logs for the associated transaction.
+C| `AscEthereumLog`| A log from an event emitted within the transaction.
+
+Depending on the subgraph manifest configuration, the runtime will receive either an `AscEthereumEvent` or an `AscEthereumEventWithReceipt`.
+
+#### 3. Receipt Ingestion
+
+Transaction receipts will be collected inside the `blocks_with_triggers` function (which is used by `PoolingBlockStream`) only when an `EthereumLogFilter` requires them.
+
+#### 4. Affected Structs and Enums
+
+The following items were updated with optional fields to accommodate data for receipt themselves and their requirement flags :
+ - `MappingEventHandler`got a new `receipt: bool` field which defaults to false when deserializing, to account for omissions in the subgraph manifest.
+ - `EthereumLogFilter`: its inner Graph data structure was updated so its edges represent the requirement of a receipt. The original `HashSet<EventSignature>` of wildcard events was also updated to a `HashMap<EventSignature, bool>` to reflect that same aspect.
+ - `EthereumTrigger::Log` variant got a second `Option<web3::TransactionReceipt>` field
+ - `MappingTrigger::Log` variant got a new `receipt: Option<web3::TransactionReceipt>` field
+
+#### Todo:
+
+- [X] validations for the new `apiVersion`
+- [X] tests for `EthereumLogFilter`
+- [X] add a retry strategy to the `get_transaction_receipts_for_transaction_hashes` function
+- [x] `graph-ts` and `graph-cli` released _(see ""Dependencies"" below)_
+- [ ] docs
+
+Resolves #3218 
+
+---
+#### Dependencies
+
+This PR depends on:
+- https://github.com/graphprotocol/graph-cli/pull/860
+- https://github.com/graphprotocol/graph-ts/pull/260","Another couple of things:
+
+1. Any reason for this PR still being Draft instead of Ready for Review?
+2. This needs a rebase, there are conflicts still. | > Another couple of things:
+> 
+>     1. Any reason for this PR still being Draft instead of Ready for Review?
+
+The Draft status is related to the dependent PRs not being merged, but I can change it now since we already started the review process. | Rebased with latest `main` branch | You are my hero @tilacog  | Add `receipt: true` caused: Failed to deploy to Graph node https://api.thegraph.com/deploy/: ipfs failure::failure parsing subgraph manifest. when run graph deploy since today. Is there any changed? | hi @creaink this is an issue with deployments to the Hosted Service, [we are investigating](https://status.thegraph.com/incidents/rcv2nvk3mxs1) and expect to resolve soon, sorry for the trouble",6.0,6.0,33.0,5d29a5cc5b8b67089373ea418c53f081f008f4b570815706ec50412c443cbd01,pattern_enriched,ipfs,,,,,,,,,,,,,,
+1605867177,OpenZeppelin/openzeppelin-contracts,4084,Pull Request,closed,2023-03-01T23:46:19+00:00,2023-03-06T21:31:49+00:00,"ignore-changeset, formal-verification",Smart Contract Library,Smart Contract Library,provider,Formal verification using Certora,"Replaces #4083 
+
+---
+
+This PR introduces the core tooling for formal verification. The scripts and specs should be copied for the formal-verification branch when they run cleanly.
+
+This include a refactor of the Makefile:
+
+- make apply: copy the contracts folder to certora/patched and apply all patches found in certora/diffs
+- make record: compare the certora/patched folder to contracts and store the diff as patches in certora/diffs
+- there is one diff per source file to improve the discoverability of changes/patches, and to avoid merge conflicts.
+
+The github action runs on all commit on the master and release-v* branches. For other branches (and PR) it must be triggered manually. Maybe we could have a label that turn on the formal verification workflow on a specific PR.
+
+---
+
+This PR currently includes specs for:
+
+- [x] AccessControl
+- [x] ERC20
+  - [x] ERC20Permit
+  - [x] ERC20FlashMint","Could we have a check in all PRs that the patches apply? | > Could we have a check in all PRs that the patches apply?
+
+done",3.0,2.0,103.0,8aba9c82e2c38879d9ef6a248d4855b8c140ad097abfab7fd27a2229045e20ec,pattern_enriched,ERC20,,,,,,,,,,,,,,
+1049311174,ProjectOpenSea/opensea-js,236,Issue,closed,2021-11-10T01:52:37+00:00,2022-04-18T19:08:17+00:00,dev-sdk-bug,SDK / Library,SDK / Library,provider,You must approve assets for trading before creating an order,"Currently running into a problem where I can't approve an asset for sale.  I am trying to approve sale on behalf of another contract through a proxy call.  The proxy signature seems to be generating correctly and  on etherscan (https://rinkeby.etherscan.io/tx/0xde7ee87487b4b678cc94352bfaf23b42e04abce44d3d2581097d1b9108eb21e7#eventlog) you can see that the correct events are getting fired but when I call publishOrder() to create the listing on openSea it gives me the following error: You must approve assets Hole for trading before creating an order
+
+Here's a link to the asset: https://testnets.opensea.io/assets/0x8cfd4fbb3e30030929bcef43fef4ca2fe45659fc/7","Did you figure this out? | Yes - two separate resolutions:
+1. You must approve the asset to your address's assigned proxy
+2. After making the contract call with the order, you have to ensure that the same salt is being used when calling `seaport.publishOrder()`  | Oh nice... so instead of setting approval for the exchange contract I have to approve it for the assigned proxy? | Yep! First you should make sure that there is a deployed proxy for that address.  If there isn't one yet, you'll have to call the `WyvernProxyRegistry.registerProxy()` (seaport has a helper which can generate this call for you too) 
+
+Then to get the address of the proxy that got registered you can call `seaport.getProxy()`, or use the `proxies` mapping directly on the `WyvernProxyRegistry` contract.
+
+Finally, make sure you grant that address approval to the token you want to sell. | Outstanding! I got it to work. Thanks a ton | Great to hear you solved this! I will close this issue out.",6.0,6.0,0.0,651d21aea6281fd98ccdc0cd57c99b38438682b601af18aaef0e8e0974b9aaff,pattern_enriched,proxy,,,,,,,,,,,,,,
+1341587813,Uniswap/v3-sdk,141,Issue,open,2022-08-17T11:01:31+00:00,,,SDK / Library,SDK / Library,provider,"What is the significance of ""POOL_INIT_CODE_HASH"" ?","In the file ""v3-sdk/src/constants.ts"" and line number 5, what is the importance of ""POOL_INIT_CODE_HASH""?","Hi @debo24 
+
+Uniswap uses [CREATE2](https://docs.openzeppelin.com/cli/2.8/deploying-with-create2) to determine the address of a pool. The advantage is that the address of a pool with two specific tokens and a specific fee tier is deterministic and computable wether the pool is deployed or not.
+The SDK uses it in [computePoolAddress](https://github.com/Uniswap/v3-sdk/blob/08a7c050cba00377843497030f502c05982b1c43/src/utils/computePoolAddress.ts#LL36C5-L36C5).",1.0,1.0,0.0,4341939697c3d685458a0ccec184e3a2eab05d5309eb3bcba0dd5d8e1f649fdc,pattern_enriched,CREATE2,,,,,,,,,,,,,,
+2632590180,Consensys/gnark,1311,Pull Request,closed,2024-11-04T11:43:13+00:00,2024-11-04T23:24:44+00:00,type: doc,ZK Library,ZK Library,provider,docs: add input packing example,"# Description
+
+Add an example on how to use a hash of the public inputs to optimize for calldata and proof recursion complexity.
+
+## Type of change
+
+
+- [x] This change requires a documentation update
+
+# How has this been tested?
+
+<!-- Please describe the tests that you ran or implemented to verify your changes. Provide instructions so we can reproduce. -->
+
+- [x] Example
+
+# Checklist:
+
+- [x] I have performed a self-review of my code
+- [x] I have commented my code, particularly in hard-to-understand areas
+- [x] I have made corresponding changes to the documentation
+- [x] I have added tests that prove my fix is effective or that my feature works
+- [x] I did not modify files generated from templates
+- [x] `golangci-lint` does not output errors locally
+- [x] New and existing unit tests pass locally with my changes
+- [x] Any dependent changes have been merged and published in downstream modules
+
+",,0.0,0.0,2.0,db568d982ef7381b4da2a01039d20e341d12a758e53f4ad229044c4f382267f9,pattern_enriched,packing,,,,,,,,,,,,,,
+2277479045,matter-labs/foundry-zksync,358,Pull Request,closed,2024-05-03T11:25:37+00:00,2024-05-06T15:07:17+00:00,,Development Platform / Framework,Development Platform / Framework,provider,fix: avoid test contract migration,"<!--
+Thank you for your Pull Request. Please provide a description above and review
+the requirements below.
+
+Bug fixes and new features should include tests.
+-->
+
+## Motivation
+During forking during `setUp` when run with `--zksync`, the test contract isn't in the `persisted_accounts` list during initialization and as such isn't migrated to zksync. This causes it to be incorrectly migrated to an empty code account when a evm fork is encountered.
+
+This in turn causes the test to _silently pass_ as it's never called (since we've effectively erased the test contract). Such a failure can be detected by a negative test, which foundry provides via `testFail`, i.e. if the function doesn't revert the test fails -ensuring that the test is executed.
+
+<!--
+Explain the context and why you're making that change. What is the problem
+you're trying to solve? In some cases there is not a problem and this can be
+thought of as being the motivation for your change.
+-->
+
+## Solution
+Avoid migrating test contract at all, since we never call it in zksync context.
+
+<!--
+Summarize the solution and provide any necessary context needed to understand
+the code change.
+-->
+
+## Notes
+An alternate solution would be to detect if the test contract is in `persisted_accounts` and has not been migrated yet, to selectively migrate it to zksync during Cheatcode tracer init.
+",,0.0,0.0,2.0,fd48148690bc1a9be610cdc662d5e57444da502eca726d6b2312eaa33eec95fd,pattern_enriched,migration,,,,,,,,,,,,,,
+992143417,paritytech/substrate,9738,Pull Request,closed,2021-09-09T12:03:34+00:00,2021-09-30T10:42:20+00:00,"A0-please_review, C1-low, D3-trivial 🧸",Blockchain Core / Protocol,Blockchain Core / Protocol,provider,Make event record easier to decode,"### Breaking change
+
+the struct EventRecord changed the type of its field `event`. It is now a `WrapperOpaque<Event>` which means it is encoded with its encoded length in front, in order to be decodable as `Vec<u8>`.
+To be more precise the field event is now encoded as compact encoding of the size in bytes of the encoding of event concatenated with the encoding of event. Instead of previously: encoding of event.
+Some rust code can be also breaking, people should update by referencing to the inner type of `WrapperOpaque` using `.0` and some conversion using `.into()`.
+
+### Description
+
+This should fix https://github.com/paritytech/substrate/issues/9480 by making event record easier to decode when some event variant are not decodable.
+
+The event record now wraps the event into a `OpaqueWrapper`, this wrapper implements codec in a way that is compatible with `Vec<u8>`. basically it encode its inner type and prepend the size (the size is encoded as a compact u32).
+
+### TODO
+
+* [x] add test
+* [x] companion: https://github.com/paritytech/polkadot/pull/3945","So happy that the problem is addressed! | i don't know people opinion about this change, if people like it, then we can go on and notify UI people about this change | It's very welcome on our end (Phala Network), because we extensively rely on events to notify our offchain systems. I think it's also useful for indexers like SubQuery and Subscan. | CC @jacogr  | So I looked at the issue logged - it refers to types not being available. This is not an issue with metadata v14 and the Substrate/Polkadot master branches. 
+
+So I am trying to understand which current Substrate issue is addressed here. Metadata v14 has all the types, so no decoding issues. | @jacogr 
+I made an error when implementing type info of WrapperOpaque https://github.com/paritytech/substrate/pull/9881
+I merged this PR into this one, so maybe it fix the issue you found. | Since the `WrapperOpaque` is already on master (and used in networking, i.e. the API has support for it since yesterday), it would actually be great getting it fixed in master instead of waiting for this PR. 
+
+This PR, as I mentioned above, doesn't seem to solve anything anymore since metadata v14 landed... what it does do it break the whole ecosystem, forget about the apps UI, it affects everybody that listens on events everywhere. And this for a currently non-existent problem with types | > Since the WrapperOpaque is already on master (and used in networking, i.e. the API has support for it since yesterday), it would actually be great getting it fixed in master instead of waiting for this PR.
+
+Yes the PR is opened here https://github.com/paritytech/substrate/pull/9881
+
+> This PR, as I mentioned above, doesn't seem to solve anything anymore since metadata v14 landed... what it does do it break the whole ecosystem, forget about the apps UI, it affects everybody that listens on events everywhere. And this for a currently non-existent problem with types
+
+I missread your first comment, I don't know it myself, if it doesn't solve anything, then there is no reason to land it, cc @ascjones @h4x3rotab  | It's true that now one can use the metadata to parse raw event bytes. e.g. https://github.com/paritytech/substrate-subxt/blob/184c0964ca3a68e411eff6400aa7fabce0973963/src/events.rs#L213.
+
+However adding the `WrapperOpaque` means that this code can be removed entirely, for handling events for which we don't have a static definition.
+
+What's more, it means that for just decoding events, a consumer would not need to consume the metadata at all, if they are just looking for some specific events they can only choose to decode those with custom local types/decoding and skip any others. | You have the realize this break everybody out there, so it is not something to be done employed lightly. For instance all explorers now have different handling when trawling the chain for all events. 
+
+So the best time for a break would be alongside metadata v14 (Not after, that is absolute chaos in the ecosystem). 
+
+So skipping is certainly interesting. 
+
+But the point stands - the reference is for „missing types“, which is now a non-existent issue. If the problem is partial decoding, yes, can see it adds value. (So you make the 0.5% happy and create chaos for all the rest) | subxt usage doesn't seems to worth the breaking change considering it also works with scale-info.
+
+I'll close the PR, if people really wants it, then they should manifest themselves in the issue https://github.com/paritytech/substrate/issues/9480#issuecomment-931205153",11.0,11.0,8.0,55c5e6773092bfda31d4ec4695cc488c73af66ed904ba82e86c08643debdddd9,random_control,,,,,,,,,,,,,,,
+738580289,trustwallet/assets,4740,Pull Request,closed,2020-11-08T23:35:10+00:00,2020-11-11T11:35:27+00:00,Payment Status: Requested,Metadata Repository,Metadata Repository,provider,Add Axie Infinity Shards (AXS),"This PR is being closed due to inactivity. If you wish to continue, please have us reopen the PR before sending your payment.
+Do NOT send payments for closed PR, as the fee may by lost!
+  (60 vs. 60 hrs)","Hi! In order to compensate for the efforts of processing PRs, we kindly ask for a contribution.
+Before paying the fee, make sure new tokens fulfill the [acceptance criteria](https://community.trustwallet.com/t/how-to-submit-a-token-logo/3863#how-to-get-approved) (there is no fee refund in case of rejection).
+See also the [PR Fee FAQ](https://developer.trustwallet.com/add_new_asset/pr-fee).
+
+Please pay  **1000 TWT**  with the memo **4740**  to the address `bnb1tqq9llyr3dyjd559dha6z5r5etk3qfwk07m098`.
+Alternatively, 6 BNB is also accepted (same memo & address).
+
+**QR** code: [Trust](https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Flink.trustwallet.com%2Fsend%3Fcoin%3D714%26address%3Dbnb1tqq9llyr3dyjd559dha6z5r5etk3qfwk07m098%26amount%3D1000%26memo%3D4740) | [other wallet](https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=bnb1tqq9llyr3dyjd559dha6z5r5etk3qfwk07m098%26amount%3D1000%26memo%3D4740)
+
+*Notes*:
+* [Trust Wallet Tokens (TWT)](https://community.trustwallet.com/t/trust-wallet-token-twt/4187) can be obtained through our [Referral Program](https://community.trustwallet.com/t/invite-a-friend-earn-trust-wallet-token-twt/4125) or [from DEXs/exchanges](https://community.trustwallet.com/t/where-to-get-trust-wallet-tokens/76641).
+* New tokens without significant usage are rejected, see criteria mentioned above.
+* One PR should be for a single project; PR's with more than 10 logos will be rejected.
+* Payment evaluation happens automatically, but with a few minutes delay.  When payment is detected, an Accept Review is automatically placed on the PR, which is a condition for merge.
+* Evaluating the PR is done manually, and it is merged only if all conditions are satisfied.
+* TWT-BEP2 is supported (Binance Chain), TWT-BEP20 version on Smart Chain is not.
+ | Fee has not been received yet (or not fully).
+
+Rejected transactions:
+| amount | memo | rejected? | time | from | txID |
+|--------|------|-----------|------|------|------|
+| 6 BNB | 4738 | Wrong memo | 2020-11-09T13:14:35.422Z | bnb16frpjudqt20lwr95drprx8vc9adqlt8vzpmukw | [741826F15CF9EC761D2E718AFCBF292FF9C11C354E4E06BBAD653FB56A0350BF](https://explorer.binance.org/tx/741826F15CF9EC761D2E718AFCBF292FF9C11C354E4E06BBAD653FB56A0350BF) |
+| 6 BNB | 4735 | Wrong memo | 2020-11-09T02:07:43.054Z | bnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m | [4C6DAA9260B4E233D9A4D77CEBD2312FFF645C21698FEB0D9DF604A83C4F2EE4](https://explorer.binance.org/tx/4C6DAA9260B4E233D9A4D77CEBD2312FFF645C21698FEB0D9DF604A83C4F2EE4) |
+| 1000 TWT | 4741 | Wrong memo | 2020-11-08T23:48:12.689Z | bnb1cv6znhpkl5glvqpda5yvd8wt2laljge6hutzqz | [2CF24971616943C73133AFA6588773DCFB90D721B78894EBCB14389B6E1F50C0](https://explorer.binance.org/tx/2CF24971616943C73133AFA6588773DCFB90D721B78894EBCB14389B6E1F50C0) |
+| 6 BNB | 4738 | Wrong memo | 2020-11-09T13:14:35.422Z | bnb16frpjudqt20lwr95drprx8vc9adqlt8vzpmukw | [741826F15CF9EC761D2E718AFCBF292FF9C11C354E4E06BBAD653FB56A0350BF](https://explorer.binance.org/tx/741826F15CF9EC761D2E718AFCBF292FF9C11C354E4E06BBAD653FB56A0350BF) |
+| 6 BNB | 4735 | Wrong memo | 2020-11-09T02:07:43.054Z | bnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m | [4C6DAA9260B4E233D9A4D77CEBD2312FFF645C21698FEB0D9DF604A83C4F2EE4](https://explorer.binance.org/tx/4C6DAA9260B4E233D9A4D77CEBD2312FFF645C21698FEB0D9DF604A83C4F2EE4) |
+| 1000 TWT | 4741 | Wrong memo | 2020-11-08T23:48:12.689Z | bnb1cv6znhpkl5glvqpda5yvd8wt2laljge6hutzqz | [2CF24971616943C73133AFA6588773DCFB90D721B78894EBCB14389B6E1F50C0](https://explorer.binance.org/tx/2CF24971616943C73133AFA6588773DCFB90D721B78894EBCB14389B6E1F50C0) |
+
+
+ | @Jihoz, kind reminder:  please pay fee:  **1000 TWT**  with the memo **4740**  to the address `bnb1tqq9llyr3dyjd559dha6z5r5etk3qfwk07m098`.
+Alternatively, 6 BNB is also accepted (same memo & address).
+
+**QR** code: [Trust](https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Flink.trustwallet.com%2Fsend%3Fcoin%3D714%26address%3Dbnb1tqq9llyr3dyjd559dha6z5r5etk3qfwk07m098%26amount%3D1000%26memo%3D4740) | [other wallet](https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=bnb1tqq9llyr3dyjd559dha6z5r5etk3qfwk07m098%26amount%3D1000%26memo%3D4740)
+See the [Pull Request Fee FAQ](https://developer.trustwallet.com/add_new_asset/pr-fee).
+ | Fee has not been received yet (or not fully).
+
+Rejected transactions:
+| amount | memo | rejected? | time | from | txID |
+|--------|------|-----------|------|------|------|
+| 5.999 BNB | 4758 | Wrong memo | 2020-11-10T08:32:49.735Z | bnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m | [D5BC02BD41440DF126F1ABA831CB02B77F4A15B769616D97996983130E8FFB0D](https://explorer.binance.org/tx/D5BC02BD41440DF126F1ABA831CB02B77F4A15B769616D97996983130E8FFB0D) |
+| 1000 TWT | 4744 | Wrong memo | 2020-11-10T06:57:09.929Z | bnb1xtdklvmvd4jvetsf3lmuf5ew3wetw3kyp5gshs | [C42365320EC3901A85D46781DED8F4987826F22FFDC7D81951FFD6494EB2796C](https://explorer.binance.org/tx/C42365320EC3901A85D46781DED8F4987826F22FFDC7D81951FFD6494EB2796C) |
+| 1000 TWT | 4756 | Wrong memo | 2020-11-10T06:06:13.597Z | bnb1gqwsv0etfxsgaldcae65dsf94jsk8f62j0jyzf | [D93D359895948AAC8959BD575FAEC58248E4DD96B6338C8F93FDA9DB753A276E](https://explorer.binance.org/tx/D93D359895948AAC8959BD575FAEC58248E4DD96B6338C8F93FDA9DB753A276E) |
+| 1000 TWT | 4736 | Wrong memo | 2020-11-10T03:22:13.548Z | bnb10g0yrmx3jlr33dr6n066sp0cytq0q4jqu95nde | [BD2476C2148A45F0DAD723BA1937E721641591E7BB708C7437A25D55FA55FBDB](https://explorer.binance.org/tx/BD2476C2148A45F0DAD723BA1937E721641591E7BB708C7437A25D55FA55FBDB) |
+| 6 BNB | 4754 | Wrong memo | 2020-11-10T03:21:14.879Z | bnb1dtpty6hrxehwz9xew6ttj52l929cu8zehprzwj | [5C7958234194C3F8F5AF27B7B41E5465EC7FAF8342D6FA640381CD5C9B58EE29](https://explorer.binance.org/tx/5C7958234194C3F8F5AF27B7B41E5465EC7FAF8342D6FA640381CD5C9B58EE29) |
+| 6 BNB | 4750 | Wrong memo | 2020-11-09T21:28:25.549Z | bnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m | [2A5FC2B69C5F4BE516BEE54DF55512FB55366BE50D2CE331EBE126C24A973E14](https://explorer.binance.org/tx/2A5FC2B69C5F4BE516BEE54DF55512FB55366BE50D2CE331EBE126C24A973E14) |
+| 6 BNB | 4749 | Wrong memo | 2020-11-09T16:52:45.487Z | bnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m | [47586183DDB35D1B36510CE9F29A896221090442675B6A1742C15249AA0DD263](https://explorer.binance.org/tx/47586183DDB35D1B36510CE9F29A896221090442675B6A1742C15249AA0DD263) |
+| 1000 TWT | 4748 | Wrong memo | 2020-11-09T16:47:07.041Z | bnb1tmwzq0573pf3trtu7vede7s7x9ze32rj37rgmw | [95D927CBD16C9F1F4970B4704421E8CA4F9BFF2BB1B9679757D2C0B54717DDEF](https://explorer.binance.org/tx/95D927CBD16C9F1F4970B4704421E8CA4F9BFF2BB1B9679757D2C0B54717DDEF) |
+| 6 BNB | 4738 | Wrong memo | 2020-11-09T13:14:35.422Z | bnb16frpjudqt20lwr95drprx8vc9adqlt8vzpmukw | [741826F15CF9EC761D2E718AFCBF292FF9C11C354E4E06BBAD653FB56A0350BF](https://explorer.binance.org/tx/741826F15CF9EC761D2E718AFCBF292FF9C11C354E4E06BBAD653FB56A0350BF) |
+| 5.999 BNB | 4758 | Wrong memo | 2020-11-10T08:32:49.735Z | bnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m | [D5BC02BD41440DF126F1ABA831CB02B77F4A15B769616D97996983130E8FFB0D](https://explorer.binance.org/tx/D5BC02BD41440DF126F1ABA831CB02B77F4A15B769616D97996983130E8FFB0D) |
+| 1000 TWT | 4744 | Wrong memo | 2020-11-10T06:57:09.929Z | bnb1xtdklvmvd4jvetsf3lmuf5ew3wetw3kyp5gshs | [C42365320EC3901A85D46781DED8F4987826F22FFDC7D81951FFD6494EB2796C](https://explorer.binance.org/tx/C42365320EC3901A85D46781DED8F4987826F22FFDC7D81951FFD6494EB2796C) |
+| 1000 TWT | 4756 | Wrong memo | 2020-11-10T06:06:13.597Z | bnb1gqwsv0etfxsgaldcae65dsf94jsk8f62j0jyzf | [D93D359895948AAC8959BD575FAEC58248E4DD96B6338C8F93FDA9DB753A276E](https://explorer.binance.org/tx/D93D359895948AAC8959BD575FAEC58248E4DD96B6338C8F93FDA9DB753A276E) |
+| 1000 TWT | 4736 | Wrong memo | 2020-11-10T03:22:13.548Z | bnb10g0yrmx3jlr33dr6n066sp0cytq0q4jqu95nde | [BD2476C2148A45F0DAD723BA1937E721641591E7BB708C7437A25D55FA55FBDB](https://explorer.binance.org/tx/BD2476C2148A45F0DAD723BA1937E721641591E7BB708C7437A25D55FA55FBDB) |
+| 6 BNB | 4754 | Wrong memo | 2020-11-10T03:21:14.879Z | bnb1dtpty6hrxehwz9xew6ttj52l929cu8zehprzwj | [5C7958234194C3F8F5AF27B7B41E5465EC7FAF8342D6FA640381CD5C9B58EE29](https://explorer.binance.org/tx/5C7958234194C3F8F5AF27B7B41E5465EC7FAF8342D6FA640381CD5C9B58EE29) |
+| 6 BNB | 4750 | Wrong memo | 2020-11-09T21:28:25.549Z | bnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m | [2A5FC2B69C5F4BE516BEE54DF55512FB55366BE50D2CE331EBE126C24A973E14](https://explorer.binance.org/tx/2A5FC2B69C5F4BE516BEE54DF55512FB55366BE50D2CE331EBE126C24A973E14) |
+| 6 BNB | 4749 | Wrong memo | 2020-11-09T16:52:45.487Z | bnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m | [47586183DDB35D1B36510CE9F29A896221090442675B6A1742C15249AA0DD263](https://explorer.binance.org/tx/47586183DDB35D1B36510CE9F29A896221090442675B6A1742C15249AA0DD263) |
+| 1000 TWT | 4748 | Wrong memo | 2020-11-09T16:47:07.041Z | bnb1tmwzq0573pf3trtu7vede7s7x9ze32rj37rgmw | [95D927CBD16C9F1F4970B4704421E8CA4F9BFF2BB1B9679757D2C0B54717DDEF](https://explorer.binance.org/tx/95D927CBD16C9F1F4970B4704421E8CA4F9BFF2BB1B9679757D2C0B54717DDEF) |
+| 6 BNB | 4738 | Wrong memo | 2020-11-09T13:14:35.422Z | bnb16frpjudqt20lwr95drprx8vc9adqlt8vzpmukw | [741826F15CF9EC761D2E718AFCBF292FF9C11C354E4E06BBAD653FB56A0350BF](https://explorer.binance.org/tx/741826F15CF9EC761D2E718AFCBF292FF9C11C354E4E06BBAD653FB56A0350BF) |
+
+
+ | @Jihoz, kind reminder:  please pay fee:  **1000 TWT**  with the memo **4740**  to the address `bnb1tqq9llyr3dyjd559dha6z5r5etk3qfwk07m098`.
+Alternatively, 6 BNB is also accepted (same memo & address).
+
+**QR** code: [Trust](https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Flink.trustwallet.com%2Fsend%3Fcoin%3D714%26address%3Dbnb1tqq9llyr3dyjd559dha6z5r5etk3qfwk07m098%26amount%3D1000%26memo%3D4740) | [other wallet](https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=bnb1tqq9llyr3dyjd559dha6z5r5etk3qfwk07m098%26amount%3D1000%26memo%3D4740)
+See the [Pull Request Fee FAQ](https://developer.trustwallet.com/add_new_asset/pr-fee).
+ | Fee has not been received yet (or not fully).
+
+Rejected transactions:
+| amount | memo | rejected? | time | from | txID |
+|--------|------|-----------|------|------|------|
+| 1000 TWT | 4768 | Wrong memo | 2020-11-10T22:33:42.267Z | bnb1lvp6yytakzz8aaul8m9zf0grr5xwy0alvua7jf | [E74E65DE40178993E629D7B6E2AD863DD54B9D0305682ACC9EC7FB2F01B48674](https://explorer.binance.org/tx/E74E65DE40178993E629D7B6E2AD863DD54B9D0305682ACC9EC7FB2F01B48674) |
+| 6 BNB | 4760 | Wrong memo | 2020-11-10T16:34:19.515Z | bnb14wlklpk0dre6yje5y62sdel3vp0wp23kjqhq9r | [DD6EA1DDD6201ABACDFB51B4754FFD3A4BCA92BC56FF0752447DFB7690715CD3](https://explorer.binance.org/tx/DD6EA1DDD6201ABACDFB51B4754FFD3A4BCA92BC56FF0752447DFB7690715CD3) |
+| 1000 TWT | 4737 | Wrong memo | 2020-11-10T13:15:19.982Z | bnb1hhav5suucfkmnffw5frhjtkw36shtf2mxllyrf | [A5E96F7AB9DA0BB3412F4BE6D5CBE835E529767FAD92076EBB9ECF3EF7588A45](https://explorer.binance.org/tx/A5E96F7AB9DA0BB3412F4BE6D5CBE835E529767FAD92076EBB9ECF3EF7588A45) |
+| 1000 TWT | 4743 | Wrong memo | 2020-11-10T11:18:06.750Z | bnb10lgnr8w93e4hny69hv9449rguwkppckajdlmpd | [FAA9AA137B58CC1C408FA29B913D703793DF6062388F24187A774DCDA5B4A990](https://explorer.binance.org/tx/FAA9AA137B58CC1C408FA29B913D703793DF6062388F24187A774DCDA5B4A990) |
+| 5.999 BNB | 4758 | Wrong memo | 2020-11-10T08:32:49.735Z | bnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m | [D5BC02BD41440DF126F1ABA831CB02B77F4A15B769616D97996983130E8FFB0D](https://explorer.binance.org/tx/D5BC02BD41440DF126F1ABA831CB02B77F4A15B769616D97996983130E8FFB0D) |
+| 1000 TWT | 4744 | Wrong memo | 2020-11-10T06:57:09.929Z | bnb1xtdklvmvd4jvetsf3lmuf5ew3wetw3kyp5gshs | [C42365320EC3901A85D46781DED8F4987826F22FFDC7D81951FFD6494EB2796C](https://explorer.binance.org/tx/C42365320EC3901A85D46781DED8F4987826F22FFDC7D81951FFD6494EB2796C) |
+| 1000 TWT | 4756 | Wrong memo | 2020-11-10T06:06:13.597Z | bnb1gqwsv0etfxsgaldcae65dsf94jsk8f62j0jyzf | [D93D359895948AAC8959BD575FAEC58248E4DD96B6338C8F93FDA9DB753A276E](https://explorer.binance.org/tx/D93D359895948AAC8959BD575FAEC58248E4DD96B6338C8F93FDA9DB753A276E) |
+| 1000 TWT | 4736 | Wrong memo | 2020-11-10T03:22:13.548Z | bnb10g0yrmx3jlr33dr6n066sp0cytq0q4jqu95nde | [BD2476C2148A45F0DAD723BA1937E721641591E7BB708C7437A25D55FA55FBDB](https://explorer.binance.org/tx/BD2476C2148A45F0DAD723BA1937E721641591E7BB708C7437A25D55FA55FBDB) |
+| 6 BNB | 4754 | Wrong memo | 2020-11-10T03:21:14.879Z | bnb1dtpty6hrxehwz9xew6ttj52l929cu8zehprzwj | [5C7958234194C3F8F5AF27B7B41E5465EC7FAF8342D6FA640381CD5C9B58EE29](https://explorer.binance.org/tx/5C7958234194C3F8F5AF27B7B41E5465EC7FAF8342D6FA640381CD5C9B58EE29) |
+| 1000 TWT | 4768 | Wrong memo | 2020-11-10T22:33:42.267Z | bnb1lvp6yytakzz8aaul8m9zf0grr5xwy0alvua7jf | [E74E65DE40178993E629D7B6E2AD863DD54B9D0305682ACC9EC7FB2F01B48674](https://explorer.binance.org/tx/E74E65DE40178993E629D7B6E2AD863DD54B9D0305682ACC9EC7FB2F01B48674) |
+| 6 BNB | 4760 | Wrong memo | 2020-11-10T16:34:19.515Z | bnb14wlklpk0dre6yje5y62sdel3vp0wp23kjqhq9r | [DD6EA1DDD6201ABACDFB51B4754FFD3A4BCA92BC56FF0752447DFB7690715CD3](https://explorer.binance.org/tx/DD6EA1DDD6201ABACDFB51B4754FFD3A4BCA92BC56FF0752447DFB7690715CD3) |
+| 1000 TWT | 4737 | Wrong memo | 2020-11-10T13:15:19.982Z | bnb1hhav5suucfkmnffw5frhjtkw36shtf2mxllyrf | [A5E96F7AB9DA0BB3412F4BE6D5CBE835E529767FAD92076EBB9ECF3EF7588A45](https://explorer.binance.org/tx/A5E96F7AB9DA0BB3412F4BE6D5CBE835E529767FAD92076EBB9ECF3EF7588A45) |
+| 1000 TWT | 4743 | Wrong memo | 2020-11-10T11:18:06.750Z | bnb10lgnr8w93e4hny69hv9449rguwkppckajdlmpd | [FAA9AA137B58CC1C408FA29B913D703793DF6062388F24187A774DCDA5B4A990](https://explorer.binance.org/tx/FAA9AA137B58CC1C408FA29B913D703793DF6062388F24187A774DCDA5B4A990) |
+| 5.999 BNB | 4758 | Wrong memo | 2020-11-10T08:32:49.735Z | bnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m | [D5BC02BD41440DF126F1ABA831CB02B77F4A15B769616D97996983130E8FFB0D](https://explorer.binance.org/tx/D5BC02BD41440DF126F1ABA831CB02B77F4A15B769616D97996983130E8FFB0D) |
+| 1000 TWT | 4744 | Wrong memo | 2020-11-10T06:57:09.929Z | bnb1xtdklvmvd4jvetsf3lmuf5ew3wetw3kyp5gshs | [C42365320EC3901A85D46781DED8F4987826F22FFDC7D81951FFD6494EB2796C](https://explorer.binance.org/tx/C42365320EC3901A85D46781DED8F4987826F22FFDC7D81951FFD6494EB2796C) |
+| 1000 TWT | 4756 | Wrong memo | 2020-11-10T06:06:13.597Z | bnb1gqwsv0etfxsgaldcae65dsf94jsk8f62j0jyzf | [D93D359895948AAC8959BD575FAEC58248E4DD96B6338C8F93FDA9DB753A276E](https://explorer.binance.org/tx/D93D359895948AAC8959BD575FAEC58248E4DD96B6338C8F93FDA9DB753A276E) |
+| 1000 TWT | 4736 | Wrong memo | 2020-11-10T03:22:13.548Z | bnb10g0yrmx3jlr33dr6n066sp0cytq0q4jqu95nde | [BD2476C2148A45F0DAD723BA1937E721641591E7BB708C7437A25D55FA55FBDB](https://explorer.binance.org/tx/BD2476C2148A45F0DAD723BA1937E721641591E7BB708C7437A25D55FA55FBDB) |
+| 6 BNB | 4754 | Wrong memo | 2020-11-10T03:21:14.879Z | bnb1dtpty6hrxehwz9xew6ttj52l929cu8zehprzwj | [5C7958234194C3F8F5AF27B7B41E5465EC7FAF8342D6FA640381CD5C9B58EE29](https://explorer.binance.org/tx/5C7958234194C3F8F5AF27B7B41E5465EC7FAF8342D6FA640381CD5C9B58EE29) |
+
+
+ | @Jihoz, kind reminder:  please pay fee:  **1000 TWT**  with the memo **4740**  to the address `bnb1tqq9llyr3dyjd559dha6z5r5etk3qfwk07m098`.
+Alternatively, 6 BNB is also accepted (same memo & address).
+
+**QR** code: [Trust](https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Flink.trustwallet.com%2Fsend%3Fcoin%3D714%26address%3Dbnb1tqq9llyr3dyjd559dha6z5r5etk3qfwk07m098%26amount%3D1000%26memo%3D4740) | [other wallet](https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=bnb1tqq9llyr3dyjd559dha6z5r5etk3qfwk07m098%26amount%3D1000%26memo%3D4740)
+See the [Pull Request Fee FAQ](https://developer.trustwallet.com/add_new_asset/pr-fee).
+ | This PR is being closed due to inactivity. If you wish to continue, please have us reopen the PR before sending your payment.
+Do NOT send payments for closed PR, as the fee may by lost!
+  (60 vs. 60 hrs)",8.0,8.0,1.0,52020b6b4b8405a05cf60a093f463950a5758c027a954e3132c0ecd8beee829b,random_control,,,,,,,,,,,,,,,
+1209151403,ipfs/js-ipfs,4085,Pull Request,closed,2022-04-20T04:36:08+00:00,2022-04-20T12:09:29+00:00,,Storage Protocol,Storage Protocol,provider,fix: update car dependency for CARv2 read support,"4.x adds basic CARv2 read support, so you could `ipfs dag import` a CARv2 with this; also with https://explore.ipld.io/ getting CAR support, this would allow importing and inspection of a CARv2 there.
+
+The breakage was in the return type definition of `CarReader#header()` which I don't believe is touched in js-ipfs, which only cares about `getRoots()` in the header which remains the same.",Thanks!,1.0,1.0,1.0,d4b6f955dc3bc1c162923cf63f126ae4c5f9476fd5560bca4cee5045972e0f5d,pattern_enriched,ipfs,,,,,,,,,,,,,,

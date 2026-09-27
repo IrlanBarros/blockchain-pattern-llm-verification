@@ -49,8 +49,9 @@ Fluxo de alto nível:
 - [llm_pipeline/normalization.py](../llm_pipeline/normalization.py): normalização robusta de headers/células e compatibilidade CSV.
 - [llm_pipeline/prompts.py](../llm_pipeline/prompts.py): prompts dos estágios alinhados ao protocolo metodológico.
 - [llm_pipeline/schemas.py](../llm_pipeline/schemas.py): contratos JSON e validações semânticas de resposta.
-- [llm_pipeline/requests.py](../llm_pipeline/requests.py): montagem de payloads para a API Gemini.
-- [llm_pipeline/client.py](../llm_pipeline/client.py): integração com SDK Gemini, retries e parsing.
+- [llm_pipeline/requests.py](../llm_pipeline/requests.py): montagem do contrato canônico de requests.
+- [llm_pipeline/providers.py](../llm_pipeline/providers.py): capabilities, configuração e adapter HTTP OpenAI-compatible.
+- [llm_pipeline/client.py](../llm_pipeline/client.py): seleção de provider, caminho SDK Gemini, retries e parsing canônico.
 - [llm_pipeline/stages.py](../llm_pipeline/stages.py): execução Stage 1/Stage 2 em `sync` e `batch`.
 - [llm_pipeline/aggregation.py](../llm_pipeline/aggregation.py): consolidação final por issue (inclui schema final de saída).
 - [llm_pipeline/artifacts.py](../llm_pipeline/artifacts.py): geração de snapshots, manifests e metadados.
@@ -158,4 +159,3 @@ Resumo de comandos:
 - O seed melhora repetibilidade, mas não elimina totalmente não determinismo de LLM.
 - Em caso de quota, checkpoint permite retomar sem reprocessar tudo.
 - `issue_results.csv` depende da qualidade e cobertura de Stage 1/Stage 2.
-

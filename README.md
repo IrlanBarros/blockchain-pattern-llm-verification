@@ -1,4 +1,4 @@
-# Pipeline Gemini de verificação de blockchain design patterns
+# Pipeline multi-provider de verificação de blockchain design patterns
 
 Pipeline em 2 estágios para identificar e verificar menções a blockchain design patterns em issues/PRs de projetos OSS.
 
@@ -9,11 +9,17 @@ Pipeline em 2 estágios para identificar e verificar menções a blockchain desi
 ## Visão rápida
 
 - Linguagem: Python
-- SDK de LLM: `google-genai`
+- Backends de LLM: Gemini (`google-genai`) e OpenAI-compatible (`llama.cpp`/vLLM)
 - Catálogo de patterns: `blockchain_patterns_keywords_v3.csv`
 - Entrypoint principal: `run_pipeline.py`
 
 Documentação técnica detalhada do projeto e dos arquivos está em `docs/PROJECT_DOCUMENTATION.md`.
+
+## Local Llama Development
+
+O fluxo OpenAI-compatible para `llama.cpp` CPU-only (e futura migração para
+vLLM), incluindo instalação, variáveis, smoke, resume e telemetria, está em
+[docs/LOCAL_LLAMA_DEVELOPMENT.md](docs/LOCAL_LLAMA_DEVELOPMENT.md).
 
 ## 1. Clonar o projeto
 
@@ -40,9 +46,14 @@ python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-## 3. Configurar chave da API Gemini
+## 3. Configurar o provider
 
-Defina apenas uma variável (`GEMINI_API_KEY` ou `GOOGLE_API_KEY`).
+Para desenvolvimento local com Llama, veja o guia completo de arquitetura,
+setup CPU-only, smoke, resume e telemetria em
+[Local Llama Development](docs/LOCAL_LLAMA_DEVELOPMENT.md).
+
+Para reprodução histórica com Gemini, defina apenas uma variável
+(`GEMINI_API_KEY` ou `GOOGLE_API_KEY`).
 
 ```bash
 export GEMINI_API_KEY="SUA_CHAVE_AQUI"
@@ -165,6 +176,7 @@ Flags comuns:
 ## 10. Referências rápidas
 
 - Arquitetura: `docs/ARCHITECTURE.md`
+- Llama local: `docs/LOCAL_LLAMA_DEVELOPMENT.md`
 - Contratos Stage 1/2: `docs/PIPELINE_STAGE1_STAGE2.md`
 - Testes de integração: `INTEGRATION_TESTS_README.md`
 - Documentação completa do projeto: `docs/PROJECT_DOCUMENTATION.md`

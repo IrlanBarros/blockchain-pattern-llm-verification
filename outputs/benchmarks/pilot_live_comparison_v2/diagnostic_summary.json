@@ -1,0 +1,121 @@
+{
+  "aggregation_bug_found": false,
+  "comparator_v1_issue": "No issue-level universe; pair labels contained eight positives and no explicit negative pairs.",
+  "diagnoses_are_annotations_only": true,
+  "optimized_false_negative_operational_origins": {},
+  "optimized_false_positive_operational_origins": {
+    "stage2_false_positive": 10
+  },
+  "optimized_false_positive_semantic_categories": {
+    "background_architecture": 3,
+    "false_friend": 3,
+    "human_model_disagreement": 2,
+    "insufficient_pattern_discussion": 2
+  },
+  "pattern_false_positives": [
+    {
+      "aliases": "",
+      "compact_definition": "Off-chain components observe specific on-chain state/events and react outside the blockchain; outbound information flow.",
+      "false_friends": "",
+      "family": "F02",
+      "fp_count": 2,
+      "keywords": "contract.on('EventName'|ethers.js event listener|web3.eth.subscribe('logs'|off-chain relayer listening to contract events|event-driven off-chain worker",
+      "llm_evidence_examples": "[\"It's very welcome on our end (Phala Network), because we extensively rely on events to notify our offchain systems. I think it's also useful for indexers like SubQuery and Subscan.\", \"Payment evaluation happens automatically, but with a few minutes delay. When payment is detected, an Accept Review is automatically placed on the PR\"]",
+      "observed_fp_proportion": 0.6666666666666666,
+      "pattern": "Reverse Oracle",
+      "total_positive_decisions": 3,
+      "tp_count": 1
+    },
+    {
+      "aliases": "",
+      "compact_definition": "Transfer and initialize source-chain state on the destination chain during migration.",
+      "false_friends": "",
+      "family": "",
+      "fp_count": 2,
+      "keywords": "importState() on target chain|bootstrapState() from migration snapshot|state migration initializer contract",
+      "llm_evidence_examples": "[\"the test contract isn't in the `persisted_accounts` list during initialization and as such isn't migrated to zksync. This causes it to be incorrectly migrated to an empty code account when a evm fork is encountered.\", \"Migration can assume max severity for all pending slashes\"]",
+      "observed_fp_proportion": 1.0,
+      "pattern": "State initialization",
+      "total_positive_decisions": 2,
+      "tp_count": 0
+    },
+    {
+      "aliases": "",
+      "compact_definition": "A creator contract creates new instances of other smart contracts; deployment primitives alone are insufficient.",
+      "false_friends": "",
+      "family": "",
+      "fp_count": 1,
+      "keywords": "Clones.clone() (OpenZeppelin)|CREATE2 deterministic deployment|deployNewInstance() factory function",
+      "llm_evidence_examples": "[\"Uniswap uses CREATE2 to determine the address of a pool. The advantage is that the address of a pool with two specific tokens and a specific fee tier is deterministic and computable wether the pool is deployed or not.\"]",
+      "observed_fp_proportion": 1.0,
+      "pattern": "Factory contract",
+      "total_positive_decisions": 1,
+      "tp_count": 0
+    },
+    {
+      "aliases": "",
+      "compact_definition": "Map a decentralized identifier (DID) to off-chain attributes in a contract; private-key possession proves control.",
+      "false_friends": "",
+      "family": "",
+      "fp_count": 1,
+      "keywords": "DID registry smart contract|resolveDID(string did)|did:ethr method|ERC-1056 EthereumDIDRegistry|DID document storage on-chain",
+      "llm_evidence_examples": "[\"No native ENS support to resolve or reverse resolve `.eth` address to ethereum address, text records (include avatar, email, etc), ipfs/arweave/skynet hash (for websites)\"]",
+      "observed_fp_proportion": 1.0,
+      "pattern": "Identifier Registry",
+      "total_positive_decisions": 1,
+      "tp_count": 0
+    },
+    {
+      "aliases": "upgradeable proxy|upgradeability proxy",
+      "compact_definition": "Forward calls to a replaceable implementation contract to upgrade logic while retaining the public address.",
+      "false_friends": "HTTP proxy|reverse proxy|nginx proxy",
+      "family": "F00",
+      "fp_count": 1,
+      "keywords": "delegatecall-based proxy|EIP-1167 minimal proxy clone|TransparentUpgradeableProxy|UUPSUpgradeable|ERC-1967 implementation slot|upgradeTo(address newImplementation)",
+      "llm_evidence_examples": "[\"Instead of setting approval for the exchange contract I have to approve it for the assigned proxy? | Yep! First you should make sure that there is a deployed proxy for that address. If there isn't one yet, you'll have to call the `WyvernProxyRegistry.registerProxy()`\"]",
+      "observed_fp_proportion": 0.5,
+      "pattern": "Proxy contract",
+      "total_positive_decisions": 2,
+      "tp_count": 1
+    },
+    {
+      "aliases": "RBAC|role based access control",
+      "compact_definition": "Assign roles to addresses and enforce different permissions for each role (RBAC).",
+      "false_friends": "",
+      "family": "F01",
+      "fp_count": 1,
+      "keywords": "OpenZeppelin AccessControl|hasRole(bytes32 role, address)|grantRole()/revokeRole()|DEFAULT_ADMIN_ROLE",
+      "llm_evidence_examples": "[\"AccessControl\"]",
+      "observed_fp_proportion": 0.5,
+      "pattern": "Role-based control",
+      "total_positive_decisions": 2,
+      "tp_count": 1
+    },
+    {
+      "aliases": "",
+      "compact_definition": "The application constructs a transaction; the user manually confirms and signs it with a browser wallet.",
+      "false_friends": "",
+      "family": "",
+      "fp_count": 1,
+      "keywords": "MetaMask transaction confirmation popup|personal_sign() browser wallet approval|wallet extension user-approved transaction",
+      "llm_evidence_examples": "[\"When call _signTypedData function from ethers metamask popup to sign the message shown up, Cancel button is pressable but the Sign button is unpressable.\"]",
+      "observed_fp_proportion": 1.0,
+      "pattern": "Self-Confirmed Transactions",
+      "total_positive_decisions": 1,
+      "tp_count": 0
+    },
+    {
+      "aliases": "zero knowledge proof|zk proof",
+      "compact_definition": "Prove a statement without revealing underlying data, with contract verification of the proof.",
+      "false_friends": "",
+      "family": "",
+      "fp_count": 1,
+      "keywords": "Verifier.sol zk-SNARK verification|Groth16 proof verification on-chain|circom circuit compiled verifier contract",
+      "llm_evidence_examples": "[\"Add an example on how to use a hash of the public inputs to optimize for calldata and proof recursion complexity.\"]",
+      "observed_fp_proportion": 1.0,
+      "pattern": "Zero-knowledge proof",
+      "total_positive_decisions": 1,
+      "tp_count": 0
+    }
+  ]
+}

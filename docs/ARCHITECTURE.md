@@ -1,8 +1,8 @@
-# Arquitetura do pipeline Gemini
+# Arquitetura multi-provider do pipeline
 
 ## Objetivo da divisão
 
-`run_pipeline.py` apenas encaminha a execução para a CLI. A implementação está dividida por responsabilidade para separar normalização, protocolo metodológico, integração com o Gemini API, execução, agregação e auditoria.
+`run_pipeline.py` apenas encaminha a execução para a CLI. A implementação está dividida por responsabilidade para separar normalização, protocolo metodológico, providers de inferência, execução, agregação e auditoria. O desenho e a operação do backend Llama estão documentados em [LOCAL_LLAMA_DEVELOPMENT.md](LOCAL_LLAMA_DEVELOPMENT.md).
 
 ## Fluxo principal
 
@@ -10,8 +10,8 @@
 2. `data.py` valida colunas, chave composta, catálogo e prepara o texto da issue/PR.
 3. `prompts.py` fornece as instruções alinhadas ao Manual v0.2.
 4. `schemas.py` constrói JSON Schemas fechados e valida semanticamente as respostas.
-5. `requests.py` cria requisições `generateContent` para os dois stages e as converte para Batch API quando necessário.
-6. `client.py` encapsula o SDK oficial `google-genai`, parsing, retries, estados de batch e limites de tamanho.
+5. `requests.py` cria requisições canônicas para os dois stages e as converte para Gemini Batch quando necessário.
+6. `providers.py` configura capabilities e adapta OpenAI-compatible HTTP para a resposta canônica; `client.py` seleciona o provider, mantém parsing/retries e o caminho Gemini.
 7. `stages.py` executa Stage 1 e Stage 2 em modo síncrono ou batch.
 8. `aggregation.py` produz a decisão no nível da issue sem uma terceira chamada de LLM.
 9. `artifacts.py` preserva snapshots, hashes, parâmetros, schemas, manifests e metadados.

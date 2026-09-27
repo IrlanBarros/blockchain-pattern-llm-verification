@@ -1,0 +1,19 @@
+repository,issue_number,human_label,optimized_relevant,classification,predicted_patterns,stage1_candidates,stage2_yes_patterns,stage2_non_yes_patterns,final_aggregated_patterns
+Consensys/gnark,1311,no,True,FP,Zero-knowledge proof,Zero-knowledge proof,Zero-knowledge proof,,Zero-knowledge proof
+MetaMask/metamask-mobile,4441,no,True,FP,Self-Confirmed Transactions,Self-Confirmed Transactions,Self-Confirmed Transactions,,Self-Confirmed Transactions
+MoralisWeb3/react-moralis,142,no,True,FP,Identifier Registry,Identifier Registry,Identifier Registry,,Identifier Registry
+OpenZeppelin/openzeppelin-contracts,4084,no,True,FP,Role-based control,Role-based control,Role-based control,,Role-based control
+ProjectOpenSea/opensea-js,236,no,True,FP,Proxy contract,Proxy contract,Proxy contract,,Proxy contract
+Uniswap/v3-sdk,141,no,True,FP,Factory contract,Factory contract,Factory contract,,Factory contract
+matter-labs/foundry-zksync,358,no,True,FP,State initialization,State initialization,State initialization,,State initialization
+paritytech/polkadot-sdk,4745,no,True,FP,State initialization,State initialization,State initialization,,State initialization
+paritytech/substrate,9738,no,True,FP,Reverse Oracle,Reverse Oracle,Reverse Oracle,,Reverse Oracle
+trustwallet/assets,4740,no,True,FP,Reverse Oracle,Reverse Oracle,Reverse Oracle,,Reverse Oracle
+OpenZeppelin/openzeppelin-contracts,3735,yes,True,TP,Role-based control,Role-based control,Role-based control,,Role-based control
+ethereum/pm,867,yes,True,TP,Mortal,Mortal,Mortal,,Mortal
+foundry-rs/foundry,8015,yes,True,TP,Proxy contract,Proxy contract,Proxy contract,,Proxy contract
+graphprotocol/graph-node,3373,yes,True,TP,Reverse Oracle,Reverse Oracle,Reverse Oracle,,Reverse Oracle
+solana-labs/solana-program-library,2003,yes,True,TP,Oracle,Oracle,Oracle,,Oracle
+solana-labs/solana-program-library,3165,yes,True,TP,Oracle,Oracle,Oracle,,Oracle
+web3swift-team/web3swift,103,yes,True,TP,Tokenization,Tokenization,Tokenization,,Tokenization
+crytic/slither,117,uncertain,True,EXCLUDED_UNCERTAIN,Check-Effects-Interactions,Check-Effects-Interactions,Check-Effects-Interactions,,Check-Effects-Interactions
