@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import shutil
 import subprocess
 import os
@@ -19,6 +20,19 @@ from .prompts import COMMON_METHOD_RULES, STAGE1_RULES, STAGE2_RULES
 from .requests import stage1_request_params
 from .schemas import stage1_schema, stage2_schema
 from .utils import append_jsonl, json_dumps, sha256_file, sha256_text, utc_now_iso, write_json
+
+
+def persist_provider_runtime(run_dir: Path, client: object) -> None:
+    """Probe a local server once per process and append non-secret provenance."""
+    probe = getattr(client, "probe", None)
+    if not callable(probe):
+        return
+    runtime = probe()
+    write_json(run_dir / "provider_runtime.json", runtime)
+    metadata_path = run_dir / "run_metadata.json"
+    metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+    metadata["server_information"] = runtime
+    write_json(metadata_path, metadata)
 
 
 def build_dry_run_artifacts(
@@ -104,10 +118,13 @@ def save_manifest(
     ]
     write_json(run_dir / "request_manifest.json", prepared_manifest)
 
+    from .providers import ProviderConfig
+    provider_config = getattr(args, 'provider_config', None) or ProviderConfig.from_environment(getattr(args, 'provider', None))
     metadata = {
         "pipeline_version": PIPELINE_VERSION,
-        "provider": PROVIDER,
-        "api_family": API_FAMILY,
+        "provider": provider_config.provider,
+        "backend": provider_config.backend,
+        "api_family": API_FAMILY if provider_config.provider == 'gemini' else 'openai-compatible-chat-completions',
         "manual_version": MANUAL_VERSION,
         "catalog_version": CATALOG_VERSION,
         "created_at_utc": utc_now_iso(),
@@ -125,6 +142,8 @@ def save_manifest(
         "stage1_model": args.stage1_model,
         "stage2_model": args.stage2_model,
         "temperature": args.temperature,
+        "top_p": provider_config.top_p,
+        "stop_sequences": list(provider_config.stop),
         "seed": args.seed,
         "stage1_thinking_level": args.stage1_thinking_level,
         "stage2_thinking_level": args.stage2_thinking_level,
@@ -142,9 +161,13 @@ def save_manifest(
         "stage1_rules_sha256": sha256_text(STAGE1_RULES),
         "stage2_rules_sha256": sha256_text(STAGE2_RULES),
         "python_version": sys.version,
+        "provider_config": provider_config.public_metadata(),
+        "provider_fingerprint": provider_config.fingerprint,
+        "model_fingerprint": provider_config.model_sha256 or provider_config.model,
+        "context_window": provider_config.context_window,
     }
     metadata['profile'] = getattr(args, 'profile', 'legacy')
-    metadata['quantization'] = 'provider_managed_not_exposed'
+    metadata['quantization'] = provider_config.quantization or ('provider_managed_not_exposed' if provider_config.provider == 'gemini' else None)
     try:
         metadata['commit_hash'] = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True, stderr=subprocess.DEVNULL).strip()
         metadata['working_tree_dirty'] = bool(subprocess.check_output(['git','status','--porcelain'], text=True).strip())
@@ -153,9 +176,10 @@ def save_manifest(
     from .optimization import OptimizationConfig
     from .optimization_runtime import optimization_metadata
     metadata.update(optimization_metadata(OptimizationConfig.from_environment(enabled=metadata['profile']=='optimized'),catalog))
-    try:
-        genai = import_genai()
-        metadata["google_genai_sdk_version"] = getattr(genai, "__version__", "unknown")
-    except RuntimeError:
-        metadata["google_genai_sdk_version"] = "not_installed"
+    if provider_config.provider == 'gemini':
+        try:
+            genai = import_genai()
+            metadata["google_genai_sdk_version"] = getattr(genai, "__version__", "unknown")
+        except RuntimeError:
+            metadata["google_genai_sdk_version"] = "not_installed"
     write_json(run_dir / "run_metadata.json", metadata)

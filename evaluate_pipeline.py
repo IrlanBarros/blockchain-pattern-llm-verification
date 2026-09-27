@@ -241,6 +241,21 @@ def safe_div(num: int | float, den: int | float) -> float | None:
 
 
 def binary_metrics(y_true: list[str], y_pred: list[str]) -> dict[str, Any]:
+    """Return a complete binary confusion matrix without inventing undefined rates.
+
+    ``yes`` is the positive class and ``no`` is the negative class.  Callers are
+    responsible for excluding abstentions before invoking this function.  The
+    original keys are preserved for backwards compatibility; the additional
+    rates make the unit-specific reports useful for issue-level evaluation too.
+    """
+    if len(y_true) != len(y_pred):
+        raise ValueError("y_true e y_pred devem ter o mesmo tamanho")
+    invalid_true = sorted(set(y_true) - {"yes", "no"})
+    invalid_pred = sorted(set(y_pred) - {"yes", "no"})
+    if invalid_true or invalid_pred:
+        raise ValueError(
+            f"Métrica binária aceita apenas yes/no; true={invalid_true}, pred={invalid_pred}"
+        )
     tp = sum(t == "yes" and p == "yes" for t, p in zip(y_true, y_pred))
     tn = sum(t == "no" and p == "no" for t, p in zip(y_true, y_pred))
     fp = sum(t == "no" and p == "yes" for t, p in zip(y_true, y_pred))
@@ -251,6 +266,15 @@ def binary_metrics(y_true: list[str], y_pred: list[str]) -> dict[str, Any]:
         f1 = None
     else:
         f1 = 2 * precision * recall / (precision + recall)
+    specificity = safe_div(tn, tn + fp)
+    false_positive_rate = safe_div(fp, fp + tn)
+    false_negative_rate = safe_div(fn, fn + tp)
+    negative_predictive_value = safe_div(tn, tn + fn)
+    balanced_accuracy = (
+        (recall + specificity) / 2
+        if recall is not None and specificity is not None
+        else None
+    )
     return {
         "n": len(y_true),
         "tp": tp,
@@ -260,7 +284,13 @@ def binary_metrics(y_true: list[str], y_pred: list[str]) -> dict[str, Any]:
         "accuracy": safe_div(tp + tn, len(y_true)),
         "precision": precision,
         "recall": recall,
+        "sensitivity": recall,
+        "specificity": specificity,
         "f1": f1,
+        "false_positive_rate": false_positive_rate,
+        "false_negative_rate": false_negative_rate,
+        "negative_predictive_value": negative_predictive_value,
+        "balanced_accuracy": balanced_accuracy,
     }
 
 

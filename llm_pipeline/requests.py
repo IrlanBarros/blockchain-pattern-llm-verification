@@ -1,4 +1,4 @@
-"""Build prompts and request parameters for the Gemini API."""
+"""Build provider-neutral prompts and canonical request parameters."""
 
 from __future__ import annotations
 

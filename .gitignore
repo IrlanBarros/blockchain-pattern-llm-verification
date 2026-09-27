@@ -119,3 +119,8 @@ Thumbs.db
 
 # Local neural retrieval indices (reproducible from catalog + pinned model)
 .cache/retrieval_embeddings/
+
+# Local LLM weights are external runtime assets, never source artifacts.
+models/
+.cache/models/
+*.gguf
