@@ -1,0 +1,66 @@
+{
+  "configurations": [
+    {
+      "configuration": "legacy_full_catalog",
+      "estimated_stage1_input_tokens": 1680013,
+      "estimated_token_reduction_percent": 0.0,
+      "estimated_total_input_tokens": 2123514
+    },
+    {
+      "configuration": "conservative_current",
+      "estimated_stage1_input_tokens": 890992,
+      "estimated_token_reduction_percent": 42.99100453305229,
+      "estimated_total_input_tokens": 1210594
+    },
+    {
+      "configuration": "conservative_expanded_fallback_counterfactual",
+      "estimated_stage1_input_tokens": 548325,
+      "estimated_token_reduction_percent": 59.12779477790116,
+      "estimated_total_input_tokens": 867927
+    },
+    {
+      "configuration": "lsa_anchor_off_high_confidence",
+      "estimated_stage1_input_tokens": 598145,
+      "estimated_token_reduction_percent": 56.78168356789736,
+      "estimated_total_input_tokens": 917747
+    },
+    {
+      "configuration": "lsa_intermediate",
+      "estimated_stage1_input_tokens": 470135,
+      "estimated_token_reduction_percent": 62.80989906353337,
+      "estimated_total_input_tokens": 789737
+    },
+    {
+      "configuration": "aggressive_previous",
+      "estimated_stage1_input_tokens": 470135,
+      "estimated_token_reduction_percent": 62.80989906353337,
+      "estimated_total_input_tokens": 789737
+    },
+    {
+      "configuration": "lsa_expanded_fallback",
+      "estimated_stage1_input_tokens": 468358,
+      "estimated_token_reduction_percent": 62.8935811113089,
+      "estimated_total_input_tokens": 787960
+    },
+    {
+      "configuration": "neural_a",
+      "estimated_stage1_input_tokens": 575736,
+      "estimated_token_reduction_percent": 57.83696269485391,
+      "estimated_total_input_tokens": 895338
+    },
+    {
+      "configuration": "neural_b_lsa_union",
+      "estimated_stage1_input_tokens": 516359,
+      "estimated_token_reduction_percent": 60.63312980277031,
+      "estimated_total_input_tokens": 835961
+    }
+  ],
+  "estimator": "uncalibrated ceil(Unicode characters/4), including schema; not official Gemini tokens",
+  "fixed_stage2_workload": {
+    "available": true,
+    "note": "Diagnostic workload only; not ground truth.",
+    "pairs": 88,
+    "path": "outputs/runs/pilot_gemini/stage1_results.csv",
+    "sha256": "931747728313546446f2cd4dc0a8b1c90c1b9a450067a312906bbf9fcf89fecc"
+  }
+}

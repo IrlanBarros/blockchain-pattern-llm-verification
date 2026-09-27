@@ -1,0 +1,545 @@
+profile,stage,repository,issue_number,pattern,prompt_chars,input_tokens_estimate
+baseline,stage1,ipfs/js-ipfs,4085,,32287,8072
+baseline,stage1,MetaMask/core,1981,,33190,8298
+baseline,stage1,MetaMask/eth-phishing-detect,159849,,32238,8060
+baseline,stage1,ipfs/ipfs-webui,2348,,32549,8138
+baseline,stage1,paritytech/polkadot-sdk,9497,,32449,8113
+baseline,stage1,trustwallet/assets,29848,,32293,8074
+baseline,stage1,trustwallet/assets,17741,,32253,8064
+baseline,stage1,graphprotocol/graph-node,5156,,34430,8608
+baseline,stage1,web3swift-team/web3swift,103,,33385,8347
+baseline,stage1,ipfs/awesome-ipfs,485,,32256,8064
+baseline,stage1,ipfs/kubo,5206,,33618,8405
+baseline,stage1,ipfs/specs,383,,36285,9072
+baseline,stage1,ipfs/kubo,3430,,34316,8579
+baseline,stage1,trustwallet/assets,24480,,32435,8109
+baseline,stage1,MetaMask/metamask-extension,30553,,32865,8217
+baseline,stage1,foundry-rs/foundry,8015,,37857,9465
+baseline,stage1,MetaMask/metamask-extension,13525,,34260,8565
+baseline,stage1,ipfs/kubo,1376,,33828,8457
+baseline,stage1,ipfs/ipfs-webui,845,,32779,8195
+baseline,stage1,trustwallet/wallet-core,2768,,32286,8072
+baseline,stage1,INFURA/infura,81,,32413,8104
+baseline,stage1,ProjectOpenSea/opensea-js,236,,33551,8388
+baseline,stage1,paritytech/polkadot-sdk,3203,,32804,8201
+baseline,stage1,AztecProtocol/aztec-packages,11391,,32755,8189
+baseline,stage1,hyperledger/besu,671,,32747,8187
+baseline,stage1,ipfs/kubo,8303,,32441,8111
+baseline,stage1,OpenZeppelin/openzeppelin-contracts,3735,,35924,8981
+baseline,stage1,trustwallet/assets,30558,,32288,8072
+baseline,stage1,Consensys/gnark,1311,,32785,8197
+baseline,stage1,junobuild/juno,481,,32391,8098
+baseline,stage1,Uniswap/v4-core,310,,34721,8681
+baseline,stage1,TrueFiEng/Waffle,646,,32507,8127
+baseline,stage1,graphprotocol/graph-node,3373,,35521,8881
+baseline,stage1,ipfs/specs,406,,38487,9622
+baseline,stage1,FuelLabs/fuel-core,2528,,34185,8547
+baseline,stage1,blockscout/blockscout,4222,,32785,8197
+baseline,stage1,OpenZeppelin/cairo-contracts,328,,35610,8903
+baseline,stage1,paritytech/subxt,1117,,34646,8662
+baseline,stage1,OpenZeppelin/openzeppelin-contracts,5062,,33615,8404
+baseline,stage1,Uniswap/interface,2094,,32437,8110
+baseline,stage1,ipfs/kubo,6458,,36963,9241
+baseline,stage1,Consensys/quorum,1586,,33946,8487
+baseline,stage1,paritytech/polkadot-sdk,2245,,36489,9123
+baseline,stage1,ipfs/ipfs-webui,2190,,38329,9583
+baseline,stage1,scroll-tech/contribute-to-scroll,1966,,32871,8218
+baseline,stage1,hyperledger/besu,4012,,33788,8447
+baseline,stage1,hyperledger/besu,3888,,32830,8208
+baseline,stage1,ethereum/go-ethereum,85,,38824,9706
+baseline,stage1,MoralisWeb3/react-moralis,142,,33561,8391
+baseline,stage1,ipfs/helia,287,,32261,8066
+baseline,stage1,MetaMask/eth-phishing-detect,184576,,32215,8054
+baseline,stage1,ethereum/web3.py,3441,,32765,8192
+baseline,stage1,smol-dot/smoldot,1806,,37380,9345
+baseline,stage1,ipfs/js-ipfs,4197,,32432,8108
+baseline,stage1,ethereum/aleth,3639,,32247,8062
+baseline,stage1,ipfs/ipfs-companion,485,,35468,8867
+baseline,stage1,solana-labs/solana,5681,,32239,8060
+baseline,stage1,MetaMask/metamask-mobile,17295,,34514,8629
+baseline,stage1,ethereum/pm,867,,33882,8471
+baseline,stage1,ipfs/js-ipfs,2760,,32177,8045
+baseline,stage1,ipfs/kubo,3869,,34369,8593
+baseline,stage1,protofire/solhint,197,,35744,8936
+baseline,stage1,paritytech/substrate,9696,,33128,8282
+baseline,stage1,matter-labs/foundry-zksync,358,,33243,8311
+baseline,stage1,ipfs/public-gateway-checker,215,,32659,8165
+baseline,stage1,foundry-rs/foundry,11673,,34533,8634
+baseline,stage1,MetaMask/eth-phishing-detect,13502,,32899,8225
+baseline,stage1,smartcontractkit/chainlink,13017,,32480,8120
+baseline,stage1,hyperledger/besu,6344,,34831,8708
+baseline,stage1,matter-labs/zksync,215,,32032,8008
+baseline,stage1,ipfs/js-ipfs,12,,32374,8094
+baseline,stage1,OpenZeppelin/openzeppelin-contracts,4084,,32957,8240
+baseline,stage1,ipfs/kubo,7168,,35358,8840
+baseline,stage1,ipfs/kubo,460,,33086,8272
+baseline,stage1,solana-labs/solana-program-library,3165,,32403,8101
+baseline,stage1,solana-labs/solana-program-library,2003,,32322,8081
+baseline,stage1,Uniswap/v3-sdk,141,,32449,8113
+baseline,stage1,trustwallet/assets,15915,,35245,8812
+baseline,stage1,ipfs/js-ipfs,2343,,37606,9402
+baseline,stage1,ipfs/ipfs-desktop,2125,,32156,8039
+baseline,stage1,Consensys/quorum,72,,38996,9749
+baseline,stage1,ProjectOpenSea/operator-filter-registry,93,,34092,8523
+baseline,stage1,OpenZeppelin/openzeppelin-contracts,722,,36468,9117
+baseline,stage1,embarklabs/embark,1361,,33336,8334
+baseline,stage1,Consensys/quorum,387,,32548,8137
+baseline,stage1,ipfs/kubo,4527,,37349,9338
+baseline,stage1,MetaMask/metamask-extension,22537,,34519,8630
+baseline,stage1,MetaMask/snaps,459,,35178,8795
+baseline,stage1,web3/web3.js,6085,,32874,8219
+baseline,stage1,hyperledger/besu,5146,,32497,8125
+baseline,stage1,ipfs/public-gateway-checker,177,,33073,8269
+baseline,stage1,ipfs/kubo,5920,,33359,8340
+baseline,stage1,paritytech/polkadot-sdk,4745,,32111,8028
+baseline,stage1,trustwallet/assets,13141,,35163,8791
+baseline,stage1,ipfs/ipfs-desktop,2788,,33612,8403
+baseline,stage1,MetaMask/metamask-mobile,4441,,37279,9320
+baseline,stage1,MetaMask/contract-metadata,1125,,32567,8142
+baseline,stage1,smartcontractkit/chainlink,2681,,32837,8210
+baseline,stage1,MetaMask/metamask-extension,20424,,33204,8301
+baseline,stage1,ethersphere/bee,2972,,32478,8120
+baseline,stage1,trustwallet/assets,16096,,33923,8481
+baseline,stage1,wevm/wagmi,1412,,32218,8055
+baseline,stage1,near/nearcore,2846,,32199,8050
+baseline,stage1,MetaMask/metamask-mobile,16448,,34776,8694
+baseline,stage1,trustwallet/assets,14229,,35081,8771
+baseline,stage1,MetaMask/core,309,,33189,8298
+baseline,stage1,livepeer/go-livepeer,1786,,33466,8367
+baseline,stage1,foundry-rs/starknet-foundry,231,,32264,8066
+baseline,stage1,AztecProtocol/aztec-packages,2388,,32762,8191
+baseline,stage1,paritytech/polkadot,3714,,38212,9553
+baseline,stage1,coinbase/onchainkit,1602,,32165,8042
+baseline,stage1,algorand/go-algorand,3261,,36250,9063
+baseline,stage1,sigp/lighthouse,911,,32341,8086
+baseline,stage1,algorand/go-algorand,6374,,32738,8185
+baseline,stage1,MetaMask/metamask-extension,28962,,36905,9227
+baseline,stage1,openethereum/parity-ethereum,5747,,36514,9129
+baseline,stage1,rainbow-me/rainbow,3675,,32131,8033
+baseline,stage1,graphprotocol/graph-node,1577,,32184,8046
+baseline,stage1,near/nearcore,306,,35284,8821
+baseline,stage1,MetaMask/core,691,,32617,8155
+baseline,stage1,foundry-rs/starknet-foundry,2924,,32972,8243
+baseline,stage1,FuelLabs/sway,7228,,33126,8282
+baseline,stage1,matter-labs/anvil-zksync,351,,32872,8218
+baseline,stage1,trustwallet/assets,26515,,32586,8147
+baseline,stage1,MetaMask/metamask-mobile,11455,,33857,8465
+baseline,stage1,near/nearcore,2483,,32237,8060
+baseline,stage1,AztecProtocol/aztec-packages,5038,,32183,8046
+baseline,stage1,paritytech/substrate,1310,,39828,9957
+baseline,stage1,ipfs/kubo,5749,,32533,8134
+baseline,stage1,trustwallet/assets,29882,,35434,8859
+baseline,stage1,ethers-io/ethers.js,970,,32236,8059
+baseline,stage1,trustwallet/assets,5452,,33765,8442
+baseline,stage1,paradigmxyz/reth,2760,,34745,8687
+baseline,stage1,Consensys/teku,8385,,32055,8014
+baseline,stage1,NomicFoundation/hardhat,4652,,32520,8130
+baseline,stage1,MetaMask/metamask-extension,25739,,33926,8482
+baseline,stage1,paradigmxyz/reth,16266,,32280,8070
+baseline,stage1,paradigmxyz/reth,17374,,32080,8020
+baseline,stage1,ethereum/mist,1179,,32615,8154
+baseline,stage1,MetaMask/metamask-extension,1091,,34090,8523
+baseline,stage1,ethereum/go-ethereum,2237,,33922,8481
+baseline,stage1,MetaMask/metamask-mobile,11138,,36715,9179
+baseline,stage1,web3/web3.js,2299,,32011,8003
+baseline,stage1,sigp/lighthouse,4971,,32882,8221
+baseline,stage1,snapshot-labs/sx-monorepo,981,,32310,8078
+baseline,stage1,ipfs/kubo,1505,,32122,8031
+baseline,stage1,ethereum/eth-tester,243,,32299,8075
+baseline,stage1,ethereum/aleth,5551,,33019,8255
+baseline,stage1,ipfs/public-gateway-checker,452,,32478,8120
+baseline,stage1,paritytech/polkadot-sdk,1851,,32961,8241
+baseline,stage1,near/core-contracts,197,,32367,8092
+baseline,stage1,hyperledger/fabric-sdk-node,94,,32117,8030
+baseline,stage1,MetaMask/metamask-mobile,14857,,33651,8413
+baseline,stage1,ethereum/execution-apis,244,,32710,8178
+baseline,stage1,ipfs/js-ipfs,3504,,35943,8986
+baseline,stage1,MetaMask/eth-phishing-detect,6425,,32249,8063
+baseline,stage1,ethereum/trin,451,,32447,8112
+baseline,stage1,blockscout/blockscout,6711,,32238,8060
+baseline,stage1,paritytech/polkadot-sdk,317,,36183,9046
+baseline,stage1,trustwallet/assets,4740,,36211,9053
+baseline,stage1,ethersphere/bee,1362,,32338,8085
+baseline,stage1,MetaMask/metamask-mobile,13691,,35115,8779
+baseline,stage1,MetaMask/eth-phishing-detect,8759,,32058,8015
+baseline,stage1,paritytech/substrate,9738,,36494,9124
+baseline,stage1,FuelLabs/fuel-connectors,349,,33045,8262
+baseline,stage1,MetaMask/metamask-extension,6105,,32884,8221
+baseline,stage1,Consensys/gnark,388,,33714,8429
+baseline,stage1,AztecProtocol/aztec-packages,5651,,32452,8113
+baseline,stage1,MetaMask/metamask-mobile,12951,,35599,8900
+baseline,stage1,near/nearcore,11333,,32502,8126
+baseline,stage1,paritytech/substrate,5493,,32197,8050
+baseline,stage1,MetaMask/metamask-docs,1505,,32413,8104
+baseline,stage1,foundry-rs/foundry,10589,,33557,8390
+baseline,stage1,trustwallet/assets,7985,,35207,8802
+baseline,stage1,trustwallet/tokens,104,,32551,8138
+baseline,stage1,livepeer/go-livepeer,3229,,33148,8287
+baseline,stage1,solana-labs/token-list,16854,,32289,8073
+baseline,stage1,MetaMask/metamask-extension,31382,,34556,8639
+baseline,stage1,blockscout/blockscout,5926,,32697,8175
+baseline,stage1,crytic/slither,117,,36430,9108
+baseline,stage1,coinbase/coinbase-wallet-sdk,526,,32295,8074
+baseline,stage1,MetaMask/metamask-mobile,13713,,33689,8423
+baseline,stage1,ethereum/consensus-specs,4177,,32261,8066
+baseline,stage1,ethereum/ethereum-org-website,5465,,32666,8167
+baseline,stage1,paritytech/substrate,900,,32111,8028
+baseline,stage1,Uniswap/web3-react,104,,33320,8330
+baseline,stage1,solana-labs/solana,3377,,32047,8012
+baseline,stage1,paradigmxyz/solar,329,,32158,8040
+baseline,stage1,FuelLabs/sway,4516,,32124,8031
+baseline,stage1,foundry-rs/foundry,8804,,34172,8543
+baseline,stage1,Uniswap/v4-core,815,,32339,8085
+baseline,stage1,ethereum/consensus-specs,44,,37043,9261
+baseline,stage1,trustwallet/assets,2057,,35279,8820
+baseline,stage1,SyncraDAO/psp-tokenlist,44,,34409,8603
+baseline,stage1,ethereum/aleth,603,,32425,8107
+baseline,stage1,ethersphere/bee,5116,,32636,8159
+baseline,stage1,OpenZeppelin/openzeppelin-sdk,917,,32431,8108
+baseline,stage1,ethereum/go-ethereum,23913,,32705,8177
+baseline,stage1,near/nearcore,6512,,32199,8050
+baseline,stage1,solana-labs/token-list,1165,,32739,8185
+baseline,stage2,Consensys/gnark,388,Low contract footprint,20293,5074
+baseline,stage2,Consensys/gnark,1311,Low contract footprint,19364,4841
+baseline,stage2,FuelLabs/sway,4516,Low contract footprint,18703,4676
+baseline,stage2,MetaMask/contract-metadata,1125,Tokenization,17618,4405
+baseline,stage2,MetaMask/core,691,Rate limit,18680,4670
+baseline,stage2,MetaMask/eth-phishing-detect,6425,Blocklist,19820,4955
+baseline,stage2,MetaMask/eth-phishing-detect,8759,Blocklist,19629,4908
+baseline,stage2,MetaMask/eth-phishing-detect,13502,Blocklist,20470,5118
+baseline,stage2,MetaMask/eth-phishing-detect,159849,Blocklist,19809,4953
+baseline,stage2,MetaMask/eth-phishing-detect,184576,Blocklist,19786,4947
+baseline,stage2,MetaMask/metamask-extension,6105,Limited-access,19065,4767
+baseline,stage2,MetaMask/metamask-extension,13525,Tokenization,19311,4828
+baseline,stage2,MetaMask/metamask-extension,28962,Blocklist,24476,6119
+baseline,stage2,MetaMask/metamask-mobile,4441,Off-chain Signatures,24256,6064
+baseline,stage2,MetaMask/metamask-mobile,11455,Freeing storage,19773,4944
+baseline,stage2,MetaMask/metamask-mobile,14857,Master & Sub Key,19295,4824
+baseline,stage2,MoralisWeb3/react-moralis,142,Identifier Registry,19680,4920
+baseline,stage2,OpenZeppelin/openzeppelin-contracts,722,Guard check,22589,5648
+baseline,stage2,OpenZeppelin/openzeppelin-contracts,3735,Role-based control,22076,5519
+baseline,stage2,OpenZeppelin/openzeppelin-contracts,3735,Tokenization,20975,5244
+baseline,stage2,OpenZeppelin/openzeppelin-contracts,5062,Ownable,19784,4946
+baseline,stage2,ProjectOpenSea/opensea-js,236,Proxy contract,21177,5295
+baseline,stage2,ProjectOpenSea/operator-filter-registry,93,Relay contract,21372,5343
+baseline,stage2,Uniswap/v3-sdk,141,Factory contract,19754,4939
+baseline,stage2,Uniswap/v4-core,310,Data contract,22295,5574
+baseline,stage2,algorand/go-algorand,3261,Contract Registry (on-chain),23873,5969
+baseline,stage2,crytic/slither,117,Check-Effects-Interactions,22568,5642
+baseline,stage2,ethereum/consensus-specs,44,Append-only data,22965,5742
+baseline,stage2,ethereum/execution-apis,244,X-confirmation,17725,4432
+baseline,stage2,ethereum/pm,867,Mortal,21336,5334
+baseline,stage2,ethers-io/ethers.js,970,Key Sharding,17895,4474
+baseline,stage2,ethersphere/bee,1362,Tokenization,17389,4348
+baseline,stage2,ethersphere/bee,2972,Proxy contract,20104,5026
+baseline,stage2,foundry-rs/foundry,8015,Proxy contract,25483,6371
+baseline,stage2,graphprotocol/graph-node,3373,Oracle,22337,5585
+baseline,stage2,graphprotocol/graph-node,5156,X-confirmation,19445,4862
+baseline,stage2,hyperledger/besu,671,Mortal,20201,5051
+baseline,stage2,hyperledger/besu,3888,X-confirmation,17845,4462
+baseline,stage2,ipfs/ipfs-desktop,2788,State initialization,19211,4803
+baseline,stage2,ipfs/ipfs-webui,845,Oracle,19595,4899
+baseline,stage2,ipfs/ipfs-webui,2190,Off-chain data storage,25920,6480
+baseline,stage2,ipfs/kubo,3869,Off-chain data storage,21960,5490
+baseline,stage2,ipfs/kubo,5206,Mutex,19670,4918
+baseline,stage2,ipfs/kubo,8303,Delegated Computation,19701,4926
+baseline,stage2,ipfs/public-gateway-checker,452,Off-chain computation,19311,4828
+baseline,stage2,ipfs/specs,383,Blocklist,23856,5964
+baseline,stage2,junobuild/juno,481,State initialization,17990,4498
+baseline,stage2,livepeer/go-livepeer,3229,Off-chain computation,19981,4996
+baseline,stage2,near/nearcore,306,State anchoring,22448,5612
+baseline,stage2,near/nearcore,2846,Announcement,19781,4946
+baseline,stage2,paritytech/polkadot-sdk,317,Low contract footprint,22762,5691
+baseline,stage2,paritytech/polkadot-sdk,2245,Low contract footprint,23068,5767
+baseline,stage2,paritytech/polkadot-sdk,4745,State initialization,17710,4428
+baseline,stage2,paritytech/polkadot-sdk,9497,Reverse Oracle,19204,4801
+baseline,stage2,paritytech/substrate,900,Low contract footprint,18690,4673
+baseline,stage2,paritytech/subxt,1117,Data refresh,22890,5723
+baseline,stage2,protofire/solhint,197,Limited-access,21925,5482
+baseline,stage2,solana-labs/solana,5681,Oracle,19055,4764
+baseline,stage2,solana-labs/solana-program-library,2003,Oracle,19138,4785
+baseline,stage2,solana-labs/solana-program-library,3165,Oracle,19219,4805
+baseline,stage2,solana-labs/token-list,1165,Tokenization,17790,4448
+baseline,stage2,trustwallet/assets,2057,Reverse Oracle,22034,5509
+baseline,stage2,trustwallet/assets,4740,Announcement,23793,5949
+baseline,stage2,trustwallet/assets,7985,Tokenization,20258,5065
+baseline,stage2,trustwallet/assets,13141,Tokenization,20214,5054
+baseline,stage2,trustwallet/assets,14229,Tokenization,20132,5033
+baseline,stage2,trustwallet/assets,15915,Tokenization,20296,5074
+baseline,stage2,trustwallet/assets,17741,Tokenization,17304,4326
+baseline,stage2,trustwallet/assets,24480,Tokenization,17486,4372
+baseline,stage2,trustwallet/assets,29848,Tokenization,17344,4336
+baseline,stage2,trustwallet/assets,29882,Tokenization,20485,5122
+baseline,stage2,web3swift-team/web3swift,103,Tokenization,18436,4609
+optimized,stage1,ipfs/js-ipfs,4085,,9525,2382
+optimized,stage1,MetaMask/core,1981,,8227,2057
+optimized,stage1,MetaMask/eth-phishing-detect,159849,,7711,1928
+optimized,stage1,ipfs/ipfs-webui,2348,,7886,1972
+optimized,stage1,paritytech/polkadot-sdk,9497,,7451,1863
+optimized,stage1,trustwallet/assets,29848,,7861,1966
+optimized,stage1,trustwallet/assets,17741,,7216,1804
+optimized,stage1,graphprotocol/graph-node,5156,,10266,2567
+optimized,stage1,web3swift-team/web3swift,103,,9492,2373
+optimized,stage1,ipfs/awesome-ipfs,485,,8319,2080
+optimized,stage1,ipfs/kubo,5206,,10113,2529
+optimized,stage1,ipfs/specs,383,,13727,3432
+optimized,stage1,ipfs/kubo,3430,,10098,2525
+optimized,stage1,trustwallet/assets,24480,,8185,2047
+optimized,stage1,MetaMask/metamask-extension,30553,,9598,2400
+optimized,stage1,foundry-rs/foundry,8015,,14222,3556
+optimized,stage1,MetaMask/metamask-extension,13525,,9491,2373
+optimized,stage1,ipfs/kubo,1376,,9383,2346
+optimized,stage1,ipfs/ipfs-webui,845,,8661,2166
+optimized,stage1,trustwallet/wallet-core,2768,,8037,2010
+optimized,stage1,INFURA/infura,81,,7576,1894
+optimized,stage1,ProjectOpenSea/opensea-js,236,,9145,2287
+optimized,stage1,paritytech/polkadot-sdk,3203,,8943,2236
+optimized,stage1,AztecProtocol/aztec-packages,11391,,9207,2302
+optimized,stage1,hyperledger/besu,671,,8174,2044
+optimized,stage1,ipfs/kubo,8303,,9493,2374
+optimized,stage1,OpenZeppelin/openzeppelin-contracts,3735,,11644,2911
+optimized,stage1,trustwallet/assets,30558,,8091,2023
+optimized,stage1,Consensys/gnark,1311,,7678,1920
+optimized,stage1,junobuild/juno,481,,8487,2122
+optimized,stage1,Uniswap/v4-core,310,,10548,2637
+optimized,stage1,TrueFiEng/Waffle,646,,8418,2105
+optimized,stage1,graphprotocol/graph-node,3373,,11320,2830
+optimized,stage1,ipfs/specs,406,,13198,3300
+optimized,stage1,FuelLabs/fuel-core,2528,,10045,2512
+optimized,stage1,blockscout/blockscout,4222,,9344,2336
+optimized,stage1,OpenZeppelin/cairo-contracts,328,,11855,2964
+optimized,stage1,paritytech/subxt,1117,,11000,2750
+optimized,stage1,OpenZeppelin/openzeppelin-contracts,5062,,9161,2291
+optimized,stage1,Uniswap/interface,2094,,9035,2259
+optimized,stage1,ipfs/kubo,6458,,13562,3391
+optimized,stage1,Consensys/quorum,1586,,9588,2397
+optimized,stage1,paritytech/polkadot-sdk,2245,,13459,3365
+optimized,stage1,ipfs/ipfs-webui,2190,,13714,3429
+optimized,stage1,scroll-tech/contribute-to-scroll,1966,,8520,2130
+optimized,stage1,hyperledger/besu,4012,,9958,2490
+optimized,stage1,hyperledger/besu,3888,,8161,2041
+optimized,stage1,ethereum/go-ethereum,85,,11534,2884
+optimized,stage1,MoralisWeb3/react-moralis,142,,10064,2516
+optimized,stage1,ipfs/helia,287,,7467,1867
+optimized,stage1,MetaMask/eth-phishing-detect,184576,,7671,1918
+optimized,stage1,ethereum/web3.py,3441,,8883,2221
+optimized,stage1,smol-dot/smoldot,1806,,12699,3175
+optimized,stage1,ipfs/js-ipfs,4197,,8352,2088
+optimized,stage1,ethereum/aleth,3639,,7261,1816
+optimized,stage1,ipfs/ipfs-companion,485,,11796,2949
+optimized,stage1,solana-labs/solana,5681,,7789,1948
+optimized,stage1,MetaMask/metamask-mobile,17295,,10205,2552
+optimized,stage1,ethereum/pm,867,,9763,2441
+optimized,stage1,ipfs/js-ipfs,2760,,7807,1952
+optimized,stage1,ipfs/kubo,3869,,10126,2532
+optimized,stage1,protofire/solhint,197,,20307,5077
+optimized,stage1,paritytech/substrate,9696,,9418,2355
+optimized,stage1,matter-labs/foundry-zksync,358,,8506,2127
+optimized,stage1,ipfs/public-gateway-checker,215,,8195,2049
+optimized,stage1,foundry-rs/foundry,11673,,10735,2684
+optimized,stage1,MetaMask/eth-phishing-detect,13502,,8343,2086
+optimized,stage1,smartcontractkit/chainlink,13017,,8778,2195
+optimized,stage1,hyperledger/besu,6344,,10867,2717
+optimized,stage1,matter-labs/zksync,215,,8373,2094
+optimized,stage1,ipfs/js-ipfs,12,,8748,2187
+optimized,stage1,OpenZeppelin/openzeppelin-contracts,4084,,8253,2064
+optimized,stage1,ipfs/kubo,7168,,10400,2600
+optimized,stage1,ipfs/kubo,460,,9192,2298
+optimized,stage1,solana-labs/solana-program-library,3165,,7949,1988
+optimized,stage1,solana-labs/solana-program-library,2003,,7870,1968
+optimized,stage1,Uniswap/v3-sdk,141,,8373,2094
+optimized,stage1,trustwallet/assets,15915,,10665,2667
+optimized,stage1,ipfs/js-ipfs,2343,,11755,2939
+optimized,stage1,ipfs/ipfs-desktop,2125,,8346,2087
+optimized,stage1,Consensys/quorum,72,,12969,3243
+optimized,stage1,ProjectOpenSea/operator-filter-registry,93,,10510,2628
+optimized,stage1,OpenZeppelin/openzeppelin-contracts,722,,12660,3165
+optimized,stage1,embarklabs/embark,1361,,9269,2318
+optimized,stage1,Consensys/quorum,387,,8234,2059
+optimized,stage1,ipfs/kubo,4527,,12753,3189
+optimized,stage1,MetaMask/metamask-extension,22537,,10360,2590
+optimized,stage1,MetaMask/snaps,459,,10567,2642
+optimized,stage1,web3/web3.js,6085,,8924,2231
+optimized,stage1,hyperledger/besu,5146,,8236,2059
+optimized,stage1,ipfs/public-gateway-checker,177,,8953,2239
+optimized,stage1,ipfs/kubo,5920,,8969,2243
+optimized,stage1,paritytech/polkadot-sdk,4745,,7477,1870
+optimized,stage1,trustwallet/assets,13141,,11337,2835
+optimized,stage1,ipfs/ipfs-desktop,2788,,10192,2548
+optimized,stage1,MetaMask/metamask-mobile,4441,,13614,3404
+optimized,stage1,MetaMask/contract-metadata,1125,,8267,2067
+optimized,stage1,smartcontractkit/chainlink,2681,,7906,1977
+optimized,stage1,MetaMask/metamask-extension,20424,,8822,2206
+optimized,stage1,ethersphere/bee,2972,,8520,2130
+optimized,stage1,trustwallet/assets,16096,,9621,2406
+optimized,stage1,wevm/wagmi,1412,,8869,2218
+optimized,stage1,near/nearcore,2846,,7835,1959
+optimized,stage1,MetaMask/metamask-mobile,16448,,10673,2669
+optimized,stage1,trustwallet/assets,14229,,10973,2744
+optimized,stage1,MetaMask/core,309,,8523,2131
+optimized,stage1,livepeer/go-livepeer,1786,,8653,2164
+optimized,stage1,foundry-rs/starknet-foundry,231,,7352,1838
+optimized,stage1,AztecProtocol/aztec-packages,2388,,7836,1959
+optimized,stage1,paritytech/polkadot,3714,,13097,3275
+optimized,stage1,coinbase/onchainkit,1602,,7930,1983
+optimized,stage1,algorand/go-algorand,3261,,12794,3199
+optimized,stage1,sigp/lighthouse,911,,8452,2113
+optimized,stage1,algorand/go-algorand,6374,,8826,2207
+optimized,stage1,MetaMask/metamask-extension,28962,,12283,3071
+optimized,stage1,openethereum/parity-ethereum,5747,,13331,3333
+optimized,stage1,rainbow-me/rainbow,3675,,7203,1801
+optimized,stage1,graphprotocol/graph-node,1577,,8074,2019
+optimized,stage1,near/nearcore,306,,10199,2550
+optimized,stage1,MetaMask/core,691,,8966,2242
+optimized,stage1,foundry-rs/starknet-foundry,2924,,8768,2192
+optimized,stage1,FuelLabs/sway,7228,,9183,2296
+optimized,stage1,matter-labs/anvil-zksync,351,,8973,2244
+optimized,stage1,trustwallet/assets,26515,,8142,2036
+optimized,stage1,MetaMask/metamask-mobile,11455,,8760,2190
+optimized,stage1,near/nearcore,2483,,8510,2128
+optimized,stage1,AztecProtocol/aztec-packages,5038,,7962,1991
+optimized,stage1,paritytech/substrate,1310,,12828,3207
+optimized,stage1,ipfs/kubo,5749,,8060,2015
+optimized,stage1,trustwallet/assets,29882,,11610,2903
+optimized,stage1,ethers-io/ethers.js,970,,7475,1869
+optimized,stage1,trustwallet/assets,5452,,10201,2551
+optimized,stage1,paradigmxyz/reth,2760,,10170,2543
+optimized,stage1,Consensys/teku,8385,,7186,1797
+optimized,stage1,NomicFoundation/hardhat,4652,,8488,2122
+optimized,stage1,MetaMask/metamask-extension,25739,,10130,2533
+optimized,stage1,paradigmxyz/reth,16266,,7732,1933
+optimized,stage1,paradigmxyz/reth,17374,,7262,1816
+optimized,stage1,ethereum/mist,1179,,7830,1958
+optimized,stage1,MetaMask/metamask-extension,1091,,9027,2257
+optimized,stage1,ethereum/go-ethereum,2237,,9064,2266
+optimized,stage1,MetaMask/metamask-mobile,11138,,12590,3148
+optimized,stage1,web3/web3.js,2299,,7684,1921
+optimized,stage1,sigp/lighthouse,4971,,8416,2104
+optimized,stage1,snapshot-labs/sx-monorepo,981,,7817,1955
+optimized,stage1,ipfs/kubo,1505,,7140,1785
+optimized,stage1,ethereum/eth-tester,243,,8182,2046
+optimized,stage1,ethereum/aleth,5551,,8906,2227
+optimized,stage1,ipfs/public-gateway-checker,452,,8838,2210
+optimized,stage1,paritytech/polkadot-sdk,1851,,8343,2086
+optimized,stage1,near/core-contracts,197,,8304,2076
+optimized,stage1,hyperledger/fabric-sdk-node,94,,8025,2007
+optimized,stage1,MetaMask/metamask-mobile,14857,,9738,2435
+optimized,stage1,ethereum/execution-apis,244,,7756,1939
+optimized,stage1,ipfs/js-ipfs,3504,,11975,2994
+optimized,stage1,MetaMask/eth-phishing-detect,6425,,8365,2092
+optimized,stage1,ethereum/trin,451,,7514,1879
+optimized,stage1,blockscout/blockscout,6711,,7888,1972
+optimized,stage1,paritytech/polkadot-sdk,317,,12901,3226
+optimized,stage1,trustwallet/assets,4740,,14304,3576
+optimized,stage1,ethersphere/bee,1362,,7782,1946
+optimized,stage1,MetaMask/metamask-mobile,13691,,10868,2717
+optimized,stage1,MetaMask/eth-phishing-detect,8759,,8212,2053
+optimized,stage1,paritytech/substrate,9738,,12188,3047
+optimized,stage1,FuelLabs/fuel-connectors,349,,7908,1977
+optimized,stage1,MetaMask/metamask-extension,6105,,8341,2086
+optimized,stage1,Consensys/gnark,388,,9156,2289
+optimized,stage1,AztecProtocol/aztec-packages,5651,,8038,2010
+optimized,stage1,MetaMask/metamask-mobile,12951,,11934,2984
+optimized,stage1,near/nearcore,11333,,7891,1973
+optimized,stage1,paritytech/substrate,5493,,7726,1932
+optimized,stage1,MetaMask/metamask-docs,1505,,8055,2014
+optimized,stage1,foundry-rs/foundry,10589,,9544,2386
+optimized,stage1,trustwallet/assets,7985,,11200,2800
+optimized,stage1,trustwallet/tokens,104,,9288,2322
+optimized,stage1,livepeer/go-livepeer,3229,,8232,2058
+optimized,stage1,solana-labs/token-list,16854,,7762,1941
+optimized,stage1,MetaMask/metamask-extension,31382,,10888,2722
+optimized,stage1,blockscout/blockscout,5926,,8900,2225
+optimized,stage1,crytic/slither,117,,13981,3496
+optimized,stage1,coinbase/coinbase-wallet-sdk,526,,7176,1794
+optimized,stage1,MetaMask/metamask-mobile,13713,,9896,2474
+optimized,stage1,ethereum/consensus-specs,4177,,7978,1995
+optimized,stage1,ethereum/ethereum-org-website,5465,,8435,2109
+optimized,stage1,paritytech/substrate,900,,8983,2246
+optimized,stage1,Uniswap/web3-react,104,,8787,2197
+optimized,stage1,solana-labs/solana,3377,,7237,1810
+optimized,stage1,paradigmxyz/solar,329,,8079,2020
+optimized,stage1,FuelLabs/sway,4516,,7555,1889
+optimized,stage1,foundry-rs/foundry,8804,,9855,2464
+optimized,stage1,Uniswap/v4-core,815,,7563,1891
+optimized,stage1,ethereum/consensus-specs,44,,12731,3183
+optimized,stage1,trustwallet/assets,2057,,10570,2643
+optimized,stage1,SyncraDAO/psp-tokenlist,44,,9849,2463
+optimized,stage1,ethereum/aleth,603,,7572,1893
+optimized,stage1,ethersphere/bee,5116,,9263,2316
+optimized,stage1,OpenZeppelin/openzeppelin-sdk,917,,7922,1981
+optimized,stage1,ethereum/go-ethereum,23913,,8045,2012
+optimized,stage1,near/nearcore,6512,,8433,2109
+optimized,stage1,solana-labs/token-list,1165,,8507,2127
+optimized,stage2,Consensys/gnark,388,Low contract footprint,14316,3579
+optimized,stage2,Consensys/gnark,1311,Low contract footprint,13386,3347
+optimized,stage2,FuelLabs/sway,4516,Low contract footprint,12727,3182
+optimized,stage2,MetaMask/contract-metadata,1125,Tokenization,12498,3125
+optimized,stage2,MetaMask/core,691,Rate limit,12984,3246
+optimized,stage2,MetaMask/eth-phishing-detect,6425,Blocklist,13323,3331
+optimized,stage2,MetaMask/eth-phishing-detect,8759,Blocklist,13132,3283
+optimized,stage2,MetaMask/eth-phishing-detect,13502,Blocklist,13972,3493
+optimized,stage2,MetaMask/eth-phishing-detect,159849,Blocklist,13310,3328
+optimized,stage2,MetaMask/eth-phishing-detect,184576,Blocklist,13287,3322
+optimized,stage2,MetaMask/metamask-extension,6105,Limited-access,13257,3315
+optimized,stage2,MetaMask/metamask-extension,13525,Tokenization,14189,3548
+optimized,stage2,MetaMask/metamask-extension,28962,Blocklist,17979,4495
+optimized,stage2,MetaMask/metamask-mobile,4441,Off-chain Signatures,18378,4595
+optimized,stage2,MetaMask/metamask-mobile,11455,Freeing storage,13689,3423
+optimized,stage2,MetaMask/metamask-mobile,14857,Master & Sub Key,13820,3455
+optimized,stage2,MoralisWeb3/react-moralis,142,Identifier Registry,13955,3489
+optimized,stage2,OpenZeppelin/openzeppelin-contracts,722,Guard check,16862,4216
+optimized,stage2,OpenZeppelin/openzeppelin-contracts,3735,Role-based control,16263,4066
+optimized,stage2,OpenZeppelin/openzeppelin-contracts,3735,Tokenization,15846,3962
+optimized,stage2,OpenZeppelin/openzeppelin-contracts,5062,Ownable,13983,3496
+optimized,stage2,ProjectOpenSea/opensea-js,236,Proxy contract,14584,3646
+optimized,stage2,ProjectOpenSea/operator-filter-registry,93,Relay contract,14957,3740
+optimized,stage2,Uniswap/v3-sdk,141,Factory contract,13234,3309
+optimized,stage2,Uniswap/v4-core,310,Data contract,15584,3896
+optimized,stage2,algorand/go-algorand,3261,Contract Registry (on-chain),18143,4536
+optimized,stage2,crytic/slither,117,Check-Effects-Interactions,19516,4879
+optimized,stage2,ethereum/consensus-specs,44,Append-only data,18131,4533
+optimized,stage2,ethereum/execution-apis,244,X-confirmation,12626,3157
+optimized,stage2,ethereum/pm,867,Mortal,14842,3711
+optimized,stage2,ethers-io/ethers.js,970,Key Sharding,12465,3117
+optimized,stage2,ethersphere/bee,1362,Tokenization,12280,3070
+optimized,stage2,ethersphere/bee,2972,Proxy contract,13520,3380
+optimized,stage2,foundry-rs/foundry,8015,Proxy contract,19557,4890
+optimized,stage2,graphprotocol/graph-node,3373,Oracle,16279,4070
+optimized,stage2,graphprotocol/graph-node,5156,X-confirmation,14344,3586
+optimized,stage2,hyperledger/besu,671,Mortal,13702,3426
+optimized,stage2,hyperledger/besu,3888,X-confirmation,12752,3188
+optimized,stage2,ipfs/ipfs-desktop,2788,State initialization,13821,3456
+optimized,stage2,ipfs/ipfs-webui,845,Oracle,13547,3387
+optimized,stage2,ipfs/ipfs-webui,2190,Off-chain data storage,20501,5126
+optimized,stage2,ipfs/kubo,3869,Off-chain data storage,15501,3876
+optimized,stage2,ipfs/kubo,5206,Mutex,14088,3522
+optimized,stage2,ipfs/kubo,8303,Delegated Computation,13421,3356
+optimized,stage2,ipfs/public-gateway-checker,452,Off-chain computation,13174,3294
+optimized,stage2,ipfs/specs,383,Blocklist,19492,4873
+optimized,stage2,junobuild/juno,481,State initialization,12604,3151
+optimized,stage2,livepeer/go-livepeer,3229,Off-chain computation,13850,3463
+optimized,stage2,near/nearcore,306,State anchoring,16134,4034
+optimized,stage2,near/nearcore,2846,Announcement,13216,3304
+optimized,stage2,paritytech/polkadot-sdk,317,Low contract footprint,21680,5420
+optimized,stage2,paritytech/polkadot-sdk,2245,Low contract footprint,21696,5424
+optimized,stage2,paritytech/polkadot-sdk,4745,State initialization,12314,3079
+optimized,stage2,paritytech/polkadot-sdk,9497,Reverse Oracle,13024,3256
+optimized,stage2,paritytech/substrate,900,Low contract footprint,12708,3177
+optimized,stage2,paritytech/subxt,1117,Data refresh,15913,3979
+optimized,stage2,protofire/solhint,197,Limited-access,16128,4032
+optimized,stage2,solana-labs/solana,5681,Oracle,13003,3251
+optimized,stage2,solana-labs/solana-program-library,2003,Oracle,13070,3268
+optimized,stage2,solana-labs/solana-program-library,3165,Oracle,13151,3288
+optimized,stage2,solana-labs/token-list,1165,Tokenization,12674,3169
+optimized,stage2,trustwallet/assets,2057,Reverse Oracle,15859,3965
+optimized,stage2,trustwallet/assets,4740,Announcement,21607,5402
+optimized,stage2,trustwallet/assets,7985,Tokenization,15146,3787
+optimized,stage2,trustwallet/assets,13141,Tokenization,15101,3776
+optimized,stage2,trustwallet/assets,14229,Tokenization,15019,3755
+optimized,stage2,trustwallet/assets,15915,Tokenization,15183,3796
+optimized,stage2,trustwallet/assets,17741,Tokenization,12191,3048
+optimized,stage2,trustwallet/assets,24480,Tokenization,12373,3094
+optimized,stage2,trustwallet/assets,29848,Tokenization,12231,3058
+optimized,stage2,trustwallet/assets,29882,Tokenization,15372,3843
+optimized,stage2,web3swift-team/web3swift,103,Tokenization,13319,3330

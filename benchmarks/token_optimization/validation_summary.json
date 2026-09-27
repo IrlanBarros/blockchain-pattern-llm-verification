@@ -1,0 +1,30 @@
+{
+  "status": "NOT_APPROVED_FOR_RESEARCH_REPLACEMENT",
+  "test_results": {
+    "original_passed": 103,
+    "final_passed": 141,
+    "command": ".venv/bin/python -m pytest -q"
+  },
+  "baseline": "baseline.json",
+  "local_reports": [
+    "pilot_conservative/report.json",
+    "smoke_conservative/report.json",
+    "pilot_aggressive_not_approved/report.json"
+  ],
+  "conservative_input_estimated_reduction_percent": 43.4535499816488,
+  "aggressive_input_estimated_reduction_percent": 63.98268934927415,
+  "aggressive_historical_candidates_excluded": 31,
+  "conservative_historical_candidates_excluded": 0,
+  "human_labeled_issues_available": 0,
+  "new_live_inference_performed": false,
+  "model_quality_validated": false,
+  "baseline_and_final_input_files_identical": true,
+  "final_report_provenance_matches_source": true,
+  "remaining_acceptance_requirements": [
+    "Official live input/output/thinking token comparison on identical sample",
+    "Human positive pair labels for retrieval recall >=98%",
+    "Stage 1 candidate recall drop <=1 percentage point",
+    "Stage 2 precision/recall/F1 within 1–2 percentage points",
+    "Conservative measured total-token savings >=60%"
+  ]
+}

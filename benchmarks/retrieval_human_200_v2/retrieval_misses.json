@@ -1,0 +1,228 @@
+{
+  "aggressive_previous": {
+    "safety": [],
+    "strict": []
+  },
+  "conservative_current": {
+    "safety": [],
+    "strict": []
+  },
+  "conservative_expanded_fallback_counterfactual": {
+    "safety": [],
+    "strict": []
+  },
+  "lsa_anchor_off_high_confidence": {
+    "safety": [],
+    "strict": []
+  },
+  "lsa_expanded_fallback": {
+    "safety": [],
+    "strict": []
+  },
+  "lsa_intermediate": {
+    "safety": [],
+    "strict": []
+  },
+  "neural_a": {
+    "safety": [
+      {
+        "evidence_text": "",
+        "fallback_reason": [
+          "ambiguous_similarity"
+        ],
+        "family": [
+          "unassigned"
+        ],
+        "human_pattern": "Time-Constrained Access",
+        "issue_number": "3735",
+        "issue_title": "EIP-4907 support",
+        "lexical_matches": [],
+        "lexical_score": 0,
+        "lsa_score": null,
+        "repository": "OpenZeppelin/openzeppelin-contracts",
+        "retrieval_reason": [],
+        "semantic_rank": 44,
+        "semantic_score": 0.82104003,
+        "shortlist": [
+          "Ticker tape",
+          "Oracle",
+          "Reverse Oracle",
+          "Pull-based inbound oracle",
+          "Push-based inbound oracle",
+          "Delegated Computation",
+          "Blockchain Security Pattern for Big Data Ecosystems",
+          "Blockchain-based reputation system",
+          "Vote",
+          "Randomness",
+          "Poll",
+          "One-Off Access",
+          "Factory contract",
+          "Relay contract",
+          "Check-Effects-Interactions",
+          "Mutex",
+          "Guard check",
+          "Contract size limit",
+          "Off-chain computation",
+          "Data refresh",
+          "Ownable",
+          "Role-based control",
+          "Permissioned actions",
+          "Implicit authorization",
+          "Limited-access",
+          "Establish genesis",
+          "Smart contract translation",
+          "Tokenization",
+          "Delegated Transactions"
+        ],
+        "suspected_failure_mode": "paraphrase_not_captured"
+      }
+    ],
+    "strict": [
+      {
+        "evidence_text": "",
+        "fallback_reason": [
+          "ambiguous_similarity"
+        ],
+        "family": [
+          "unassigned"
+        ],
+        "human_pattern": "Time-Constrained Access",
+        "issue_number": "3735",
+        "issue_title": "EIP-4907 support",
+        "lexical_matches": [],
+        "lexical_score": 0,
+        "lsa_score": null,
+        "repository": "OpenZeppelin/openzeppelin-contracts",
+        "retrieval_reason": [],
+        "semantic_rank": 44,
+        "semantic_score": 0.82104003,
+        "shortlist": [
+          "Ticker tape",
+          "Oracle",
+          "Reverse Oracle",
+          "Pull-based inbound oracle",
+          "Push-based inbound oracle",
+          "Delegated Computation",
+          "Blockchain Security Pattern for Big Data Ecosystems",
+          "Blockchain-based reputation system",
+          "Vote",
+          "Randomness",
+          "Poll",
+          "One-Off Access",
+          "Factory contract",
+          "Relay contract",
+          "Check-Effects-Interactions",
+          "Mutex",
+          "Guard check",
+          "Contract size limit",
+          "Off-chain computation",
+          "Data refresh",
+          "Ownable",
+          "Role-based control",
+          "Permissioned actions",
+          "Implicit authorization",
+          "Limited-access",
+          "Establish genesis",
+          "Smart contract translation",
+          "Tokenization",
+          "Delegated Transactions"
+        ],
+        "suspected_failure_mode": "paraphrase_not_captured"
+      }
+    ]
+  },
+  "neural_b_lsa_union": {
+    "safety": [
+      {
+        "evidence_text": "",
+        "fallback_reason": [],
+        "family": [
+          "unassigned"
+        ],
+        "human_pattern": "Time-Constrained Access",
+        "issue_number": "3735",
+        "issue_title": "EIP-4907 support",
+        "lexical_matches": [],
+        "lexical_score": 0,
+        "lsa_score": 0.37651881,
+        "repository": "OpenZeppelin/openzeppelin-contracts",
+        "retrieval_reason": [],
+        "semantic_rank": 44,
+        "semantic_score": 0.82104003,
+        "shortlist": [
+          "Ticker tape",
+          "Oracle",
+          "Reverse Oracle",
+          "Pull-based inbound oracle",
+          "Push-based inbound oracle",
+          "Delegated Computation",
+          "Vote",
+          "Poll",
+          "One-Off Access",
+          "Factory contract",
+          "Relay contract",
+          "Check-Effects-Interactions",
+          "Mutex",
+          "Guard check",
+          "Off-chain computation",
+          "Data refresh",
+          "Ownable",
+          "Role-based control",
+          "Permissioned actions",
+          "Implicit authorization",
+          "Limited-access",
+          "Establish genesis",
+          "Smart contract translation",
+          "Tokenization"
+        ],
+        "suspected_failure_mode": "paraphrase_not_captured"
+      }
+    ],
+    "strict": [
+      {
+        "evidence_text": "",
+        "fallback_reason": [],
+        "family": [
+          "unassigned"
+        ],
+        "human_pattern": "Time-Constrained Access",
+        "issue_number": "3735",
+        "issue_title": "EIP-4907 support",
+        "lexical_matches": [],
+        "lexical_score": 0,
+        "lsa_score": 0.37651881,
+        "repository": "OpenZeppelin/openzeppelin-contracts",
+        "retrieval_reason": [],
+        "semantic_rank": 44,
+        "semantic_score": 0.82104003,
+        "shortlist": [
+          "Ticker tape",
+          "Oracle",
+          "Reverse Oracle",
+          "Pull-based inbound oracle",
+          "Push-based inbound oracle",
+          "Delegated Computation",
+          "Vote",
+          "Poll",
+          "One-Off Access",
+          "Factory contract",
+          "Relay contract",
+          "Check-Effects-Interactions",
+          "Mutex",
+          "Guard check",
+          "Off-chain computation",
+          "Data refresh",
+          "Ownable",
+          "Role-based control",
+          "Permissioned actions",
+          "Implicit authorization",
+          "Limited-access",
+          "Establish genesis",
+          "Smart contract translation",
+          "Tokenization"
+        ],
+        "suspected_failure_mode": "paraphrase_not_captured"
+      }
+    ]
+  }
+}

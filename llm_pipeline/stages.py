@@ -9,7 +9,7 @@ from typing import Any
 
 import pandas as pd
 
-from .checkpoint import Checkpoint, CheckpointIntegrityError, ResultStore
+from .checkpoint import Checkpoint, CheckpointIntegrityError, ResultStore, resumable_batch, mark_batch_consumed
 from .client import (
     batch_custom_id,
     batch_error_text,
@@ -24,6 +24,8 @@ from .client import (
     wait_for_batch,
 )
 from .confidence import compute_stage2_confidence
+from .optimization_runtime import decode_stage, prepare_stage2_contexts, audit_request
+from .telemetry import observed_sync, record_call
 from .evidence import is_literal_match
 from .lexical import detect_false_friend_signals
 from .models import PatternCatalog, PreparedIssue
@@ -148,12 +150,13 @@ def run_stage1_sync(
             seed,
             thinking_level,
         )
+        audit_request(run_dir, prepared, params, 'stage1')
         try:
-            response = call_sync(client, params)
+            response = observed_sync(call_sync, client, params, run_dir, prepared, 'stage1')
             raw = object_to_dict(response)
             append_jsonl(raw_path, {"custom_id": prepared.custom_id_stage1, "response": raw})
             payload, metadata = parse_response_payload(response)
-            normalized = normalize_stage1(payload, catalog)
+            normalized = normalize_stage1(decode_stage(payload, catalog, prepared, 1), catalog)
 
             # P2: Detect lexical false friends for candidate patterns.
             candidate_patterns = [c["pattern"] for c in normalized.get("candidates", [])]
@@ -283,6 +286,7 @@ def run_stage2_sync(
     thinking_level: str,
     run_dir: Path,
 ) -> pd.DataFrame:
+    select_stage2 = prepare_stage2_contexts(prepared_by_key, catalog, run_dir)
     checkpoint = Checkpoint(run_dir / "stage2_checkpoint.json", stage="stage2", run_id=run_dir.name)
     store = ResultStore(run_dir / "stage2_results.csv", stage="stage2")
     completed = store.completed_ids()
@@ -302,6 +306,7 @@ def run_stage2_sync(
             continue
 
         print(f"[stage2 sync] {idx}/{len(pairs)} {prepared.issue_key} / {pattern}")
+        prepared = select_stage2(prepared, pattern)
         params = stage2_request_params(
             prepared,
             pattern,
@@ -312,12 +317,13 @@ def run_stage2_sync(
             seed,
             thinking_level,
         )
+        audit_request(run_dir, prepared, params, 'stage2', pattern)
         try:
-            response = call_sync(client, params)
+            response = observed_sync(call_sync, client, params, run_dir, prepared, 'stage2', pattern)
             raw = object_to_dict(response)
             append_jsonl(raw_path, {"custom_id": custom_id, "response": raw})
             payload, metadata = parse_response_payload(response)
-            normalized = normalize_stage2(payload, catalog)
+            normalized = normalize_stage2(decode_stage(payload, catalog, prepared, 2), catalog)
 
             # P5: Verify evidence_text is a literal substring of the artifact.
             evidence = normalized.get("evidence_text", "")
@@ -366,10 +372,14 @@ def _record_failed_stage1_chunk(
     manifest: dict[str, PreparedIssue],
     request_chunk: list[dict[str, Any]],
     error: str,
+    run_dir: Path,
+    model: str,
 ) -> None:
     for request in request_chunk:
         custom_id = clean_scalar((request.get("metadata") or {}).get("custom_id"))
         prepared = manifest[custom_id]
+        record_call(run_dir, prepared, {**request, 'model':model}, stage='stage1', error=error,
+                    timing_source='batch_submission_or_polling_failure_unknown_usage')
         rows.append(flatten_stage1_result(prepared, {}, {}, "errored", error))
 
 
@@ -378,10 +388,14 @@ def _record_failed_stage2_chunk(
     manifest: dict[str, tuple[PreparedIssue, str]],
     request_chunk: list[dict[str, Any]],
     error: str,
+    run_dir: Path,
+    model: str,
 ) -> None:
     for request in request_chunk:
         custom_id = clean_scalar((request.get("metadata") or {}).get("custom_id"))
         prepared, pattern = manifest[custom_id]
+        record_call(run_dir, prepared, {**request, 'model':model}, stage='stage2', pattern=pattern,
+                    error=error, timing_source='batch_submission_or_polling_failure_unknown_usage')
         rows.append(flatten_stage2_result(prepared, pattern, {}, {}, "errored", error))
 
 
@@ -440,6 +454,7 @@ def run_stage1_batch(
             seed,
             thinking_level,
         )
+        audit_request(run_dir, item, params, 'stage1')
         requests.append(to_inline_batch_request(item.custom_id_stage1, params))
 
     chunks = list(
@@ -449,16 +464,10 @@ def run_stage1_batch(
         display_name = f"stage1-{run_dir.name}-{batch_index}"
         print(f"[stage1 batch] enviando lote {batch_index}/{len(chunks)} com {len(request_chunk)} requests")
         try:
-            created = call_batch_create(
-                client,
-                model=model,
-                requests=request_chunk,
-                display_name=display_name,
-            )
-            batch_name = clean_scalar(getattr(created, "name", ""))
-            if not batch_name:
-                raise ValueError("Batch criado sem name")
-            final_batch = wait_for_batch(client, batch_name, poll_seconds)
+            batch_name, created, final_batch = resumable_batch(
+                client, model=model, requests=request_chunk, display_name=display_name,
+                run_dir=run_dir, stage='stage1', create=call_batch_create,
+                wait=wait_for_batch, poll_seconds=poll_seconds)
             batch_meta.append(
                 {
                     "batch_index": batch_index,
@@ -467,10 +476,12 @@ def run_stage1_batch(
                 }
             )
             write_json(run_dir / "stage1_batches.json", batch_meta)
+        except (CheckpointIntegrityError, OSError):
+            raise
         except Exception as exc:
             error = f"Falha no job batch: {exc}"
             append_jsonl(raw_path, {"batch_index": batch_index, "error": error})
-            _record_failed_stage1_chunk(rows, manifest, request_chunk, error)
+            _record_failed_stage1_chunk(rows, manifest, request_chunk, error, run_dir, model)
             if is_global_api_error(exc):
                 raise
             continue
@@ -478,14 +489,18 @@ def run_stage1_batch(
         state = batch_state_name(final_batch)
         if state not in {"JOB_STATE_SUCCEEDED", "JOB_STATE_PARTIALLY_SUCCEEDED"}:
             error = f"Batch terminou com state={state}: {json_dumps(object_to_dict(getattr(final_batch, 'error', {})))}"
-            _record_failed_stage1_chunk(rows, manifest, request_chunk, error)
+            _record_failed_stage1_chunk(rows, manifest, request_chunk, error, run_dir, model)
+            mark_batch_consumed(run_dir, 'stage1', batch_name)
             continue
 
         expected_ids = [clean_scalar((req.get("metadata") or {}).get("custom_id")) for req in request_chunk]
         returned_ids: set[str] = set()
         responses = batch_inlined_responses(final_batch)
+        original_order = created.get('_request_order', expected_ids)
         for response_index, inline_response in enumerate(responses):
-            fallback_id = expected_ids[response_index] if response_index < len(expected_ids) else ""
+            # Reused jobs may cover a superset of pending IDs. Positional fallback
+            # is safe only against the original complete job order.
+            fallback_id = original_order[response_index] if len(responses) == len(original_order) else ""
             custom_id = batch_custom_id(inline_response) or fallback_id
             append_jsonl(
                 raw_path,
@@ -495,12 +510,16 @@ def run_stage1_batch(
                     "inline_response": object_to_dict(inline_response),
                 },
             )
-            if not custom_id or custom_id not in manifest:
+            if not custom_id or custom_id not in expected_ids or custom_id in returned_ids:
                 continue
             returned_ids.add(custom_id)
             prepared = manifest[custom_id]
             api_error = batch_error_text(inline_response)
             response = batch_generated_response(inline_response)
+            request = next(r for r in request_chunk if r['metadata']['custom_id'] == custom_id)
+            record_call(run_dir, prepared, {**request, 'model': model}, stage='stage1',
+                        response=response, error=api_error, batch_name=batch_name,
+                        timing_source='batch_per_request_unavailable')
             if api_error or response is None:
                 rows.append(
                     flatten_stage1_result(
@@ -514,7 +533,7 @@ def run_stage1_batch(
                 continue
             try:
                 payload, metadata = parse_response_payload(response)
-                normalized = normalize_stage1(payload, catalog)
+                normalized = normalize_stage1(decode_stage(payload, catalog, prepared, 1), catalog)
 
                 # P2: Detect lexical false friends for candidate patterns (batch mode).
                 candidate_patterns = [c["pattern"] for c in normalized.get("candidates", [])]
@@ -527,12 +546,18 @@ def run_stage1_batch(
                         ]
 
                 rows.append(flatten_stage1_result(prepared, normalized, metadata))
+            except (CheckpointIntegrityError, OSError):
+                raise
             except Exception as exc:
                 rows.append(flatten_stage1_result(prepared, {}, {}, "errored", str(exc)))
 
         for custom_id in expected_ids:
             if custom_id not in returned_ids:
                 prepared = manifest[custom_id]
+                request = next(r for r in request_chunk if r['metadata']['custom_id'] == custom_id)
+                record_call(run_dir, prepared, {**request,'model':model}, stage='stage1',
+                            error='Missing batch response; usage unknown', batch_name=batch_name,
+                            timing_source='batch_per_request_unavailable')
                 rows.append(
                     flatten_stage1_result(
                         prepared,
@@ -542,6 +567,7 @@ def run_stage1_batch(
                         "Resposta ausente no resultado inline do Batch API",
                     )
                 )
+        mark_batch_consumed(run_dir, 'stage1', batch_name)
     return store.dataframe.copy()
 
 
@@ -560,6 +586,7 @@ def run_stage2_batch(
     poll_seconds: int,
     run_dir: Path,
 ) -> pd.DataFrame:
+    select_stage2 = prepare_stage2_contexts(prepared_by_key, catalog, run_dir)
     checkpoint = Checkpoint(run_dir / "stage2_checkpoint.json", stage="stage2", run_id=run_dir.name)
     store = ResultStore(run_dir / "stage2_results.csv", stage="stage2")
     completed = store.completed_ids()
@@ -571,6 +598,7 @@ def run_stage2_batch(
         custom_id = stable_custom_id("s2", repository, issue_number, pattern)
         if custom_id in completed:
             continue
+        prepared = select_stage2(prepared, pattern)
         manifest[custom_id] = (prepared, pattern)
         params = stage2_request_params(
             prepared,
@@ -582,6 +610,7 @@ def run_stage2_batch(
             seed,
             thinking_level,
         )
+        audit_request(run_dir, prepared, params, 'stage2', pattern)
         requests.append(to_inline_batch_request(custom_id, params))
 
     print(f"[stage2] expected={len(pairs)} completed={len(completed)} pending={len(requests)}")
@@ -596,16 +625,10 @@ def run_stage2_batch(
         display_name = f"stage2-{run_dir.name}-{batch_index}"
         print(f"[stage2 batch] enviando lote {batch_index}/{len(chunks)} com {len(request_chunk)} requests")
         try:
-            created = call_batch_create(
-                client,
-                model=model,
-                requests=request_chunk,
-                display_name=display_name,
-            )
-            batch_name = clean_scalar(getattr(created, "name", ""))
-            if not batch_name:
-                raise ValueError("Batch criado sem name")
-            final_batch = wait_for_batch(client, batch_name, poll_seconds)
+            batch_name, created, final_batch = resumable_batch(
+                client, model=model, requests=request_chunk, display_name=display_name,
+                run_dir=run_dir, stage='stage2', create=call_batch_create,
+                wait=wait_for_batch, poll_seconds=poll_seconds)
             batch_meta.append(
                 {
                     "batch_index": batch_index,
@@ -614,10 +637,12 @@ def run_stage2_batch(
                 }
             )
             write_json(run_dir / "stage2_batches.json", batch_meta)
+        except (CheckpointIntegrityError, OSError):
+            raise
         except Exception as exc:
             error = f"Falha no job batch: {exc}"
             append_jsonl(raw_path, {"batch_index": batch_index, "error": error})
-            _record_failed_stage2_chunk(rows, manifest, request_chunk, error)
+            _record_failed_stage2_chunk(rows, manifest, request_chunk, error, run_dir, model)
             if is_global_api_error(exc):
                 raise
             continue
@@ -625,14 +650,18 @@ def run_stage2_batch(
         state = batch_state_name(final_batch)
         if state not in {"JOB_STATE_SUCCEEDED", "JOB_STATE_PARTIALLY_SUCCEEDED"}:
             error = f"Batch terminou com state={state}: {json_dumps(object_to_dict(getattr(final_batch, 'error', {})))}"
-            _record_failed_stage2_chunk(rows, manifest, request_chunk, error)
+            _record_failed_stage2_chunk(rows, manifest, request_chunk, error, run_dir, model)
+            mark_batch_consumed(run_dir, 'stage2', batch_name)
             continue
 
         expected_ids = [clean_scalar((req.get("metadata") or {}).get("custom_id")) for req in request_chunk]
         returned_ids: set[str] = set()
         responses = batch_inlined_responses(final_batch)
+        original_order = created.get('_request_order', expected_ids)
         for response_index, inline_response in enumerate(responses):
-            fallback_id = expected_ids[response_index] if response_index < len(expected_ids) else ""
+            # Reused jobs may cover a superset of pending IDs. Positional fallback
+            # is safe only against the original complete job order.
+            fallback_id = original_order[response_index] if len(responses) == len(original_order) else ""
             custom_id = batch_custom_id(inline_response) or fallback_id
             append_jsonl(
                 raw_path,
@@ -642,12 +671,16 @@ def run_stage2_batch(
                     "inline_response": object_to_dict(inline_response),
                 },
             )
-            if not custom_id or custom_id not in manifest:
+            if not custom_id or custom_id not in expected_ids or custom_id in returned_ids:
                 continue
             returned_ids.add(custom_id)
             prepared, pattern = manifest[custom_id]
             api_error = batch_error_text(inline_response)
             response = batch_generated_response(inline_response)
+            request = next(r for r in request_chunk if r['metadata']['custom_id'] == custom_id)
+            record_call(run_dir, prepared, {**request, 'model': model}, stage='stage2', pattern=pattern,
+                        response=response, error=api_error, batch_name=batch_name,
+                        timing_source='batch_per_request_unavailable')
             if api_error or response is None:
                 rows.append(
                     flatten_stage2_result(
@@ -662,7 +695,7 @@ def run_stage2_batch(
                 continue
             try:
                 payload, metadata = parse_response_payload(response)
-                normalized = normalize_stage2(payload, catalog)
+                normalized = normalize_stage2(decode_stage(payload, catalog, prepared, 2), catalog)
 
                 # P5: Verify evidence_text is a literal substring of the artifact.
                 evidence = normalized.get("evidence_text", "")
@@ -685,12 +718,18 @@ def run_stage2_batch(
                 normalized["confidence"] = computed_confidence
 
                 rows.append(flatten_stage2_result(prepared, pattern, normalized, metadata))
+            except (CheckpointIntegrityError, OSError):
+                raise
             except Exception as exc:
                 rows.append(flatten_stage2_result(prepared, pattern, {}, {}, "errored", str(exc)))
 
         for custom_id in expected_ids:
             if custom_id not in returned_ids:
                 prepared, pattern = manifest[custom_id]
+                request = next(r for r in request_chunk if r['metadata']['custom_id'] == custom_id)
+                record_call(run_dir, prepared, {**request,'model':model}, stage='stage2',pattern=pattern,
+                            error='Missing batch response; usage unknown', batch_name=batch_name,
+                            timing_source='batch_per_request_unavailable')
                 rows.append(
                     flatten_stage2_result(
                         prepared,
@@ -701,4 +740,5 @@ def run_stage2_batch(
                         "Resposta ausente no resultado inline do Batch API",
                     )
                 )
+        mark_batch_consumed(run_dir, 'stage2', batch_name)
     return store.dataframe.copy()

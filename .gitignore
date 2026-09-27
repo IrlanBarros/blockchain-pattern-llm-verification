@@ -116,3 +116,6 @@ build/
 Thumbs.db
 .vscode-server/
 .vscode-remote/
+
+# Local neural retrieval indices (reproducible from catalog + pinned model)
+.cache/retrieval_embeddings/

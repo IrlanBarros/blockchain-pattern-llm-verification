@@ -1,0 +1,415 @@
+{
+  "version": "compact-v1",
+  "patterns": {
+    "Ticker tape": {
+      "pattern_id": "P001",
+      "short_definition": "Continuously supply recurring numeric prices to smart contracts; a specialized inbound oracle price feed.",
+      "source_description_sha256": "5cbca4671342b2b25945a9d41ac3d1a1a9bdc8fc057fc3ad66b34e8cf1736d5b"
+    },
+    "Oracle": {
+      "pattern_id": "P002",
+      "short_definition": "Off-chain components observe contract requests/state and submit external data to the blockchain in a transaction.",
+      "source_description_sha256": "c9e649471bd88c30ddd5c56bba34f8ce17c60f4d092cb42de85fbe17f058760b"
+    },
+    "Reverse Oracle": {
+      "pattern_id": "P003",
+      "short_definition": "Off-chain components observe specific on-chain state/events and react outside the blockchain; outbound information flow.",
+      "source_description_sha256": "a13de4f1d5e04b20aacf8a7b5f8eda10fd28b7c825efbf177dcbc6e63a97addb"
+    },
+    "Pull-based inbound oracle": {
+      "pattern_id": "P004",
+      "short_definition": "Bring external data on-chain by an active component fetching it manually or on demand (pull).",
+      "source_description_sha256": "746d55afd7844cc31b59efd6cc219621d492c2cd0c665b3ddf7271a3f2115d71"
+    },
+    "Push-based inbound oracle": {
+      "pattern_id": "P005",
+      "short_definition": "An external component automatically pushes data on-chain without an explicit contract request.",
+      "source_description_sha256": "483ee7177ad346d67758f70a15534d023be44d7cc498c4dae24e4b2f67972bca"
+    },
+    "State Channel": {
+      "pattern_id": "P006",
+      "short_definition": "Multiple users exchange microtransactions off-chain and periodically anchor their hash on-chain for later proof.",
+      "source_description_sha256": "8ddd12157d8811626bd2ad784ddfb76c9ff081d78a3c2857ab095857df2b018c"
+    },
+    "Off-chain Contract Registry": {
+      "pattern_id": "P007",
+      "short_definition": "A contract registers references to off-chain services/versions for discovery and versioning.",
+      "source_description_sha256": "1230455ede20d04dd133a5235127d97db28055e636a78aa5f7bd672b2a0c1b60"
+    },
+    "Legal and smart contract pair": {
+      "pattern_id": "P008",
+      "short_definition": "Link an off-chain legal contract to an on-chain smart contract, retaining signatures/states on-chain and sensitive data off-chain.",
+      "source_description_sha256": "cf07d8fc06eed6e9bffe58a0bc9a64a04567c3ebe06d43f8dd25130d9339f88d"
+    },
+    "Off-chain data storage": {
+      "pattern_id": "P009",
+      "short_definition": "Store bulky data off-chain and its hash on-chain to verify integrity with less storage and disclosure.",
+      "source_description_sha256": "5d8c4fc2cfdcac9976b3b859db367f91a7b50fee8b50d1652203c4c2a5688a47"
+    },
+    "Confidential and pseudo-anonymous contract enforcement": {
+      "pattern_id": "P010",
+      "short_definition": "Combine an off-chain legal contract, on-chain state machine and zero-knowledge proofs to verify clauses without exposing private data.",
+      "source_description_sha256": "e016e890100c89bfd48859f7a4fa96732373315dbb53b51d2ded33d0d4cab567"
+    },
+    "Off-chain Signatures": {
+      "pattern_id": "P011",
+      "short_definition": "Sign authorization/data off-chain and verify/recover the cryptographic signature on-chain to avoid extra transactions.",
+      "source_description_sha256": "6f8e77347319c9f07b25db443b68db2b00649a22748dafd162691755e1827686"
+    },
+    "Delegated Computation": {
+      "pattern_id": "P012",
+      "short_definition": "Delegate expensive computation off-chain, submit results on-chain and allow a challenge/verification period.",
+      "source_description_sha256": "83a5f55ef82c52e7abd67d9ccfaaa0a977f92dab88a9307783f205d213f44cc3"
+    },
+    "Master & Sub Key": {
+      "pattern_id": "P013",
+      "short_definition": "Derive multiple purpose-specific subkeys from a master key hierarchically (BIP32) instead of reusing a sensitive key.",
+      "source_description_sha256": "9bf014f87565b3b1149e36059acec198fa807d5d23e69674b6c0902a625496b0"
+    },
+    "Hot & Cold Wallet Storage": {
+      "pattern_id": "P014",
+      "short_definition": "Separate frequently used online funds from secure offline reserves, optionally with multisignatures and withdrawal delays.",
+      "source_description_sha256": "e4053adfc3324149d6916e30c70f35fd4699bdb3a801f8d7b5d5a76ad85890b4"
+    },
+    "Key Sharding": {
+      "pattern_id": "P015",
+      "short_definition": "Split a private key into shares, requiring a threshold of shares to reconstruct it.",
+      "source_description_sha256": "cc73f12e82787d7dff58142d31582efa200b27fa23324d5bfe570e3908a3ef52"
+    },
+    "X-confirmation": {
+      "pattern_id": "P016",
+      "short_definition": "Wait for X block confirmations before accepting a transaction as final to mitigate chain reorganizations.",
+      "source_description_sha256": "a33d6334309b31d71cfc58a39a236c4a73daf6120aa8fa5283863c8d1ec18c32"
+    },
+    "Blockchain BP Engine": {
+      "pattern_id": "P017",
+      "short_definition": "An on-chain smart contract stores and executes a collaborative business workflow.",
+      "source_description_sha256": "2570412e046d5f64ac1e8999c9286fd7eadc5b73d08361175bf34fa6b9e32915"
+    },
+    "Smart Contract Activities": {
+      "pattern_id": "P018",
+      "short_definition": "One smart contract contains multiple business-process activities and controls transitions between them.",
+      "source_description_sha256": "8e04fac368fb5dc5b0684e1ed8589e2224db3fd516c926760e1666f9cc5afc7a"
+    },
+    "Decentralize business process": {
+      "pattern_id": "P019",
+      "short_definition": "Use blockchain to coordinate a collaborative process across organizations without a trusted intermediary.",
+      "source_description_sha256": "ae970d57721d7ed0b6eb24e1a8dffb03819e87f1949a6af243d6fd6d89327c21"
+    },
+    "Identifier Registry": {
+      "pattern_id": "P020",
+      "short_definition": "Map a decentralized identifier (DID) to off-chain attributes in a contract; private-key possession proves control.",
+      "source_description_sha256": "ed8b71e03ccf4d346c395cef0044156ab451ebb57cde90e6075321bffbec3bbb"
+    },
+    "Multiple Registration": {
+      "pattern_id": "P021",
+      "short_definition": "One controller creates multiple distinct identifiers to prevent correlation between identity contexts.",
+      "source_description_sha256": "33c810d00b4f7753904353e380740305835d65d8f892e1cf922e0e36089218cd"
+    },
+    "Bound with Social Media": {
+      "pattern_id": "P022",
+      "short_definition": "Bind an on-chain identifier to a social-media account with proof of possession.",
+      "source_description_sha256": "ef1010fd06e4497d0fa49fae74d7d3eb3b328f8f24861e44517101141594905e"
+    },
+    "Dual Resolution": {
+      "pattern_id": "P023",
+      "short_definition": "Resolve identities bidirectionally so two DID-identified entities can communicate.",
+      "source_description_sha256": "cb7ac12364b7b7c4a2d32722773aaf6e2a4319da6ead8cd42493632d677d83c2"
+    },
+    "Delegate List": {
+      "pattern_id": "P024",
+      "short_definition": "Register delegated addresses that can help recover a DID when its controlling private key is lost.",
+      "source_description_sha256": "6ada4be53714979ebbc49fbe2d0a2c8c5354c042040ada8c739f55d6fa810759"
+    },
+    "Blockchain Security Pattern for Big Data Ecosystems": {
+      "pattern_id": "P025",
+      "short_definition": "Record operations on a big-data repository using blockchain for audit and traceability.",
+      "source_description_sha256": "595aca209fdb8205f1508bf268f6e892b748f7d48c4a43e11279ce3e62d81e84"
+    },
+    "Blockchain-based reputation system": {
+      "pattern_id": "P026",
+      "short_definition": "Record and update participant reputation/trust scores on-chain with verifiable behavioral history.",
+      "source_description_sha256": "4ec5bbb18ceecfed80fd69826c776281ff3997653b963ce66ba923aa717fe19e"
+    },
+    "Vote": {
+      "pattern_id": "P027",
+      "short_definition": "Collaborative verifiable on-chain governance decisions through proposals and votes.",
+      "source_description_sha256": "fda3ae86e634391e9a5e2b061d658cbe6cbc2393cc2836fcbd1c99120744a012"
+    },
+    "Blocklist": {
+      "pattern_id": "P028",
+      "short_definition": "A contract lists addresses prohibited from calling specified functions.",
+      "source_description_sha256": "038c7e8f4ba7f074154267fb153389e9b2fd705dffecc52772563fbcadb58dad"
+    },
+    "Announcement": {
+      "pattern_id": "P029",
+      "short_definition": "Publish and retrieve verifiable public announcements on-chain.",
+      "source_description_sha256": "d8adb874bb4232f6fee27e1452a3266cd95486271581c0961a0c128adc93e097"
+    },
+    "Bulletin Board": {
+      "pattern_id": "P030",
+      "short_definition": "An on-chain public message board lets users publish/query immutable, verifiable messages.",
+      "source_description_sha256": "f050c2ecaa6ab1db42adcc9bb30cdf12407539a618c9b3813c442562ecec187e"
+    },
+    "Randomness": {
+      "pattern_id": "P031",
+      "short_definition": "Generate secure verifiable randomness in a deterministic blockchain, e.g. VRF.",
+      "source_description_sha256": "22cc748f0aa46e3b87ae25342ebbe3789219fc161777d69880a38a8090a95fd3"
+    },
+    "Poll": {
+      "pattern_id": "P032",
+      "short_definition": "Collect and tally participants' opinions/preferences through on-chain polls.",
+      "source_description_sha256": "df16c333925405745e37b1fa1eb60c14e5c41ca9360c8b1505b5ed3942302f0f"
+    },
+    "Selective Content Generation": {
+      "pattern_id": "P033",
+      "short_definition": "Conditionally generate/reveal content according to authorization or on-chain state.",
+      "source_description_sha256": "bc08d19c6dff5164554db9780acfc60fe0477c9cd12cc431b9aca57386e72e85"
+    },
+    "Time-Constrained Access": {
+      "pattern_id": "P034",
+      "short_definition": "A contract authorizes access to a resource only within a specified time window.",
+      "source_description_sha256": "14cf19b1b5cc7eebc71a7c0f6386b8560aaf965b63ff091080efb0b78b2522bd"
+    },
+    "One-Off Access": {
+      "pattern_id": "P035",
+      "short_definition": "Grant one-use access and mark the permission/token consumed to prevent reuse.",
+      "source_description_sha256": "554783bc2522fcaef335240641549db7820830536e8f902044073f01b9d02f5b"
+    },
+    "Digital Record": {
+      "pattern_id": "P036",
+      "short_definition": "Record document metadata/hashes on-chain as proof of existence and integrity over time.",
+      "source_description_sha256": "00e0ea6838bdbfbc4d77dc7b1eb7537f9bd0432bc90e926a85cbe3e97bae2f04"
+    },
+    "State machine": {
+      "pattern_id": "P037",
+      "short_definition": "Represent contract phases and allowed transitions explicitly as a state machine.",
+      "source_description_sha256": "3c2406eb37e606fe3b8d825e510cbcc5c18dd71cf6ee510137f6fcf445e14b32"
+    },
+    "Proxy contract": {
+      "pattern_id": "P038",
+      "short_definition": "Forward calls to a replaceable implementation contract to upgrade logic while retaining the public address.",
+      "source_description_sha256": "867345b0c595b65897b40964ce8646d4acc1871233ee78467ea877f612f7b477"
+    },
+    "Contract Registry (on-chain)": {
+      "pattern_id": "P039",
+      "short_definition": "Map multiple contracts to their latest version addresses; unlike a proxy forwarding to one target.",
+      "source_description_sha256": "26f38ad1e87acdc3411ef647582a44d303308418dad2490e6791376ed4c2aaf3"
+    },
+    "Factory contract": {
+      "pattern_id": "P040",
+      "short_definition": "A creator contract creates new instances of other smart contracts; deployment primitives alone are insufficient.",
+      "source_description_sha256": "7b0e04d39d132ad59c20367b2a752bcea463863ed2babf835ec225adebd2479a"
+    },
+    "Data contract": {
+      "pattern_id": "P041",
+      "short_definition": "Keep persistent data in a dedicated contract separate from business logic, allowing logic upgrades without migrating state.",
+      "source_description_sha256": "4a69b394b8f2a636bc37dbf0cdf54434cd80ea64934ecb72d45fc8155958815e"
+    },
+    "Router contract": {
+      "pattern_id": "P042",
+      "short_definition": "Route function calls to different contracts/modules based on a function selector.",
+      "source_description_sha256": "9ebf493f748914b88f5a4c50bf5e2464962a31fce56226d3723e4d5e1b5e38eb"
+    },
+    "Relay contract": {
+      "pattern_id": "P043",
+      "short_definition": "Forward users' off-chain signed meta-transactions and pay gas for them.",
+      "source_description_sha256": "836a89068504cd628da3ea5618ea26051dd81c8dddd2a50cd3011f1941aa9c01"
+    },
+    "Emergency stop": {
+      "pattern_id": "P044",
+      "short_definition": "Temporarily pause sensitive contract functions during anomalous behavior or attacks (circuit breaker).",
+      "source_description_sha256": "7cc20a256051f39f4a0db4f83d3cc9fea1377e26c2927f3551637ef227c6a698"
+    },
+    "Mortal": {
+      "pattern_id": "P045",
+      "short_definition": "Terminate a contract using selfdestruct; historical code/storage removal is restricted by EIP-6780.",
+      "source_description_sha256": "60041d6f1a19f3dc1875ee6fc8f8aae63fabe3541b314ef274ae308de37e930d"
+    },
+    "Check-Effects-Interactions": {
+      "pattern_id": "P046",
+      "short_definition": "Check preconditions, update internal state, then interact externally to prevent reentrancy.",
+      "source_description_sha256": "fa52cd6c6312babf0dc07e0c3904acf0168e7915c9123ac8e746d57f52a53000"
+    },
+    "Mutex": {
+      "pattern_id": "P047",
+      "short_definition": "Explicitly lock/unlock sensitive contract execution to prevent concurrent or recursive calls to shared resources.",
+      "source_description_sha256": "dd62d44e6b970df4c1473b745f2da7eca617cbf70bf29290267c94db9e169c20"
+    },
+    "Guard check": {
+      "pattern_id": "P048",
+      "short_definition": "Validate preconditions with modifiers/require before executing a function to prevent invalid or unauthorized calls.",
+      "source_description_sha256": "caed7f2f9fe782594b309019ff5c3115ff78bb4290f38f73d015ad82083da5c1"
+    },
+    "Rate limit": {
+      "pattern_id": "P049",
+      "short_definition": "Limit operation frequency/volume within a time interval (speed bump) to mitigate abuse or mass withdrawals.",
+      "source_description_sha256": "fd3ffc73799890e6d70c54c30c1b8add435f6fc7f3289085e01d5a3782fda285"
+    },
+    "Balance limit": {
+      "pattern_id": "P050",
+      "short_definition": "Cap funds held by a contract to limit financial exposure if compromised.",
+      "source_description_sha256": "dad27ac9959636660e51df3003ecfc534ab14fdf6a7184d7dc07d4dbf65d729c"
+    },
+    "Low contract footprint": {
+      "pattern_id": "P051",
+      "short_definition": "Reduce on-chain contract computation and storage footprint to lower gas; network packet optimization alone is different.",
+      "source_description_sha256": "296415db5a8667a817bd555d7498fe36ba66e82475eb371ec15889a97465b6ed"
+    },
+    "Loop unrolling": {
+      "pattern_id": "P052",
+      "short_definition": "Replace dynamic loops with fixed instruction sequences to reduce unpredictable gas consumption.",
+      "source_description_sha256": "810658784d609ba8b2792a55fbe8a954dff0c2ceabcee277ff5ace19a0d3abe6"
+    },
+    "Contract size limit": {
+      "pattern_id": "P053",
+      "short_definition": "Split oversized contract bytecode into modules to satisfy deployment size constraints such as EIP-170.",
+      "source_description_sha256": "82cd158494be7addcd0820760d6bbacb6910fe0ebafe1a950b7cf7d6efc80e09"
+    },
+    "Off-chain computation": {
+      "pattern_id": "P054",
+      "short_definition": "Move expensive blockchain computation off-chain, submitting and verifying the result on-chain.",
+      "source_description_sha256": "ad5a7bed1bb32fccca84c483d50e1c3bbacc082d168888bf4d564c28814360fe"
+    },
+    "State anchoring": {
+      "pattern_id": "P055",
+      "short_definition": "Periodically anchor a digest/Merkle root of off-chain states/transactions on-chain for integrity verification.",
+      "source_description_sha256": "784768effc61b90985b0c77156e4e6227934887ae7c150ebc927e4a68bfc7d07"
+    },
+    "Data refresh": {
+      "pattern_id": "P056",
+      "short_definition": "Refresh stale on-chain data using external transactions, potentially rewarding callers (incentive execution).",
+      "source_description_sha256": "e4e57dfb4a884f1b98dfc9a52a01d76d8cba0892b8de2afa6507d3cb7d99940e"
+    },
+    "Ownable": {
+      "pattern_id": "P057",
+      "short_definition": "A single owner address can execute restricted administrative contract functions.",
+      "source_description_sha256": "a962e2234d4cb217590432ef37d787d2dcd6d51c087e455dfcf30444c748bda2"
+    },
+    "Role-based control": {
+      "pattern_id": "P058",
+      "short_definition": "Assign roles to addresses and enforce different permissions for each role (RBAC).",
+      "source_description_sha256": "78f8a7a15819a1c47692e5aeb3cb2de0ad5d1fa735d91fb1b9e1fc6a898c8d41"
+    },
+    "Permissioned actions": {
+      "pattern_id": "P059",
+      "short_definition": "Restrict sensitive contract functions to a predefined set of authorized addresses.",
+      "source_description_sha256": "a57f9a72d8f63753a2ab10c9a7b9c0fe9c03790de51b7c0b6125e7c2de0b928e"
+    },
+    "Implicit authorization": {
+      "pattern_id": "P060",
+      "short_definition": "Authorize implicitly through asset/token ownership (balanceOf/ownerOf), without an explicit permission list.",
+      "source_description_sha256": "6c9692a0803b83d3752f7d4628d194c0c68d7a221d68ccb25b4ca4daa49947b6"
+    },
+    "Limited-access": {
+      "pattern_id": "P061",
+      "short_definition": "Restrict contract functions with an access modifier that rejects unauthorized addresses.",
+      "source_description_sha256": "538451b4c0c899dca4cb395e1b1ee663b1b6ebc62942ea76d6a4d4a6cefd42d8"
+    },
+    "Immutable data": {
+      "pattern_id": "P062",
+      "short_definition": "Use constant/immutable values fixed after deployment to avoid storage reads and save gas.",
+      "source_description_sha256": "021370ffbe8cc26a0b22b987a8194692194910af5ec01fa5e37787a28fe175c0"
+    },
+    "Mutable data": {
+      "pattern_id": "P063",
+      "short_definition": "Contract state values can change over time through updates/setters, unlike immutable data.",
+      "source_description_sha256": "4595d853f0c2115faa4f092fdb88e18becfa2c34e3e1f104c3a5742a5b6939aa"
+    },
+    "Append-only data": {
+      "pattern_id": "P064",
+      "short_definition": "Only append new records; never overwrite/remove prior records, preserving a complete audit history.",
+      "source_description_sha256": "81a21bb197c80be05d70c525109342df8a41758370bec2e0919d42d9d6e35265"
+    },
+    "Data compression": {
+      "pattern_id": "P065",
+      "short_definition": "Pack/unpack data into compact formats/storage slots to reduce on-chain storage costs.",
+      "source_description_sha256": "854b3f9a1a8d65d418a9c5b0f7798f2d2495bb5fd2ba835b287807b7fcd5d842"
+    },
+    "Data separation": {
+      "pattern_id": "P066",
+      "short_definition": "Physically separate stored data from manipulating logic to support upgrades and reduce coupling.",
+      "source_description_sha256": "877f1781502096436b6f8db520ca0b492d44f162cab3907df86c86e8ac1639a0"
+    },
+    "Homomorphic encryption": {
+      "pattern_id": "P067",
+      "short_definition": "Compute over encrypted data without decrypting it.",
+      "source_description_sha256": "cb19f30cf19552fd66c80671c5c9e52bf8b66a7ecb4523b6102de9f706a82718"
+    },
+    "Zero-knowledge proof": {
+      "pattern_id": "P068",
+      "short_definition": "Prove a statement without revealing underlying data, with contract verification of the proof.",
+      "source_description_sha256": "d82ff3397bdfad516f88d43c04f58f16b4eea378cee6b8d7e14eb363a83cb6a2"
+    },
+    "Commit and Reveal": {
+      "pattern_id": "P069",
+      "short_definition": "Commit a secret's hash, later reveal the value and verify it matches the prior commitment.",
+      "source_description_sha256": "f0528f6c3f11b22da7b99f2695a690bf76d5ab625633325499751eb38a5aa1f8"
+    },
+    "Snapshotting": {
+      "pattern_id": "P070",
+      "short_definition": "Copy source blockchain states/contracts/transactions for subsequent transfer to a destination chain during migration.",
+      "source_description_sha256": "ff12502528836b14777900e7b1c6b1b15e5484ecae0d56832664d6aef6b233ca"
+    },
+    "State initialization": {
+      "pattern_id": "P071",
+      "short_definition": "Transfer and initialize source-chain state on the destination chain during migration.",
+      "source_description_sha256": "8dd233135265efd7203490cbbc7e97868cac650db8a652be4a5eb0f29fdd97e0"
+    },
+    "Establish genesis": {
+      "pattern_id": "P072",
+      "short_definition": "Initialize a destination blockchain's genesis block with migrated state.",
+      "source_description_sha256": "5d3054499e390d40f0c8a569fd06b8f4df2c4b5ef231c20426216b26cbed8802"
+    },
+    "Smart contract translation": {
+      "pattern_id": "P073",
+      "short_definition": "Adapt existing smart-contract code to a destination blockchain's VM/language during migration.",
+      "source_description_sha256": "b99dd8f90b879dd0da1c83a6a94eec5efe986a86d46d486b7dc1e05a2d1f8fcc"
+    },
+    "Tokenization": {
+      "pattern_id": "P074",
+      "short_definition": "Represent an asset/right/entity as transferable on-chain tokens; listing an existing token alone is insufficient.",
+      "source_description_sha256": "ecd4993de115afcb1827bb28ea4ee220a4ac858e7835a1a66dc6df8106be2845"
+    },
+    "Self-generated transactions": {
+      "pattern_id": "P075",
+      "short_definition": "The user constructs and signs transactions client-side and retains full control of private keys.",
+      "source_description_sha256": "288d5f93977c3794a89e16b6490d91c3813799c046ed7df7531cde4df95de63e"
+    },
+    "Self-Confirmed Transactions": {
+      "pattern_id": "P076",
+      "short_definition": "The application constructs a transaction; the user manually confirms and signs it with a browser wallet.",
+      "source_description_sha256": "ca2c3d2355976bfbcb0da3bb7a0e6d9b4c048e4a895017abce25e5e96f1a0b84"
+    },
+    "Delegated Transactions": {
+      "pattern_id": "P077",
+      "short_definition": "The application controls blockchain operations, keys and wallets on the user's behalf, requiring trust in the service.",
+      "source_description_sha256": "9d86c83a48ecf0a2075e6f96d5b3ad39eb5667dbd10b601ea3c2456681ff9172"
+    },
+    "Packing variables": {
+      "pattern_id": "P078",
+      "short_definition": "Place small typed variables adjacently in the same 32-byte storage slot to reduce storage reads/writes.",
+      "source_description_sha256": "f809d5d8a1fe609a633844694d98d7930a5cfd7e760a68a59dd4ecafff9bb1fe"
+    },
+    "Packing booleans": {
+      "pattern_id": "P079",
+      "short_definition": "Pack multiple boolean values as bits in a bitmap to save storage.",
+      "source_description_sha256": "114312c3ece2db5498dced78e7b5ad48b66f5928bce7e95ada4139a5de798428"
+    },
+    "Unit vs Unit256": {
+      "pattern_id": "P080",
+      "short_definition": "Choose smaller integer types versus uint256 considering packing, storage access and gas costs.",
+      "source_description_sha256": "027cf1913dbf3ae7c77aeb5e3d807a80b222f125ff8ec7382c848d273a08b4f5"
+    },
+    "Mapping vs Array": {
+      "pattern_id": "P081",
+      "short_definition": "Choose Solidity mapping versus array according to data access patterns and gas/storage tradeoffs.",
+      "source_description_sha256": "c2b888d206742a25a06b717c1c0e54861910294c19f72cddcf9e9fc427c5b288"
+    },
+    "Freeing storage": {
+      "pattern_id": "P082",
+      "short_definition": "Delete unused storage variables to release storage and obtain applicable gas refunds.",
+      "source_description_sha256": "0427cbeab1f65c380e67b8001a806def566651aef662e12089a5564fb5532dae"
+    }
+  }
+}

@@ -1,0 +1,260 @@
+{
+  "commit": "c34e48b02d4a154c238e81ac898b3c594d50dfd8",
+  "estimator": "ceil(Unicode prompt+schema characters/4); NOT an official tokenizer; excludes transport framing",
+  "tests": "103 passed",
+  "samples": {
+    "smoke": {
+      "rows": 30,
+      "sha256": "b83fe66a8abce5a2635de4000301aa27a44b3c080d9d8e08d5773a51a9b930a5",
+      "labels": {
+        "": 30
+      },
+      "stage1_input_estimate": {
+        "count": 30,
+        "sum": 259341.0,
+        "mean": 8644.7,
+        "median": 8437.0,
+        "p95": 9706.2,
+        "min": 8026.0,
+        "max": 10399.0
+      },
+      "stage2_all_pairs_input_estimate": {
+        "count": 2460,
+        "sum": 12984291.0,
+        "mean": 5278.167073170732,
+        "median": 5079.0,
+        "p95": 6550.399999999998,
+        "min": 4280.0,
+        "max": 7468.0
+      }
+    },
+    "pilot": {
+      "rows": 200,
+      "sha256": "411d66b08d2f2838d313c7a19b8d50f4628447e510c263a93ea8adffd4875617",
+      "labels": {
+        "": 200
+      },
+      "stage1_input_estimate": {
+        "count": 200,
+        "sum": 1681917.0,
+        "mean": 8409.585,
+        "median": 8218.5,
+        "p95": 9320.9,
+        "min": 8003.0,
+        "max": 9957.0
+      },
+      "stage2_all_pairs_input_estimate": {
+        "count": 16400,
+        "sum": 82705867.0,
+        "mean": 5043.040670731707,
+        "median": 4954.0,
+        "p95": 6013.049999999999,
+        "min": 4257.0,
+        "max": 7026.0
+      }
+    }
+  },
+  "historical": {
+    "pilot_gemini": {
+      "stage1": {
+        "rows": 200,
+        "succeeded": 188,
+        "input_tokens": {
+          "count": 188,
+          "sum": 1293538.0,
+          "mean": 6880.521276595745,
+          "median": 6616.5,
+          "p95": 8078.2,
+          "min": 6367.0,
+          "max": 10744.0
+        },
+        "output_tokens": {
+          "count": 188,
+          "sum": 25965.0,
+          "mean": 138.11170212765958,
+          "median": 102.0,
+          "p95": 229.65,
+          "min": 72.0,
+          "max": 331.0
+        },
+        "total_tokens": {
+          "count": 188,
+          "sum": 1319503.0,
+          "mean": 7018.632978723404,
+          "median": 6760.5,
+          "p95": 8250.95,
+          "min": 6444.0,
+          "max": 10858.0
+        },
+        "thoughts_tokens": null,
+        "candidate_count": {
+          "count": 188,
+          "sum": 88.0,
+          "mean": 0.46808510638297873,
+          "median": 0.0,
+          "p95": 1.0,
+          "min": 0.0,
+          "max": 2.0
+        }
+      },
+      "stage2": {
+        "available": false
+      },
+      "metadata": {
+        "api_family": "generateContent",
+        "batch_max_bytes": 18000000,
+        "batch_size": 250,
+        "catalog_version": "v3",
+        "common_rules_sha256": "6b73934ac56b4eb545bb9ab3311ea0943007539abf4c48dc6373c60dca5d16d4",
+        "created_at_utc": "2026-08-06T01:07:56+00:00",
+        "google_genai_sdk_version": "1.75.0",
+        "input_delimiter": ",",
+        "input_encoding": "utf-8",
+        "input_path": "/home/irlan-barros/faculdade/projetos/llm_verification_pipeline_gemini/data/pilot/pilot_annotation_sample.csv",
+        "input_rows": 200,
+        "input_sha256": "411d66b08d2f2838d313c7a19b8d50f4628447e510c263a93ea8adffd4875617",
+        "limit": 200,
+        "manual_version": "0.2",
+        "max_input_chars": 12000,
+        "mode": "sync",
+        "normalization_change_count": 312,
+        "pattern_count": 82,
+        "patterns_delimiter": ",",
+        "patterns_encoding": "utf-8-sig",
+        "patterns_path": "/home/irlan-barros/faculdade/projetos/llm_verification_pipeline_gemini/blockchain_patterns_keywords_v3.csv",
+        "patterns_sha256": "f210c75e5dfd443e11727943c78e6e1efc77b80f9ea140f0fb993419d2457970",
+        "pipeline_version": "0.6.1-gemini",
+        "poll_seconds": 30,
+        "provider": "google-gemini",
+        "python_version": "3.13.5 (main, Jul 23 2025, 19:43:25) [GCC 13.3.0]",
+        "seed": 0,
+        "stage1_max_tokens": 2048,
+        "stage1_model": "gemini-3.1-flash-lite",
+        "stage1_rules_sha256": "68802213876abc98ef6f0f4ec1beb90148a98a089b8fa042e0ef1c94e7d355fc",
+        "stage1_schema_sha256": "4e2ac3e4618440ece05dcaad5bcbb211009be16592edc1a68148e72c722a537e",
+        "stage1_thinking_level": "minimal",
+        "stage2_max_tokens": 2048,
+        "stage2_model": "gemini-3.5-flash",
+        "stage2_rules_sha256": "47b4ca9ec09bcd93746acddf2255c12c7f1e81204ae592a181821b5d5ae9421a",
+        "stage2_schema_sha256": "8e414cdaf1fc1a11cad14ea07ce11885fa844bb0c2e5cc39782361cc51817aa9",
+        "stage2_thinking_level": "low",
+        "temperature": 1.0
+      }
+    },
+    "pilot_sample_run": {
+      "stage1": {
+        "rows": 200,
+        "succeeded": 200,
+        "input_tokens": {
+          "count": 200,
+          "sum": 1409617.0,
+          "mean": 7048.085,
+          "median": 6777.0,
+          "p95": 8270.599999999999,
+          "min": 6522.0,
+          "max": 10899.0
+        },
+        "output_tokens": {
+          "count": 200,
+          "sum": 24933.0,
+          "mean": 124.665,
+          "median": 93.5,
+          "p95": 209.04999999999998,
+          "min": 68.0,
+          "max": 324.0
+        },
+        "total_tokens": {
+          "count": 200,
+          "sum": 1434550.0,
+          "mean": 7172.75,
+          "median": 6904.0,
+          "p95": 8419.9,
+          "min": 6610.0,
+          "max": 10992.0
+        },
+        "thoughts_tokens": null,
+        "candidate_count": {
+          "count": 200,
+          "sum": 72.0,
+          "mean": 0.36,
+          "median": 0.0,
+          "p95": 1.0,
+          "min": 0.0,
+          "max": 2.0
+        }
+      },
+      "stage2": {
+        "rows": 51,
+        "succeeded": 51,
+        "input_tokens": {
+          "count": 51,
+          "sum": 130743.0,
+          "mean": 2563.5882352941176,
+          "median": 2293.0,
+          "p95": 4392.5,
+          "min": 1530.0,
+          "max": 5941.0
+        },
+        "output_tokens": {
+          "count": 51,
+          "sum": 10673.0,
+          "mean": 209.27450980392157,
+          "median": 208.0,
+          "p95": 241.5,
+          "min": 171.0,
+          "max": 272.0
+        },
+        "total_tokens": {
+          "count": 51,
+          "sum": 141416.0,
+          "mean": 2772.8627450980393,
+          "median": 2504.0,
+          "p95": 4621.5,
+          "min": 1701.0,
+          "max": 6183.0
+        },
+        "thoughts_tokens": null
+      },
+      "metadata": {
+        "api_family": "generateContent",
+        "batch_max_bytes": 18000000,
+        "batch_size": 250,
+        "catalog_version": "v3",
+        "common_rules_sha256": "6b73934ac56b4eb545bb9ab3311ea0943007539abf4c48dc6373c60dca5d16d4",
+        "created_at_utc": "2026-08-18T14:43:14+00:00",
+        "google_genai_sdk_version": "1.75.0",
+        "input_delimiter": ",",
+        "input_encoding": "utf-8",
+        "input_path": "/home/irlan-barros/faculdade/projetos/llm_verification_pipeline_gemini/data/pilot/pilot_annotation_sample.csv",
+        "input_rows": 200,
+        "input_sha256": "411d66b08d2f2838d313c7a19b8d50f4628447e510c263a93ea8adffd4875617",
+        "limit": null,
+        "manual_version": "0.2",
+        "max_input_chars": 12000,
+        "mode": "sync",
+        "normalization_change_count": 312,
+        "pattern_count": 82,
+        "patterns_delimiter": ",",
+        "patterns_encoding": "utf-8-sig",
+        "patterns_path": "/home/irlan-barros/faculdade/projetos/llm_verification_pipeline_gemini/blockchain_patterns_keywords_v3.csv",
+        "patterns_sha256": "f210c75e5dfd443e11727943c78e6e1efc77b80f9ea140f0fb993419d2457970",
+        "pipeline_version": "0.6.1-gemini",
+        "poll_seconds": 30,
+        "provider": "google-gemini",
+        "python_version": "3.13.5 (main, Jul 23 2025, 19:43:25) [GCC 13.3.0]",
+        "seed": 0,
+        "stage1_max_tokens": 2048,
+        "stage1_model": "gemini-3.1-flash-lite",
+        "stage1_rules_sha256": "128aa4a654fb7a36c9f0c9a4af191dcf96a3774f6e73ed5035741eb8b4c3b0ee",
+        "stage1_schema_sha256": "24301249dfa3422de9a4cee27144e61c3197922cd98dcfbf20731087d7387d27",
+        "stage1_thinking_level": "minimal",
+        "stage2_max_tokens": 2048,
+        "stage2_model": "gemini-3.5-flash",
+        "stage2_rules_sha256": "8b6cba01f41d75f4bcbc72af8f66c12bb5918605de3c9241d6ae877f02ce3da8",
+        "stage2_schema_sha256": "15ab92f56cf46ca166dea437de431e4f97a14959ef93630c28a5b6e25082de6f",
+        "stage2_thinking_level": "low",
+        "temperature": 1.0
+      }
+    }
+  }
+}

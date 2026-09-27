@@ -1,0 +1,59 @@
+{
+  "counts": {
+    "strict_positive_issues": 7,
+    "strict_positive_pairs": 8,
+    "uncertain_issues": 1,
+    "uncertain_pairs": 1
+  },
+  "safety_definition": "strict positives plus separately retained annotator uncertain patterns",
+  "strict_definition": "annotator relevance=yes plus annotator-confirmed patterns",
+  "strict_pairs": [
+    {
+      "issue_number": "867",
+      "pattern": "Mortal",
+      "repository": "ethereum/pm"
+    },
+    {
+      "issue_number": "2003",
+      "pattern": "Oracle",
+      "repository": "solana-labs/solana-program-library"
+    },
+    {
+      "issue_number": "103",
+      "pattern": "Tokenization",
+      "repository": "web3swift-team/web3swift"
+    },
+    {
+      "issue_number": "3735",
+      "pattern": "Role-based control",
+      "repository": "OpenZeppelin/openzeppelin-contracts"
+    },
+    {
+      "issue_number": "3735",
+      "pattern": "Time-Constrained Access",
+      "repository": "OpenZeppelin/openzeppelin-contracts"
+    },
+    {
+      "issue_number": "8015",
+      "pattern": "Proxy contract",
+      "repository": "foundry-rs/foundry"
+    },
+    {
+      "issue_number": "3373",
+      "pattern": "Reverse Oracle",
+      "repository": "graphprotocol/graph-node"
+    },
+    {
+      "issue_number": "3165",
+      "pattern": "Oracle",
+      "repository": "solana-labs/solana-program-library"
+    }
+  ],
+  "uncertain_pairs": [
+    {
+      "issue_number": "117",
+      "pattern": "Check-Effects-Interactions",
+      "repository": "crytic/slither"
+    }
+  ]
+}

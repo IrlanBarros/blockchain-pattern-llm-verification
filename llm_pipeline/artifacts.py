@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import argparse
 import shutil
+import subprocess
+import os
 import sys
 from pathlib import Path
 
@@ -26,9 +28,12 @@ def build_dry_run_artifacts(
     run_dir: Path,
 ) -> None:
     stage1_requests_path = run_dir / "stage1_requests.jsonl"
+    # Dry-run requests are derived artifacts: replace atomically, never append duplicates.
+    temporary = stage1_requests_path.with_suffix('.jsonl.tmp')
+    temporary.write_text('', encoding='utf-8')
     for item in prepared_issues:
         append_jsonl(
-            stage1_requests_path,
+            temporary,
             {
                 "custom_id": item.custom_id_stage1,
                 "params": stage1_request_params(
@@ -42,6 +47,7 @@ def build_dry_run_artifacts(
                 ),
             },
         )
+    os.replace(temporary, stage1_requests_path)
     print(f"Dry-run concluído. Requisições Stage 1: {stage1_requests_path}")
 
 
@@ -137,6 +143,16 @@ def save_manifest(
         "stage2_rules_sha256": sha256_text(STAGE2_RULES),
         "python_version": sys.version,
     }
+    metadata['profile'] = getattr(args, 'profile', 'legacy')
+    metadata['quantization'] = 'provider_managed_not_exposed'
+    try:
+        metadata['commit_hash'] = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True, stderr=subprocess.DEVNULL).strip()
+        metadata['working_tree_dirty'] = bool(subprocess.check_output(['git','status','--porcelain'], text=True).strip())
+    except (OSError, subprocess.CalledProcessError):
+        metadata['commit_hash'] = None
+    from .optimization import OptimizationConfig
+    from .optimization_runtime import optimization_metadata
+    metadata.update(optimization_metadata(OptimizationConfig.from_environment(enabled=metadata['profile']=='optimized'),catalog))
     try:
         genai = import_genai()
         metadata["google_genai_sdk_version"] = getattr(genai, "__version__", "unknown")

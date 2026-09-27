@@ -1,0 +1,187 @@
+{
+  "acceptance": "NOT_APPROVED",
+  "acceptance_gates": {
+    "complete_runs": true,
+    "end_to_end_f1_drop_le_2pp": true,
+    "end_to_end_precision_drop_le_2pp": true,
+    "end_to_end_recall_drop_le_2pp": true,
+    "measured_token_reduction_ge_60_percent": false,
+    "retrieval_recall_ge_98_percent": true,
+    "stage1_recall_drop_le_1pp": true,
+    "stage2_conditional_f1_drop_le_2pp": true,
+    "stage2_conditional_precision_drop_le_2pp": true,
+    "stage2_conditional_recall_drop_le_2pp": true
+  },
+  "comparison": "live_runs_only",
+  "human_positive_pairs": 8,
+  "new_stage1_false_negatives": [
+    [
+      "OpenZeppelin/openzeppelin-contracts",
+      "3735",
+      "Time-Constrained Access"
+    ]
+  ],
+  "percentage_saved_vs_baseline": null,
+  "runs": {
+    "baseline": {
+      "integrity": {
+        "completed_stage1_issues": 200,
+        "completed_stage2_pairs": 86,
+        "duplicate_stage2_pairs": [],
+        "expected_stage2_pairs": 86,
+        "extra_stage2_pairs": [],
+        "failed_stage2_pairs": 0,
+        "issues_with_candidates": 83,
+        "missing_stage2_pairs": [],
+        "stage1_complete": true,
+        "stage2_complete": true,
+        "status": "OK",
+        "total_candidates": 86,
+        "total_stage1_issues": 200
+      },
+      "quality": {
+        "end_to_end_strict_yes": {
+          "accuracy": 0.625,
+          "f1": 0.7692307692307693,
+          "fn": 3,
+          "fp": 0,
+          "n": 8,
+          "precision": 1.0,
+          "recall": 0.625,
+          "tn": 0,
+          "tp": 5
+        },
+        "note": "Conditional metrics only for generated labeled binary pairs. Strict yes includes screened-out pairs and abstentions as not-yes.",
+        "stage1_candidate_recall": 0.875,
+        "stage1_missed_positives": [
+          [
+            "graphprotocol/graph-node",
+            "3373",
+            "Reverse Oracle"
+          ]
+        ],
+        "stage2_conditional_binary": {
+          "accuracy": 0.7142857142857143,
+          "f1": 0.8333333333333333,
+          "fn": 2,
+          "fp": 0,
+          "n": 7,
+          "precision": 1.0,
+          "recall": 0.7142857142857143,
+          "tn": 0,
+          "tp": 5
+        }
+      },
+      "retrieval_missed_positives": null,
+      "retrieval_recall": null,
+      "tokens": {
+        "cached_input_tokens_measured_calls": 207,
+        "calls": 397,
+        "estimated_cost_if_api": null,
+        "input_tokens_measured_calls": 286,
+        "mean_candidates_per_issue": 0.43,
+        "mean_input_tokens_stage1": 7116.085,
+        "mean_input_tokens_stage2": 2970.953488372093,
+        "measured_call_elapsed_seconds": 5006.8975769240005,
+        "median_input_tokens_stage1": 6845.0,
+        "median_input_tokens_stage2": 2827.5,
+        "output_tokens_measured_calls": 286,
+        "p95_input_tokens_stage1": 8338.599999999999,
+        "p95_input_tokens_stage2": 4141.25,
+        "percentage_saved_vs_baseline": null,
+        "run_wall_seconds": 5390.684148108,
+        "thoughts_tokens_measured_calls": 48,
+        "timing_note": "Sync: sum of attempt latency, excluding backoff. Batch: per-request latency unavailable.",
+        "tokens_saved_vs_baseline": null,
+        "total_cached_input_tokens": 641467,
+        "total_input_tokens": 1678719,
+        "total_output_tokens": 43344,
+        "total_thoughts_tokens": 11520,
+        "total_tokens": 1733583,
+        "total_tokens_measured_calls": 286,
+        "usage_complete": false
+      }
+    },
+    "optimized": {
+      "integrity": {
+        "completed_stage1_issues": 200,
+        "completed_stage2_pairs": 62,
+        "duplicate_stage2_pairs": [],
+        "expected_stage2_pairs": 62,
+        "extra_stage2_pairs": [],
+        "failed_stage2_pairs": 0,
+        "issues_with_candidates": 60,
+        "missing_stage2_pairs": [],
+        "stage1_complete": true,
+        "stage2_complete": true,
+        "status": "OK",
+        "total_candidates": 62,
+        "total_stage1_issues": 200
+      },
+      "quality": {
+        "end_to_end_strict_yes": {
+          "accuracy": 0.875,
+          "f1": 0.9333333333333333,
+          "fn": 1,
+          "fp": 0,
+          "n": 8,
+          "precision": 1.0,
+          "recall": 0.875,
+          "tn": 0,
+          "tp": 7
+        },
+        "note": "Conditional metrics only for generated labeled binary pairs. Strict yes includes screened-out pairs and abstentions as not-yes.",
+        "stage1_candidate_recall": 0.875,
+        "stage1_missed_positives": [
+          [
+            "OpenZeppelin/openzeppelin-contracts",
+            "3735",
+            "Time-Constrained Access"
+          ]
+        ],
+        "stage2_conditional_binary": {
+          "accuracy": 1.0,
+          "f1": 1.0,
+          "fn": 0,
+          "fp": 0,
+          "n": 7,
+          "precision": 1.0,
+          "recall": 1.0,
+          "tn": 0,
+          "tp": 7
+        }
+      },
+      "retrieval_missed_positives": [],
+      "retrieval_recall": 1.0,
+      "tokens": {
+        "cached_input_tokens_measured_calls": 16,
+        "calls": 503,
+        "estimated_cost_if_api": null,
+        "input_tokens_measured_calls": 262,
+        "mean_candidates_per_issue": 0.31,
+        "mean_input_tokens_stage1": 1723.575,
+        "mean_input_tokens_stage2": 2552.532258064516,
+        "measured_call_elapsed_seconds": 2280.222655707,
+        "median_input_tokens_stage1": 1460.5,
+        "median_input_tokens_stage2": 2269.5,
+        "output_tokens_measured_calls": 262,
+        "p95_input_tokens_stage1": 2976.899999999999,
+        "p95_input_tokens_stage2": 3934.399999999999,
+        "percentage_saved_vs_baseline": null,
+        "run_wall_seconds": 3159.7122670539998,
+        "thoughts_tokens_measured_calls": 30,
+        "timing_note": "Sync: sum of attempt latency, excluding backoff. Batch: per-request latency unavailable.",
+        "tokens_saved_vs_baseline": null,
+        "total_cached_input_tokens": 16463,
+        "total_input_tokens": 502972,
+        "total_output_tokens": 29033,
+        "total_thoughts_tokens": 9088,
+        "total_tokens": 541093,
+        "total_tokens_measured_calls": 262,
+        "usage_complete": false
+      }
+    }
+  },
+  "statistical_note": "Report absolute misses; a finite sample does not establish population recall >=98%.",
+  "tokens_saved_vs_baseline": null
+}

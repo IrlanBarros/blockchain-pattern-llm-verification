@@ -1,0 +1,1401 @@
+[
+  {
+    "configuration": "legacy_full_catalog",
+    "estimated_stage1_input_tokens": 1680013,
+    "estimated_token_reduction_percent": 0.0,
+    "estimated_total_input_tokens": 2047008,
+    "full_catalog_fallback_issues": 200,
+    "full_catalog_fallback_rate": 1.0,
+    "human_candidate_misses": 0,
+    "human_candidate_recall": 1.0,
+    "human_positive_pairs": 8,
+    "issue_level_positive_coverage": 1.0,
+    "note": "100% structural availability, not 100% LLM recall.",
+    "safety_misses_yes_plus_uncertain": 0,
+    "safety_recall_yes_plus_uncertain": 1.0,
+    "shortlist": {
+      "max": 82.0,
+      "mean": 82.0,
+      "median": 82.0,
+      "min": 82.0,
+      "n": 200,
+      "p95": 82.0,
+      "sum": 16400.0
+    },
+    "stage1": {
+      "max": 9749.0,
+      "mean": 8400.065,
+      "median": 8218.0,
+      "min": 8003.0,
+      "n": 200,
+      "p95": 9263.949999999999,
+      "sum": 1680013.0
+    },
+    "stage2_fixed_historical_workload": {
+      "max": 6480.0,
+      "mean": 5097.152777777777,
+      "median": 4950.0,
+      "min": 4326.0,
+      "n": 72,
+      "p95": 6011.75,
+      "sum": 366995.0
+    }
+  },
+  {
+    "average_patterns_added_by_family": 0.195,
+    "config": {
+      "body_budget_fraction": 0.75,
+      "comment_retrieval_enabled": true,
+      "compact_output": true,
+      "context_chunk_chars": 800,
+      "embedding_batch_size": 16,
+      "embedding_cache_dir": ".cache/retrieval_embeddings",
+      "embedding_local_files_only": true,
+      "embedding_model": "intfloat/multilingual-e5-small",
+      "embedding_model_revision": "0e60b8d9d2166d80387f86e3b48ec9ced55f4d15",
+      "enabled": true,
+      "force_full_catalog": false,
+      "full_catalog_fallback": true,
+      "input_price_per_million": null,
+      "output_price_per_million": null,
+      "retrieval_ambiguity_ratio": 0.8,
+      "retrieval_confidence_threshold": 0.55,
+      "retrieval_enabled": true,
+      "retrieval_fallback_multiplier": 2,
+      "retrieval_family_expansion": true,
+      "retrieval_max_candidates": 10,
+      "retrieval_min_candidates": 5,
+      "retrieval_require_lexical_anchor": true,
+      "retrieval_similarity_threshold": 0.18,
+      "semantic_backend": "lsa",
+      "semantic_chunk_chars": 1200,
+      "semantic_dimensions": 32,
+      "stage1_max_context_tokens": 1600,
+      "stage2_max_context_tokens": 2400,
+      "token_telemetry_enabled": true
+    },
+    "configuration": "conservative_current",
+    "estimated_stage1_input_tokens": 890992,
+    "estimated_token_reduction_percent": 43.45596109052823,
+    "estimated_total_input_tokens": 1157461,
+    "fallback_reason_counts": {
+      "ambiguous_similarity": 1,
+      "low_confidence": 60,
+      "no_lexical_anchor": 190
+    },
+    "family_expansion_recovery_rate": 0.0,
+    "full_catalog_fallback_issues": 192,
+    "full_catalog_fallback_rate": 0.96,
+    "historical_candidate_misses": 0,
+    "historical_candidate_retention": 1.0,
+    "historical_candidates_are_gold": false,
+    "human_candidate_misses": 0,
+    "human_candidate_recall": 1.0,
+    "human_positive_pairs": 8,
+    "issue_level_positive_coverage": 1.0,
+    "lexical_match_rate": 0.05,
+    "local_timing": {
+      "index_seconds": 0.021078433999718982,
+      "issues_per_second": 51.576535126820566,
+      "retrieval_and_context_seconds": 3.8777323739996064
+    },
+    "misses": [],
+    "recall_by_pattern": {
+      "Mortal": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "Oracle": {
+        "misses": 0,
+        "n": 2,
+        "recall": 1.0
+      },
+      "Proxy contract": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "Reverse Oracle": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "Role-based control": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "Time-Constrained Access": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "Tokenization": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      }
+    },
+    "recall_by_pattern_family": {
+      "F00": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "F01": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "F02": {
+        "misses": 0,
+        "n": 3,
+        "recall": 1.0
+      },
+      "unassigned": {
+        "misses": 0,
+        "n": 3,
+        "recall": 1.0
+      }
+    },
+    "safety_misses": [],
+    "safety_misses_yes_plus_uncertain": 0,
+    "safety_recall_yes_plus_uncertain": 1.0,
+    "semantic_index": {
+      "embedding_model": null,
+      "embedding_model_artifact_sha256": null,
+      "embedding_model_revision": null,
+      "semantic_backend": "lsa",
+      "semantic_index_cache_hit": null,
+      "semantic_index_fingerprint": null
+    },
+    "semantic_only_recovery_rate": 0.75,
+    "shortlist": {
+      "max": 82.0,
+      "mean": 79.325,
+      "median": 82.0,
+      "min": 14.0,
+      "n": 200,
+      "p95": 82.0,
+      "sum": 15865.0
+    },
+    "stage1": {
+      "max": 5639.0,
+      "mean": 4454.96,
+      "median": 4348.5,
+      "min": 1918.0,
+      "n": 200,
+      "p95": 5563.1,
+      "sum": 890992.0
+    },
+    "stage2_fixed_historical_workload": {
+      "max": 5424.0,
+      "mean": 3700.9583333333335,
+      "median": 3476.0,
+      "min": 3048.0,
+      "n": 72,
+      "p95": 4996.200000000001,
+      "sum": 266469.0
+    }
+  },
+  {
+    "average_patterns_added_by_family": 8.03,
+    "config": {
+      "body_budget_fraction": 0.75,
+      "comment_retrieval_enabled": true,
+      "compact_output": true,
+      "context_chunk_chars": 800,
+      "embedding_batch_size": 16,
+      "embedding_cache_dir": ".cache/retrieval_embeddings",
+      "embedding_local_files_only": true,
+      "embedding_model": "intfloat/multilingual-e5-small",
+      "embedding_model_revision": "0e60b8d9d2166d80387f86e3b48ec9ced55f4d15",
+      "enabled": true,
+      "force_full_catalog": false,
+      "full_catalog_fallback": false,
+      "input_price_per_million": null,
+      "output_price_per_million": null,
+      "retrieval_ambiguity_ratio": 0.8,
+      "retrieval_confidence_threshold": 0.55,
+      "retrieval_enabled": true,
+      "retrieval_fallback_multiplier": 2,
+      "retrieval_family_expansion": true,
+      "retrieval_max_candidates": 10,
+      "retrieval_min_candidates": 5,
+      "retrieval_require_lexical_anchor": true,
+      "retrieval_similarity_threshold": 0.18,
+      "semantic_backend": "lsa",
+      "semantic_chunk_chars": 1200,
+      "semantic_dimensions": 32,
+      "stage1_max_context_tokens": 1600,
+      "stage2_max_context_tokens": 2400,
+      "token_telemetry_enabled": true
+    },
+    "configuration": "conservative_expanded_fallback_counterfactual",
+    "estimated_stage1_input_tokens": 548325,
+    "estimated_token_reduction_percent": 60.195856586784224,
+    "estimated_total_input_tokens": 814794,
+    "fallback_reason_counts": {
+      "ambiguous_similarity": 1,
+      "low_confidence": 60,
+      "no_lexical_anchor": 190
+    },
+    "family_expansion_recovery_rate": 0.0,
+    "full_catalog_fallback_issues": 0,
+    "full_catalog_fallback_rate": 0.0,
+    "historical_candidate_misses": 14,
+    "historical_candidate_retention": 0.8055555555555556,
+    "historical_candidates_are_gold": false,
+    "human_candidate_misses": 0,
+    "human_candidate_recall": 1.0,
+    "human_positive_pairs": 8,
+    "issue_level_positive_coverage": 1.0,
+    "lexical_match_rate": 0.05,
+    "local_timing": {
+      "index_seconds": 0.02126047199999448,
+      "issues_per_second": 53.10229790887758,
+      "retrieval_and_context_seconds": 3.766315355000188
+    },
+    "misses": [],
+    "recall_by_pattern": {
+      "Mortal": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "Oracle": {
+        "misses": 0,
+        "n": 2,
+        "recall": 1.0
+      },
+      "Proxy contract": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "Reverse Oracle": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "Role-based control": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "Time-Constrained Access": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "Tokenization": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      }
+    },
+    "recall_by_pattern_family": {
+      "F00": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "F01": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "F02": {
+        "misses": 0,
+        "n": 3,
+        "recall": 1.0
+      },
+      "unassigned": {
+        "misses": 0,
+        "n": 3,
+        "recall": 1.0
+      }
+    },
+    "safety_misses": [],
+    "safety_misses_yes_plus_uncertain": 0,
+    "safety_recall_yes_plus_uncertain": 1.0,
+    "semantic_index": {
+      "embedding_model": null,
+      "embedding_model_artifact_sha256": null,
+      "embedding_model_revision": null,
+      "semantic_backend": "lsa",
+      "semantic_index_cache_hit": null,
+      "semantic_index_fingerprint": null
+    },
+    "semantic_only_recovery_rate": 0.75,
+    "shortlist": {
+      "max": 37.0,
+      "mean": 27.64,
+      "median": 28.0,
+      "min": 14.0,
+      "n": 200,
+      "p95": 34.0,
+      "sum": 5528.0
+    },
+    "stage1": {
+      "max": 4125.0,
+      "mean": 2741.625,
+      "median": 2582.5,
+      "min": 1918.0,
+      "n": 200,
+      "p95": 3712.35,
+      "sum": 548325.0
+    },
+    "stage2_fixed_historical_workload": {
+      "max": 5424.0,
+      "mean": 3700.9583333333335,
+      "median": 3476.0,
+      "min": 3048.0,
+      "n": 72,
+      "p95": 4996.200000000001,
+      "sum": 266469.0
+    }
+  },
+  {
+    "average_patterns_added_by_family": 3.705,
+    "config": {
+      "body_budget_fraction": 0.75,
+      "comment_retrieval_enabled": true,
+      "compact_output": true,
+      "context_chunk_chars": 800,
+      "embedding_batch_size": 16,
+      "embedding_cache_dir": ".cache/retrieval_embeddings",
+      "embedding_local_files_only": true,
+      "embedding_model": "intfloat/multilingual-e5-small",
+      "embedding_model_revision": "0e60b8d9d2166d80387f86e3b48ec9ced55f4d15",
+      "enabled": true,
+      "force_full_catalog": false,
+      "full_catalog_fallback": true,
+      "input_price_per_million": null,
+      "output_price_per_million": null,
+      "retrieval_ambiguity_ratio": 0.8,
+      "retrieval_confidence_threshold": 0.55,
+      "retrieval_enabled": true,
+      "retrieval_fallback_multiplier": 2,
+      "retrieval_family_expansion": true,
+      "retrieval_max_candidates": 10,
+      "retrieval_min_candidates": 5,
+      "retrieval_require_lexical_anchor": false,
+      "retrieval_similarity_threshold": 0.18,
+      "semantic_backend": "lsa",
+      "semantic_chunk_chars": 1200,
+      "semantic_dimensions": 32,
+      "stage1_max_context_tokens": 1600,
+      "stage2_max_context_tokens": 2400,
+      "token_telemetry_enabled": true
+    },
+    "configuration": "lsa_anchor_off_high_confidence",
+    "estimated_stage1_input_tokens": 598145,
+    "estimated_token_reduction_percent": 57.76206052931889,
+    "estimated_total_input_tokens": 864614,
+    "fallback_reason_counts": {
+      "ambiguous_similarity": 1,
+      "low_confidence": 60
+    },
+    "family_expansion_recovery_rate": 0.0,
+    "full_catalog_fallback_issues": 60,
+    "full_catalog_fallback_rate": 0.3,
+    "historical_candidate_misses": 19,
+    "historical_candidate_retention": 0.7361111111111112,
+    "historical_candidates_are_gold": false,
+    "human_candidate_misses": 0,
+    "human_candidate_recall": 1.0,
+    "human_positive_pairs": 8,
+    "issue_level_positive_coverage": 1.0,
+    "lexical_match_rate": 0.05,
+    "local_timing": {
+      "index_seconds": 0.11607994299993152,
+      "issues_per_second": 47.7111834351363,
+      "retrieval_and_context_seconds": 4.191889313999127
+    },
+    "misses": [],
+    "recall_by_pattern": {
+      "Mortal": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "Oracle": {
+        "misses": 0,
+        "n": 2,
+        "recall": 1.0
+      },
+      "Proxy contract": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "Reverse Oracle": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "Role-based control": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "Time-Constrained Access": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "Tokenization": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      }
+    },
+    "recall_by_pattern_family": {
+      "F00": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "F01": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "F02": {
+        "misses": 0,
+        "n": 3,
+        "recall": 1.0
+      },
+      "unassigned": {
+        "misses": 0,
+        "n": 3,
+        "recall": 1.0
+      }
+    },
+    "safety_misses": [],
+    "safety_misses_yes_plus_uncertain": 0,
+    "safety_recall_yes_plus_uncertain": 1.0,
+    "semantic_index": {
+      "embedding_model": null,
+      "embedding_model_artifact_sha256": null,
+      "embedding_model_revision": null,
+      "semantic_backend": "lsa",
+      "semantic_index_cache_hit": null,
+      "semantic_index_fingerprint": null
+    },
+    "semantic_only_recovery_rate": 0.75,
+    "shortlist": {
+      "max": 82.0,
+      "mean": 35.315,
+      "median": 17.0,
+      "min": 10.0,
+      "n": 200,
+      "p95": 82.0,
+      "sum": 7063.0
+    },
+    "stage1": {
+      "max": 5639.0,
+      "mean": 2990.725,
+      "median": 2452.0,
+      "min": 1785.0,
+      "n": 200,
+      "p95": 5085.849999999997,
+      "sum": 598145.0
+    },
+    "stage2_fixed_historical_workload": {
+      "max": 5424.0,
+      "mean": 3700.9583333333335,
+      "median": 3476.0,
+      "min": 3048.0,
+      "n": 72,
+      "p95": 4996.200000000001,
+      "sum": 266469.0
+    }
+  },
+  {
+    "average_patterns_added_by_family": 5.74,
+    "config": {
+      "body_budget_fraction": 0.75,
+      "comment_retrieval_enabled": true,
+      "compact_output": true,
+      "context_chunk_chars": 800,
+      "embedding_batch_size": 16,
+      "embedding_cache_dir": ".cache/retrieval_embeddings",
+      "embedding_local_files_only": true,
+      "embedding_model": "intfloat/multilingual-e5-small",
+      "embedding_model_revision": "0e60b8d9d2166d80387f86e3b48ec9ced55f4d15",
+      "enabled": true,
+      "force_full_catalog": false,
+      "full_catalog_fallback": true,
+      "input_price_per_million": null,
+      "output_price_per_million": null,
+      "retrieval_ambiguity_ratio": 0.8,
+      "retrieval_confidence_threshold": 0.35,
+      "retrieval_enabled": true,
+      "retrieval_fallback_multiplier": 2,
+      "retrieval_family_expansion": true,
+      "retrieval_max_candidates": 10,
+      "retrieval_min_candidates": 5,
+      "retrieval_require_lexical_anchor": false,
+      "retrieval_similarity_threshold": 0.18,
+      "semantic_backend": "lsa",
+      "semantic_chunk_chars": 1200,
+      "semantic_dimensions": 32,
+      "stage1_max_context_tokens": 1600,
+      "stage2_max_context_tokens": 2400,
+      "token_telemetry_enabled": true
+    },
+    "configuration": "lsa_intermediate",
+    "estimated_stage1_input_tokens": 470135,
+    "estimated_token_reduction_percent": 64.01557785802498,
+    "estimated_total_input_tokens": 736604,
+    "fallback_reason_counts": {
+      "ambiguous_similarity": 1
+    },
+    "family_expansion_recovery_rate": 0.0,
+    "full_catalog_fallback_issues": 1,
+    "full_catalog_fallback_rate": 0.005,
+    "historical_candidate_misses": 31,
+    "historical_candidate_retention": 0.5694444444444444,
+    "historical_candidates_are_gold": false,
+    "human_candidate_misses": 0,
+    "human_candidate_recall": 1.0,
+    "human_positive_pairs": 8,
+    "issue_level_positive_coverage": 1.0,
+    "lexical_match_rate": 0.05,
+    "local_timing": {
+      "index_seconds": 0.023533854999186588,
+      "issues_per_second": 49.703852036046584,
+      "retrieval_and_context_seconds": 4.0238329989988415
+    },
+    "misses": [],
+    "recall_by_pattern": {
+      "Mortal": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "Oracle": {
+        "misses": 0,
+        "n": 2,
+        "recall": 1.0
+      },
+      "Proxy contract": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "Reverse Oracle": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "Role-based control": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "Time-Constrained Access": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "Tokenization": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      }
+    },
+    "recall_by_pattern_family": {
+      "F00": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "F01": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "F02": {
+        "misses": 0,
+        "n": 3,
+        "recall": 1.0
+      },
+      "unassigned": {
+        "misses": 0,
+        "n": 3,
+        "recall": 1.0
+      }
+    },
+    "safety_misses": [],
+    "safety_misses_yes_plus_uncertain": 0,
+    "safety_recall_yes_plus_uncertain": 1.0,
+    "semantic_index": {
+      "embedding_model": null,
+      "embedding_model_artifact_sha256": null,
+      "embedding_model_revision": null,
+      "semantic_backend": "lsa",
+      "semantic_index_cache_hit": null,
+      "semantic_index_fingerprint": null
+    },
+    "semantic_only_recovery_rate": 0.75,
+    "shortlist": {
+      "max": 82.0,
+      "mean": 16.11,
+      "median": 16.0,
+      "min": 10.0,
+      "n": 200,
+      "p95": 21.0,
+      "sum": 3222.0
+    },
+    "stage1": {
+      "max": 5077.0,
+      "mean": 2350.675,
+      "median": 2208.5,
+      "min": 1785.0,
+      "n": 200,
+      "p95": 3301.6499999999996,
+      "sum": 470135.0
+    },
+    "stage2_fixed_historical_workload": {
+      "max": 5424.0,
+      "mean": 3700.9583333333335,
+      "median": 3476.0,
+      "min": 3048.0,
+      "n": 72,
+      "p95": 4996.200000000001,
+      "sum": 266469.0
+    }
+  },
+  {
+    "average_patterns_added_by_family": 5.74,
+    "config": {
+      "body_budget_fraction": 0.75,
+      "comment_retrieval_enabled": true,
+      "compact_output": true,
+      "context_chunk_chars": 800,
+      "embedding_batch_size": 16,
+      "embedding_cache_dir": ".cache/retrieval_embeddings",
+      "embedding_local_files_only": true,
+      "embedding_model": "intfloat/multilingual-e5-small",
+      "embedding_model_revision": "0e60b8d9d2166d80387f86e3b48ec9ced55f4d15",
+      "enabled": true,
+      "force_full_catalog": false,
+      "full_catalog_fallback": true,
+      "input_price_per_million": null,
+      "output_price_per_million": null,
+      "retrieval_ambiguity_ratio": 0.8,
+      "retrieval_confidence_threshold": 0.18,
+      "retrieval_enabled": true,
+      "retrieval_fallback_multiplier": 2,
+      "retrieval_family_expansion": true,
+      "retrieval_max_candidates": 10,
+      "retrieval_min_candidates": 5,
+      "retrieval_require_lexical_anchor": false,
+      "retrieval_similarity_threshold": 0.18,
+      "semantic_backend": "lsa",
+      "semantic_chunk_chars": 1200,
+      "semantic_dimensions": 32,
+      "stage1_max_context_tokens": 1600,
+      "stage2_max_context_tokens": 2400,
+      "token_telemetry_enabled": true
+    },
+    "configuration": "aggressive_previous",
+    "estimated_stage1_input_tokens": 470135,
+    "estimated_token_reduction_percent": 64.01557785802498,
+    "estimated_total_input_tokens": 736604,
+    "fallback_reason_counts": {
+      "ambiguous_similarity": 1
+    },
+    "family_expansion_recovery_rate": 0.0,
+    "full_catalog_fallback_issues": 1,
+    "full_catalog_fallback_rate": 0.005,
+    "historical_candidate_misses": 31,
+    "historical_candidate_retention": 0.5694444444444444,
+    "historical_candidates_are_gold": false,
+    "human_candidate_misses": 0,
+    "human_candidate_recall": 1.0,
+    "human_positive_pairs": 8,
+    "issue_level_positive_coverage": 1.0,
+    "lexical_match_rate": 0.05,
+    "local_timing": {
+      "index_seconds": 0.02307494800152199,
+      "issues_per_second": 47.88053778243432,
+      "retrieval_and_context_seconds": 4.177062524000576
+    },
+    "misses": [],
+    "recall_by_pattern": {
+      "Mortal": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "Oracle": {
+        "misses": 0,
+        "n": 2,
+        "recall": 1.0
+      },
+      "Proxy contract": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "Reverse Oracle": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "Role-based control": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "Time-Constrained Access": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "Tokenization": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      }
+    },
+    "recall_by_pattern_family": {
+      "F00": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "F01": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "F02": {
+        "misses": 0,
+        "n": 3,
+        "recall": 1.0
+      },
+      "unassigned": {
+        "misses": 0,
+        "n": 3,
+        "recall": 1.0
+      }
+    },
+    "safety_misses": [],
+    "safety_misses_yes_plus_uncertain": 0,
+    "safety_recall_yes_plus_uncertain": 1.0,
+    "semantic_index": {
+      "embedding_model": null,
+      "embedding_model_artifact_sha256": null,
+      "embedding_model_revision": null,
+      "semantic_backend": "lsa",
+      "semantic_index_cache_hit": null,
+      "semantic_index_fingerprint": null
+    },
+    "semantic_only_recovery_rate": 0.75,
+    "shortlist": {
+      "max": 82.0,
+      "mean": 16.11,
+      "median": 16.0,
+      "min": 10.0,
+      "n": 200,
+      "p95": 21.0,
+      "sum": 3222.0
+    },
+    "stage1": {
+      "max": 5077.0,
+      "mean": 2350.675,
+      "median": 2208.5,
+      "min": 1785.0,
+      "n": 200,
+      "p95": 3301.6499999999996,
+      "sum": 470135.0
+    },
+    "stage2_fixed_historical_workload": {
+      "max": 5424.0,
+      "mean": 3700.9583333333335,
+      "median": 3476.0,
+      "min": 3048.0,
+      "n": 72,
+      "p95": 4996.200000000001,
+      "sum": 266469.0
+    }
+  },
+  {
+    "average_patterns_added_by_family": 5.785,
+    "config": {
+      "body_budget_fraction": 0.75,
+      "comment_retrieval_enabled": true,
+      "compact_output": true,
+      "context_chunk_chars": 800,
+      "embedding_batch_size": 16,
+      "embedding_cache_dir": ".cache/retrieval_embeddings",
+      "embedding_local_files_only": true,
+      "embedding_model": "intfloat/multilingual-e5-small",
+      "embedding_model_revision": "0e60b8d9d2166d80387f86e3b48ec9ced55f4d15",
+      "enabled": true,
+      "force_full_catalog": false,
+      "full_catalog_fallback": false,
+      "input_price_per_million": null,
+      "output_price_per_million": null,
+      "retrieval_ambiguity_ratio": 0.8,
+      "retrieval_confidence_threshold": 0.18,
+      "retrieval_enabled": true,
+      "retrieval_fallback_multiplier": 2,
+      "retrieval_family_expansion": true,
+      "retrieval_max_candidates": 10,
+      "retrieval_min_candidates": 5,
+      "retrieval_require_lexical_anchor": false,
+      "retrieval_similarity_threshold": 0.18,
+      "semantic_backend": "lsa",
+      "semantic_chunk_chars": 1200,
+      "semantic_dimensions": 32,
+      "stage1_max_context_tokens": 1600,
+      "stage2_max_context_tokens": 2400,
+      "token_telemetry_enabled": true
+    },
+    "configuration": "lsa_expanded_fallback",
+    "estimated_stage1_input_tokens": 468358,
+    "estimated_token_reduction_percent": 64.10238748456284,
+    "estimated_total_input_tokens": 734827,
+    "fallback_reason_counts": {
+      "ambiguous_similarity": 1
+    },
+    "family_expansion_recovery_rate": 0.0,
+    "full_catalog_fallback_issues": 0,
+    "full_catalog_fallback_rate": 0.0,
+    "historical_candidate_misses": 31,
+    "historical_candidate_retention": 0.5694444444444444,
+    "historical_candidates_are_gold": false,
+    "human_candidate_misses": 0,
+    "human_candidate_recall": 1.0,
+    "human_positive_pairs": 8,
+    "issue_level_positive_coverage": 1.0,
+    "lexical_match_rate": 0.05,
+    "local_timing": {
+      "index_seconds": 0.10263730100086832,
+      "issues_per_second": 45.33071957671787,
+      "retrieval_and_context_seconds": 4.412019087001681
+    },
+    "misses": [],
+    "recall_by_pattern": {
+      "Mortal": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "Oracle": {
+        "misses": 0,
+        "n": 2,
+        "recall": 1.0
+      },
+      "Proxy contract": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "Reverse Oracle": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "Role-based control": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "Time-Constrained Access": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "Tokenization": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      }
+    },
+    "recall_by_pattern_family": {
+      "F00": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "F01": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "F02": {
+        "misses": 0,
+        "n": 3,
+        "recall": 1.0
+      },
+      "unassigned": {
+        "misses": 0,
+        "n": 3,
+        "recall": 1.0
+      }
+    },
+    "safety_misses": [],
+    "safety_misses_yes_plus_uncertain": 0,
+    "safety_recall_yes_plus_uncertain": 1.0,
+    "semantic_index": {
+      "embedding_model": null,
+      "embedding_model_artifact_sha256": null,
+      "embedding_model_revision": null,
+      "semantic_backend": "lsa",
+      "semantic_index_cache_hit": null,
+      "semantic_index_fingerprint": null
+    },
+    "semantic_only_recovery_rate": 0.75,
+    "shortlist": {
+      "max": 29.0,
+      "mean": 15.845,
+      "median": 16.0,
+      "min": 10.0,
+      "n": 200,
+      "p95": 21.0,
+      "sum": 3169.0
+    },
+    "stage1": {
+      "max": 3576.0,
+      "mean": 2341.79,
+      "median": 2208.5,
+      "min": 1785.0,
+      "n": 200,
+      "p95": 3300.0,
+      "sum": 468358.0
+    },
+    "stage2_fixed_historical_workload": {
+      "max": 5424.0,
+      "mean": 3700.9583333333335,
+      "median": 3476.0,
+      "min": 3048.0,
+      "n": 72,
+      "p95": 4996.200000000001,
+      "sum": 266469.0
+    }
+  },
+  {
+    "average_patterns_added_by_family": 11.825,
+    "config": {
+      "body_budget_fraction": 0.75,
+      "comment_retrieval_enabled": true,
+      "compact_output": true,
+      "context_chunk_chars": 800,
+      "embedding_batch_size": 16,
+      "embedding_cache_dir": ".cache/retrieval_embeddings",
+      "embedding_local_files_only": true,
+      "embedding_model": "intfloat/multilingual-e5-small",
+      "embedding_model_revision": "0e60b8d9d2166d80387f86e3b48ec9ced55f4d15",
+      "enabled": true,
+      "force_full_catalog": false,
+      "full_catalog_fallback": false,
+      "input_price_per_million": null,
+      "output_price_per_million": null,
+      "retrieval_ambiguity_ratio": 0.8,
+      "retrieval_confidence_threshold": 0.78,
+      "retrieval_enabled": true,
+      "retrieval_fallback_multiplier": 2,
+      "retrieval_family_expansion": true,
+      "retrieval_max_candidates": 10,
+      "retrieval_min_candidates": 5,
+      "retrieval_require_lexical_anchor": false,
+      "retrieval_similarity_threshold": 0.82,
+      "semantic_backend": "neural",
+      "semantic_chunk_chars": 1200,
+      "semantic_dimensions": 32,
+      "stage1_max_context_tokens": 1600,
+      "stage2_max_context_tokens": 2400,
+      "token_telemetry_enabled": true
+    },
+    "configuration": "neural_a",
+    "estimated_stage1_input_tokens": 575736,
+    "estimated_token_reduction_percent": 58.856780237302445,
+    "estimated_total_input_tokens": 842205,
+    "fallback_reason_counts": {
+      "ambiguous_similarity": 200
+    },
+    "family_expansion_recovery_rate": 0.0,
+    "full_catalog_fallback_issues": 0,
+    "full_catalog_fallback_rate": 0.0,
+    "historical_candidate_misses": 18,
+    "historical_candidate_retention": 0.75,
+    "historical_candidates_are_gold": false,
+    "human_candidate_misses": 1,
+    "human_candidate_recall": 0.875,
+    "human_positive_pairs": 8,
+    "issue_level_positive_coverage": 1.0,
+    "lexical_match_rate": 0.05,
+    "local_timing": {
+      "index_seconds": 6.68700563099992,
+      "issues_per_second": 3.2274205063672454,
+      "retrieval_and_context_seconds": 61.9689933819991
+    },
+    "misses": [
+      {
+        "evidence_text": "",
+        "fallback_reason": [
+          "ambiguous_similarity"
+        ],
+        "family": [
+          "unassigned"
+        ],
+        "human_pattern": "Time-Constrained Access",
+        "issue_number": "3735",
+        "issue_title": "EIP-4907 support",
+        "lexical_matches": [],
+        "lexical_score": 0,
+        "lsa_score": null,
+        "repository": "OpenZeppelin/openzeppelin-contracts",
+        "retrieval_reason": [],
+        "semantic_rank": 44,
+        "semantic_score": 0.82104003,
+        "shortlist": [
+          "Ticker tape",
+          "Oracle",
+          "Reverse Oracle",
+          "Pull-based inbound oracle",
+          "Push-based inbound oracle",
+          "Delegated Computation",
+          "Blockchain Security Pattern for Big Data Ecosystems",
+          "Blockchain-based reputation system",
+          "Vote",
+          "Randomness",
+          "Poll",
+          "One-Off Access",
+          "Factory contract",
+          "Relay contract",
+          "Check-Effects-Interactions",
+          "Mutex",
+          "Guard check",
+          "Contract size limit",
+          "Off-chain computation",
+          "Data refresh",
+          "Ownable",
+          "Role-based control",
+          "Permissioned actions",
+          "Implicit authorization",
+          "Limited-access",
+          "Establish genesis",
+          "Smart contract translation",
+          "Tokenization",
+          "Delegated Transactions"
+        ],
+        "suspected_failure_mode": "paraphrase_not_captured"
+      }
+    ],
+    "recall_by_pattern": {
+      "Mortal": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "Oracle": {
+        "misses": 0,
+        "n": 2,
+        "recall": 1.0
+      },
+      "Proxy contract": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "Reverse Oracle": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "Role-based control": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "Time-Constrained Access": {
+        "misses": 1,
+        "n": 1,
+        "recall": 0.0
+      },
+      "Tokenization": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      }
+    },
+    "recall_by_pattern_family": {
+      "F00": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "F01": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "F02": {
+        "misses": 0,
+        "n": 3,
+        "recall": 1.0
+      },
+      "unassigned": {
+        "misses": 1,
+        "n": 3,
+        "recall": 0.6666666666666666
+      }
+    },
+    "safety_misses": [
+      {
+        "evidence_text": "",
+        "fallback_reason": [
+          "ambiguous_similarity"
+        ],
+        "family": [
+          "unassigned"
+        ],
+        "human_pattern": "Time-Constrained Access",
+        "issue_number": "3735",
+        "issue_title": "EIP-4907 support",
+        "lexical_matches": [],
+        "lexical_score": 0,
+        "lsa_score": null,
+        "repository": "OpenZeppelin/openzeppelin-contracts",
+        "retrieval_reason": [],
+        "semantic_rank": 44,
+        "semantic_score": 0.82104003,
+        "shortlist": [
+          "Ticker tape",
+          "Oracle",
+          "Reverse Oracle",
+          "Pull-based inbound oracle",
+          "Push-based inbound oracle",
+          "Delegated Computation",
+          "Blockchain Security Pattern for Big Data Ecosystems",
+          "Blockchain-based reputation system",
+          "Vote",
+          "Randomness",
+          "Poll",
+          "One-Off Access",
+          "Factory contract",
+          "Relay contract",
+          "Check-Effects-Interactions",
+          "Mutex",
+          "Guard check",
+          "Contract size limit",
+          "Off-chain computation",
+          "Data refresh",
+          "Ownable",
+          "Role-based control",
+          "Permissioned actions",
+          "Implicit authorization",
+          "Limited-access",
+          "Establish genesis",
+          "Smart contract translation",
+          "Tokenization",
+          "Delegated Transactions"
+        ],
+        "suspected_failure_mode": "paraphrase_not_captured"
+      }
+    ],
+    "safety_misses_yes_plus_uncertain": 1,
+    "safety_recall_yes_plus_uncertain": 0.8888888888888888,
+    "semantic_index": {
+      "embedding_model": "intfloat/multilingual-e5-small",
+      "embedding_model_artifact_sha256": "607b16865b8c9f954117981fe83b41d7651f3123badb6725c33790d1c7f1cde8",
+      "embedding_model_revision": "0e60b8d9d2166d80387f86e3b48ec9ced55f4d15",
+      "semantic_backend": "neural",
+      "semantic_index_cache_hit": true,
+      "semantic_index_fingerprint": "549f4eb0a0b0c683ddf6f74bd345781dfb66d8f218b9ea9bfae2a11db715a3fd"
+    },
+    "semantic_only_recovery_rate": 0.625,
+    "shortlist": {
+      "max": 40.0,
+      "mean": 31.83,
+      "median": 32.0,
+      "min": 23.0,
+      "n": 200,
+      "p95": 36.0,
+      "sum": 6366.0
+    },
+    "stage1": {
+      "max": 4028.0,
+      "mean": 2878.68,
+      "median": 2739.5,
+      "min": 2224.0,
+      "n": 200,
+      "p95": 3871.6999999999994,
+      "sum": 575736.0
+    },
+    "stage2_fixed_historical_workload": {
+      "max": 5424.0,
+      "mean": 3700.9583333333335,
+      "median": 3476.0,
+      "min": 3048.0,
+      "n": 72,
+      "p95": 4996.200000000001,
+      "sum": 266469.0
+    }
+  },
+  {
+    "average_patterns_added_by_family": 9.265,
+    "config": {
+      "body_budget_fraction": 0.75,
+      "comment_retrieval_enabled": true,
+      "compact_output": true,
+      "context_chunk_chars": 800,
+      "embedding_batch_size": 16,
+      "embedding_cache_dir": ".cache/retrieval_embeddings",
+      "embedding_local_files_only": true,
+      "embedding_model": "intfloat/multilingual-e5-small",
+      "embedding_model_revision": "0e60b8d9d2166d80387f86e3b48ec9ced55f4d15",
+      "enabled": true,
+      "force_full_catalog": false,
+      "full_catalog_fallback": true,
+      "input_price_per_million": null,
+      "output_price_per_million": null,
+      "retrieval_ambiguity_ratio": 0.99,
+      "retrieval_confidence_threshold": 0.18,
+      "retrieval_enabled": true,
+      "retrieval_fallback_multiplier": 2,
+      "retrieval_family_expansion": true,
+      "retrieval_max_candidates": 10,
+      "retrieval_min_candidates": 5,
+      "retrieval_require_lexical_anchor": false,
+      "retrieval_similarity_threshold": 0.18,
+      "semantic_backend": "lsa_neural",
+      "semantic_chunk_chars": 1200,
+      "semantic_dimensions": 32,
+      "stage1_max_context_tokens": 1600,
+      "stage2_max_context_tokens": 2400,
+      "token_telemetry_enabled": true
+    },
+    "configuration": "neural_b_lsa_union",
+    "estimated_stage1_input_tokens": 559122,
+    "estimated_token_reduction_percent": 59.668403836233175,
+    "estimated_total_input_tokens": 825591,
+    "fallback_reason_counts": {
+      "ambiguous_similarity": 9
+    },
+    "family_expansion_recovery_rate": 0.0,
+    "full_catalog_fallback_issues": 9,
+    "full_catalog_fallback_rate": 0.045,
+    "historical_candidate_misses": 16,
+    "historical_candidate_retention": 0.7777777777777778,
+    "historical_candidates_are_gold": false,
+    "human_candidate_misses": 0,
+    "human_candidate_recall": 1.0,
+    "human_positive_pairs": 8,
+    "issue_level_positive_coverage": 1.0,
+    "lexical_match_rate": 0.05,
+    "local_timing": {
+      "index_seconds": 0.3306050459996186,
+      "issues_per_second": 46.432003855596854,
+      "retrieval_and_context_seconds": 4.307373866999114
+    },
+    "misses": [],
+    "recall_by_pattern": {
+      "Mortal": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "Oracle": {
+        "misses": 0,
+        "n": 2,
+        "recall": 1.0
+      },
+      "Proxy contract": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "Reverse Oracle": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "Role-based control": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "Time-Constrained Access": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "Tokenization": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      }
+    },
+    "recall_by_pattern_family": {
+      "F00": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "F01": {
+        "misses": 0,
+        "n": 1,
+        "recall": 1.0
+      },
+      "F02": {
+        "misses": 0,
+        "n": 3,
+        "recall": 1.0
+      },
+      "unassigned": {
+        "misses": 0,
+        "n": 3,
+        "recall": 1.0
+      }
+    },
+    "safety_misses": [],
+    "safety_misses_yes_plus_uncertain": 0,
+    "safety_recall_yes_plus_uncertain": 1.0,
+    "semantic_index": {
+      "embedding_model": "intfloat/multilingual-e5-small",
+      "embedding_model_artifact_sha256": "607b16865b8c9f954117981fe83b41d7651f3123badb6725c33790d1c7f1cde8",
+      "embedding_model_revision": "0e60b8d9d2166d80387f86e3b48ec9ced55f4d15",
+      "semantic_backend": "lsa_neural",
+      "semantic_index_cache_hit": true,
+      "semantic_index_fingerprint": "549f4eb0a0b0c683ddf6f74bd345781dfb66d8f218b9ea9bfae2a11db715a3fd"
+    },
+    "semantic_only_recovery_rate": 0.75,
+    "shortlist": {
+      "max": 82.0,
+      "mean": 29.33,
+      "median": 27.0,
+      "min": 16.0,
+      "n": 200,
+      "p95": 36.0,
+      "sum": 5866.0
+    },
+    "stage1": {
+      "max": 5447.0,
+      "mean": 2795.61,
+      "median": 2608.0,
+      "min": 2003.0,
+      "n": 200,
+      "p95": 3933.699999999999,
+      "sum": 559122.0
+    },
+    "stage2_fixed_historical_workload": {
+      "max": 5424.0,
+      "mean": 3700.9583333333335,
+      "median": 3476.0,
+      "min": 3048.0,
+      "n": 72,
+      "p95": 4996.200000000001,
+      "sum": 266469.0
+    }
+  }
+]

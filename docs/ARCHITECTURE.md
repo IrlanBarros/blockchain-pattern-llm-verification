@@ -127,3 +127,11 @@ A camada de dados aceita `repository_full_name` como identificador canônico do
 corpus e mantém `repository` como alias interno para os stages e joins. A coluna
 `repository_category` é preservada nos snapshots, mas não participa da chave
 `(repository, issue_number)` e não é usada como evidência pela LLM.
+
+## Perfil experimental de otimização
+
+`--profile optimized` insere `retrieval.py` e `context.py` antes da triagem,
+usa `compact_wire.py` para preservar o contrato público com IDs/chaves internos,
+e integra `telemetry.py` e `optimization_runtime.py` à execução sync/batch.
+`--profile legacy` mantém o comportamento metodológico anterior. As regras,
+limitações, artefatos e comandos estão em [TOKEN_OPTIMIZATION.md](TOKEN_OPTIMIZATION.md).

@@ -1,0 +1,117 @@
+{
+  "configurations": [
+    {
+      "configuration": "conservative_current",
+      "full_catalog_fallback_issues": 192,
+      "rules": {
+        "ambiguous_similarity": {
+          "estimated_stage1_tokens_on_affected_issues": 5077,
+          "human_positive_pairs_protected": 0,
+          "issues_affected": 1,
+          "note": "Rules can overlap; counts and costs are not additive.",
+          "patterns_added": 82
+        },
+        "low_confidence": {
+          "estimated_stage1_tokens_on_affected_issues": 278298,
+          "human_positive_pairs_protected": 0,
+          "issues_affected": 60,
+          "note": "Rules can overlap; counts and costs are not additive.",
+          "patterns_added": 4918
+        },
+        "no_lexical_anchor": {
+          "estimated_stage1_tokens_on_affected_issues": 863859,
+          "human_positive_pairs_protected": 0,
+          "issues_affected": 190,
+          "note": "Rules can overlap; counts and costs are not additive.",
+          "patterns_added": 15580
+        }
+      }
+    },
+    {
+      "configuration": "lsa_anchor_off_high_confidence",
+      "full_catalog_fallback_issues": 60,
+      "rules": {
+        "ambiguous_similarity": {
+          "estimated_stage1_tokens_on_affected_issues": 5077,
+          "human_positive_pairs_protected": 0,
+          "issues_affected": 1,
+          "note": "Rules can overlap; counts and costs are not additive.",
+          "patterns_added": 82
+        },
+        "low_confidence": {
+          "estimated_stage1_tokens_on_affected_issues": 278298,
+          "human_positive_pairs_protected": 0,
+          "issues_affected": 60,
+          "note": "Rules can overlap; counts and costs are not additive.",
+          "patterns_added": 4918
+        }
+      }
+    },
+    {
+      "configuration": "lsa_intermediate",
+      "full_catalog_fallback_issues": 1,
+      "rules": {
+        "ambiguous_similarity": {
+          "estimated_stage1_tokens_on_affected_issues": 5077,
+          "human_positive_pairs_protected": 0,
+          "issues_affected": 1,
+          "note": "Rules can overlap; counts and costs are not additive.",
+          "patterns_added": 82
+        }
+      }
+    },
+    {
+      "configuration": "aggressive_previous",
+      "full_catalog_fallback_issues": 1,
+      "rules": {
+        "ambiguous_similarity": {
+          "estimated_stage1_tokens_on_affected_issues": 5077,
+          "human_positive_pairs_protected": 0,
+          "issues_affected": 1,
+          "note": "Rules can overlap; counts and costs are not additive.",
+          "patterns_added": 82
+        }
+      }
+    },
+    {
+      "configuration": "lsa_expanded_fallback",
+      "full_catalog_fallback_issues": 0,
+      "rules": {
+        "ambiguous_similarity": {
+          "estimated_stage1_tokens_on_affected_issues": 3300,
+          "human_positive_pairs_protected": 0,
+          "issues_affected": 1,
+          "note": "Rules can overlap; counts and costs are not additive.",
+          "patterns_added": 0
+        }
+      }
+    },
+    {
+      "configuration": "neural_a",
+      "full_catalog_fallback_issues": 0,
+      "rules": {
+        "ambiguous_similarity": {
+          "estimated_stage1_tokens_on_affected_issues": 575736,
+          "human_positive_pairs_protected": 1,
+          "issues_affected": 200,
+          "note": "Rules can overlap; counts and costs are not additive.",
+          "patterns_added": 0
+        }
+      }
+    },
+    {
+      "configuration": "neural_b_lsa_union",
+      "full_catalog_fallback_issues": 200,
+      "rules": {
+        "ambiguous_similarity": {
+          "estimated_stage1_tokens_on_affected_issues": 908868,
+          "human_positive_pairs_protected": 1,
+          "issues_affected": 200,
+          "note": "Rules can overlap; counts and costs are not additive.",
+          "patterns_added": 16390
+        }
+      }
+    }
+  ],
+  "conservative_explanation": "The lexical-anchor guard fires on issues without exact canonical/alias/keyword phrases; it is independent of whether LSA has a useful top candidate."
+}

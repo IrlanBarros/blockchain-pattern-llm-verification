@@ -194,16 +194,26 @@ def close_client(client: Any) -> None:
 def call_sync(client: Any, params: dict[str, Any], attempts: int = 4) -> Any:
     delay = 2.0
     last_error: Exception | None = None
+    from .telemetry import ATTEMPT_OBSERVER
     for attempt in range(1, attempts + 1):
+        start = time.perf_counter()
         try:
-            return client.models.generate_content(**params)
+            response = client.models.generate_content(**params)
         except Exception as exc:  # SDK expõe subclasses diferentes por versão
+            observer = ATTEMPT_OBSERVER.get()
+            if observer:
+                observer(None, exc, time.perf_counter() - start)
             last_error = exc
             if attempt == attempts or not is_retryable_api_error(exc):
                 break
             print(f"[retry] tentativa {attempt}/{attempts} falhou: {exc}", file=sys.stderr)
             time.sleep(delay)
             delay = min(delay * 2, 30)
+        else:
+            observer = ATTEMPT_OBSERVER.get()
+            if observer:
+                observer(response, None, time.perf_counter() - start)
+            return response
     assert last_error is not None
     raise last_error
 
