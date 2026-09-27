@@ -1,0 +1,156 @@
+{
+  "average_patterns_added_by_family": 5.74,
+  "config": {
+    "body_budget_fraction": 0.75,
+    "comment_retrieval_enabled": true,
+    "compact_output": true,
+    "context_chunk_chars": 800,
+    "embedding_batch_size": 16,
+    "embedding_cache_dir": ".cache/retrieval_embeddings",
+    "embedding_local_files_only": true,
+    "embedding_model": "intfloat/multilingual-e5-small",
+    "embedding_model_revision": "0e60b8d9d2166d80387f86e3b48ec9ced55f4d15",
+    "enabled": true,
+    "force_full_catalog": false,
+    "full_catalog_fallback": true,
+    "input_price_per_million": null,
+    "output_price_per_million": null,
+    "retrieval_ambiguity_ratio": 0.8,
+    "retrieval_confidence_threshold": 0.18,
+    "retrieval_enabled": true,
+    "retrieval_fallback_multiplier": 2,
+    "retrieval_family_expansion": true,
+    "retrieval_max_candidates": 10,
+    "retrieval_min_candidates": 5,
+    "retrieval_require_lexical_anchor": false,
+    "retrieval_similarity_threshold": 0.18,
+    "semantic_backend": "lsa",
+    "semantic_chunk_chars": 1200,
+    "semantic_dimensions": 32,
+    "stage1_max_context_tokens": 1600,
+    "stage2_max_context_tokens": 2400,
+    "token_telemetry_enabled": true
+  },
+  "configuration": "aggressive_previous",
+  "estimated_stage1_input_tokens": 470135,
+  "estimated_token_reduction_percent": 62.80989906353337,
+  "estimated_total_input_tokens": 789737,
+  "fallback_reason_counts": {
+    "ambiguous_similarity": 1
+  },
+  "family_expansion_recovery_rate": 0.0,
+  "full_catalog_fallback_issues": 1,
+  "full_catalog_fallback_rate": 0.005,
+  "historical_candidate_misses": 33,
+  "historical_candidate_retention": 0.625,
+  "historical_candidates_are_gold": false,
+  "human_candidate_misses": 0,
+  "human_candidate_recall": 1.0,
+  "human_positive_pairs": 8,
+  "issue_level_positive_coverage": 1.0,
+  "lexical_match_rate": 0.05,
+  "local_timing": {
+    "index_seconds": 0.04318125899953884,
+    "issues_per_second": 52.520106417425986,
+    "retrieval_and_context_seconds": 3.808065399000043
+  },
+  "misses": [],
+  "recall_by_pattern": {
+    "Mortal": {
+      "misses": 0,
+      "n": 1,
+      "recall": 1.0
+    },
+    "Oracle": {
+      "misses": 0,
+      "n": 2,
+      "recall": 1.0
+    },
+    "Proxy contract": {
+      "misses": 0,
+      "n": 1,
+      "recall": 1.0
+    },
+    "Reverse Oracle": {
+      "misses": 0,
+      "n": 1,
+      "recall": 1.0
+    },
+    "Role-based control": {
+      "misses": 0,
+      "n": 1,
+      "recall": 1.0
+    },
+    "Time-Constrained Access": {
+      "misses": 0,
+      "n": 1,
+      "recall": 1.0
+    },
+    "Tokenization": {
+      "misses": 0,
+      "n": 1,
+      "recall": 1.0
+    }
+  },
+  "recall_by_pattern_family": {
+    "F00": {
+      "misses": 0,
+      "n": 1,
+      "recall": 1.0
+    },
+    "F01": {
+      "misses": 0,
+      "n": 1,
+      "recall": 1.0
+    },
+    "F02": {
+      "misses": 0,
+      "n": 3,
+      "recall": 1.0
+    },
+    "unassigned": {
+      "misses": 0,
+      "n": 3,
+      "recall": 1.0
+    }
+  },
+  "safety_misses": [],
+  "safety_misses_yes_plus_uncertain": 0,
+  "safety_recall_yes_plus_uncertain": 1.0,
+  "semantic_index": {
+    "embedding_model": null,
+    "embedding_model_artifact_sha256": null,
+    "embedding_model_revision": null,
+    "semantic_backend": "lsa",
+    "semantic_index_cache_hit": null,
+    "semantic_index_fingerprint": null
+  },
+  "semantic_only_recovery_rate": 0.75,
+  "shortlist": {
+    "max": 82.0,
+    "mean": 16.11,
+    "median": 16.0,
+    "min": 10.0,
+    "n": 200,
+    "p95": 21.0,
+    "sum": 3222.0
+  },
+  "stage1": {
+    "max": 5077.0,
+    "mean": 2350.675,
+    "median": 2208.5,
+    "min": 1785.0,
+    "n": 200,
+    "p95": 3301.6499999999996,
+    "sum": 470135.0
+  },
+  "stage2_fixed_historical_workload": {
+    "max": 5451.0,
+    "mean": 3631.840909090909,
+    "median": 3471.0,
+    "min": 2972.0,
+    "n": 88,
+    "p95": 4876.9,
+    "sum": 319602.0
+  }
+}

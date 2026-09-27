@@ -1,0 +1,157 @@
+{
+  "configurations": [
+    {
+      "configuration": "conservative_current",
+      "full_catalog_fallback_issues": 192,
+      "rules": {
+        "ambiguous_similarity": {
+          "counterfactual_configuration": "conservative_expanded_fallback_counterfactual",
+          "estimated_incremental_stage1_tokens": 1777,
+          "human_positive_pairs_protected": 0,
+          "issues_affected": 1,
+          "note": "Rules can overlap; counts and costs are not additive.",
+          "patterns_added_vs_expanded_fallback_counterfactual": 53
+        },
+        "low_confidence": {
+          "counterfactual_configuration": "conservative_expanded_fallback_counterfactual",
+          "estimated_incremental_stage1_tokens": 106269,
+          "human_positive_pairs_protected": 0,
+          "issues_affected": 60,
+          "note": "Rules can overlap; counts and costs are not additive.",
+          "patterns_added_vs_expanded_fallback_counterfactual": 3199
+        },
+        "no_lexical_anchor": {
+          "counterfactual_configuration": "conservative_expanded_fallback_counterfactual",
+          "estimated_incremental_stage1_tokens": 339242,
+          "human_positive_pairs_protected": 0,
+          "issues_affected": 190,
+          "note": "Rules can overlap; counts and costs are not additive.",
+          "patterns_added_vs_expanded_fallback_counterfactual": 10234
+        }
+      }
+    },
+    {
+      "configuration": "conservative_expanded_fallback_counterfactual",
+      "full_catalog_fallback_issues": 0,
+      "rules": {
+        "ambiguous_similarity": {
+          "counterfactual_configuration": null,
+          "estimated_incremental_stage1_tokens": null,
+          "human_positive_pairs_protected": 0,
+          "issues_affected": 1,
+          "note": "Rules can overlap; counts and costs are not additive.",
+          "patterns_added_vs_expanded_fallback_counterfactual": null
+        },
+        "low_confidence": {
+          "counterfactual_configuration": null,
+          "estimated_incremental_stage1_tokens": null,
+          "human_positive_pairs_protected": 0,
+          "issues_affected": 60,
+          "note": "Rules can overlap; counts and costs are not additive.",
+          "patterns_added_vs_expanded_fallback_counterfactual": null
+        },
+        "no_lexical_anchor": {
+          "counterfactual_configuration": null,
+          "estimated_incremental_stage1_tokens": null,
+          "human_positive_pairs_protected": 0,
+          "issues_affected": 190,
+          "note": "Rules can overlap; counts and costs are not additive.",
+          "patterns_added_vs_expanded_fallback_counterfactual": null
+        }
+      }
+    },
+    {
+      "configuration": "lsa_anchor_off_high_confidence",
+      "full_catalog_fallback_issues": 60,
+      "rules": {
+        "ambiguous_similarity": {
+          "counterfactual_configuration": null,
+          "estimated_incremental_stage1_tokens": null,
+          "human_positive_pairs_protected": 0,
+          "issues_affected": 1,
+          "note": "Rules can overlap; counts and costs are not additive.",
+          "patterns_added_vs_expanded_fallback_counterfactual": null
+        },
+        "low_confidence": {
+          "counterfactual_configuration": null,
+          "estimated_incremental_stage1_tokens": null,
+          "human_positive_pairs_protected": 0,
+          "issues_affected": 60,
+          "note": "Rules can overlap; counts and costs are not additive.",
+          "patterns_added_vs_expanded_fallback_counterfactual": null
+        }
+      }
+    },
+    {
+      "configuration": "lsa_intermediate",
+      "full_catalog_fallback_issues": 1,
+      "rules": {
+        "ambiguous_similarity": {
+          "counterfactual_configuration": null,
+          "estimated_incremental_stage1_tokens": null,
+          "human_positive_pairs_protected": 0,
+          "issues_affected": 1,
+          "note": "Rules can overlap; counts and costs are not additive.",
+          "patterns_added_vs_expanded_fallback_counterfactual": null
+        }
+      }
+    },
+    {
+      "configuration": "aggressive_previous",
+      "full_catalog_fallback_issues": 1,
+      "rules": {
+        "ambiguous_similarity": {
+          "counterfactual_configuration": "lsa_expanded_fallback",
+          "estimated_incremental_stage1_tokens": 1777,
+          "human_positive_pairs_protected": 0,
+          "issues_affected": 1,
+          "note": "Rules can overlap; counts and costs are not additive.",
+          "patterns_added_vs_expanded_fallback_counterfactual": 53
+        }
+      }
+    },
+    {
+      "configuration": "lsa_expanded_fallback",
+      "full_catalog_fallback_issues": 0,
+      "rules": {
+        "ambiguous_similarity": {
+          "counterfactual_configuration": null,
+          "estimated_incremental_stage1_tokens": null,
+          "human_positive_pairs_protected": 0,
+          "issues_affected": 1,
+          "note": "Rules can overlap; counts and costs are not additive.",
+          "patterns_added_vs_expanded_fallback_counterfactual": null
+        }
+      }
+    },
+    {
+      "configuration": "neural_a",
+      "full_catalog_fallback_issues": 0,
+      "rules": {
+        "ambiguous_similarity": {
+          "counterfactual_configuration": null,
+          "estimated_incremental_stage1_tokens": null,
+          "human_positive_pairs_protected": 0,
+          "issues_affected": 200,
+          "note": "Rules can overlap; counts and costs are not additive.",
+          "patterns_added_vs_expanded_fallback_counterfactual": null
+        }
+      }
+    },
+    {
+      "configuration": "neural_b_lsa_union",
+      "full_catalog_fallback_issues": 9,
+      "rules": {
+        "ambiguous_similarity": {
+          "counterfactual_configuration": null,
+          "estimated_incremental_stage1_tokens": null,
+          "human_positive_pairs_protected": 0,
+          "issues_affected": 9,
+          "note": "Rules can overlap; counts and costs are not additive.",
+          "patterns_added_vs_expanded_fallback_counterfactual": null
+        }
+      }
+    }
+  ],
+  "conservative_explanation": "The lexical-anchor guard fires on issues without exact canonical/alias/keyword phrases; it is independent of whether LSA has a useful top candidate."
+}

@@ -214,3 +214,47 @@ class ResultStore:
         if not self.path.exists():
             self.dataframe = pd.DataFrame(columns=columns)
             write_dataframe_csv(self.path, self.dataframe)
+
+
+def resumable_batch(client, *, model, requests, display_name, run_dir, stage, create, wait, poll_seconds):
+    """Persist the remote job identity before polling; reuse in-flight jobs on resume.
+
+    A request subset can reuse an earlier superset after some rows were persisted.
+    The unavoidable create-before-save network ambiguity is reported, not hidden.
+    """
+    from .utils import object_to_dict, sha256_text
+    path = run_dir / f'{stage}_remote_jobs.json'
+    jobs = json.loads(path.read_text()) if path.exists() else []
+    fingerprints = {r['metadata']['custom_id']: sha256_text(json.dumps(r, sort_keys=True, ensure_ascii=False))
+                    for r in requests}
+    selected = None
+    for job in reversed(jobs):
+        if job['model'] == model and all(job['requests'].get(k) == v for k,v in fingerprints.items()):
+            # Failed/expired remote jobs need resubmission. A successful job that
+            # returned malformed/missing model results also needs a fresh attempt.
+            if job.get('consumed') or job.get('terminal_failure'):
+                continue
+            selected = job
+            break
+    if selected is None:
+        created = create(client, model=model, requests=requests, display_name=display_name)
+        name = clean_scalar(getattr(created, 'name', ''))
+        if not name:
+            raise ValueError('Batch created without name')
+        selected = {'model':model,'name':name,'requests':fingerprints,
+                    'request_order':[r['metadata']['custom_id'] for r in requests],
+                    'created':object_to_dict(created)}
+        jobs.append(selected)
+        write_json(path,jobs)
+    final = wait(client, selected['name'], poll_seconds)
+    created_metadata = {**selected['created'], '_request_order':selected.get('request_order', [])}
+    return selected['name'], created_metadata, final
+
+
+def mark_batch_consumed(run_dir, stage, name):
+    path = run_dir / f'{stage}_remote_jobs.json'
+    jobs = json.loads(path.read_text())
+    for job in jobs:
+        if job['name'] == name:
+            job['consumed'] = True
+    write_json(path, jobs)

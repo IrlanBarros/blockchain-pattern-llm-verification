@@ -69,6 +69,9 @@ def stage1_request_params(
     seed: int,
     thinking_level: str,
 ) -> dict[str, Any]:
+    if prepared.optimization and prepared.optimization.enabled:
+        return _optimized_request(prepared, catalog, model, temperature, max_tokens,
+                                  seed, thinking_level, stage=1)
     schema = stage1_schema(catalog.names)
     system_instruction = (
         COMMON_METHOD_RULES
@@ -105,6 +108,9 @@ def stage2_request_params(
     seed: int,
     thinking_level: str,
 ) -> dict[str, Any]:
+    if prepared.optimization and prepared.optimization.enabled:
+        return _optimized_request(prepared, catalog, model, temperature, max_tokens,
+                                  seed, thinking_level, stage=2, pattern=pattern)
     record = catalog.by_name[pattern]
     schema = stage2_schema(catalog.names)
     comparison = related_patterns_context(pattern, catalog)
@@ -145,3 +151,45 @@ def to_inline_batch_request(custom_id: str, params: dict[str, Any]) -> dict[str,
     request.pop("model", None)
     request["metadata"] = {"custom_id": custom_id}
     return request
+
+
+def _optimized_request(prepared, catalog, model, temperature, max_tokens, seed,
+                       thinking_level, *, stage, pattern=None):
+    from .compact_wire import wire_schema, wire_legend
+    from .retrieval import CompactCatalog
+    from .prompts import OPTIMIZED_COMMON_RULES, OPTIMIZED_STAGE1_RULES, OPTIMIZED_STAGE2_RULES
+    compact = CompactCatalog(catalog)
+    cfg = prepared.optimization
+    names = prepared.retrieval['retrieval_candidates'] if stage == 1 else catalog.names
+    ids = [compact.records[n].pattern_id for n in names]
+    schema = (stage1_schema if stage == 1 else stage2_schema)(ids if cfg.compact_output else names)
+    system = OPTIMIZED_COMMON_RULES + '\n\n' + (OPTIMIZED_STAGE1_RULES if stage == 1 else OPTIMIZED_STAGE2_RULES)
+    if cfg.compact_output:
+        schema = wire_schema(schema, stage=stage)
+        system += '\n' + wire_legend(stage)
+    # Invariant instructions/schema precede variable catalog and source content.
+    if stage == 1:
+        context = 'SCREENING CATALOG (IDs are stable):\n' + '\n'.join(compact.records[n].prompt_line() for n in names)
+        friends = compact.false_friends_context(names)
+    else:
+        record = catalog.by_name[pattern]
+        related = set()
+        for group in KNOWN_OVERLAP_GROUPS:
+            if pattern in group:
+                related.update(n for n in group if n in catalog.by_name)
+        related.update(n for n in catalog.names if record['subcategory'] and
+                       catalog.by_name[n]['subcategory'] == record['subcategory'])
+        related.discard(pattern)
+        context = (f'CANDIDATE PATTERN: {pattern} ({compact.records[pattern].pattern_id})\n'
+                   f"CATEGORY: {record['category']} / {record['subcategory']}\n"
+                   f"FULL DESCRIPTION: {record['description']}\n"
+                   'NEARBY MECHANISMS FOR COMPARISON:\n' +
+                   '\n'.join(compact.records[n].prompt_line() for n in sorted(related)) +
+                   '\nALTERNATIVE/OVERLAP ID INDEX:\n' +
+                   '; '.join(f'{r.pattern_id}={r.canonical_name}' for r in compact.records.values()))
+        friends = compact.false_friends_context([pattern])
+    if friends:
+        context += '\nPOTENTIAL LEXICAL COLLISIONS (apply the strict criteria):\n' + friends
+    return {'model': model, 'contents': _user_contents(context + '\nARTIFACT:\n' + prepared.artifact_text),
+            'config': _generate_config(system_instruction=system, schema=schema, temperature=temperature,
+                        max_tokens=max_tokens, seed=seed, thinking_level=thinking_level)}

@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+from dataclasses import replace
 import argparse
 import json
 import sys
+import time
 from pathlib import Path
 
 import pandas as pd
@@ -30,6 +32,11 @@ from .config import (
 from .data import load_input, load_patterns_with_report, prepare_issue
 from .normalization import merge_reports
 from .models import PatternCatalog
+from .optimization import OptimizationConfig
+from .context import prepare_optimized
+from .retrieval import HybridRetriever
+from .optimization_runtime import save_optimization_manifest, validate_optimization_resume
+from .telemetry import summarize_calls
 from .prompts import COMMON_METHOD_RULES, STAGE1_RULES, STAGE2_RULES
 from .schemas import stage1_schema, stage2_schema
 from .stages import (
@@ -42,6 +49,8 @@ from .stages import (
 )
 from .utils import (
     json_dumps,
+    append_jsonl,
+    utc_now_iso,
     sha256_file,
     sha256_text,
     stable_custom_id,
@@ -132,6 +141,7 @@ def _validate_resume_metadata(
 
 
 def run_command(args: argparse.Namespace) -> int:
+    session_started = time.perf_counter()
     input_path = Path(args.input)
     patterns_path = Path(args.patterns)
     if not input_path.exists():
@@ -145,7 +155,11 @@ def run_command(args: argparse.Namespace) -> int:
             raise ValueError("--limit deve ser maior que zero")
         df = df.head(args.limit).copy()
     catalog, pattern_report = load_patterns_with_report(patterns_path)
-    prepared_issues = [prepare_issue(row, args.max_input_chars) for _, row in df.iterrows()]
+    optimization = OptimizationConfig.from_environment(enabled=args.profile == 'optimized')
+    retriever = HybridRetriever(catalog, optimization) if optimization.enabled else None
+    prepared_issues = [prepare_optimized(row, args.max_input_chars, retriever) if retriever
+                       else prepare_issue(row, args.max_input_chars) for _, row in df.iterrows()]
+    prepared_issues = [replace(item, optimization=optimization) for item in prepared_issues]
     prepared_by_key = {(x.repository, x.issue_number): x for x in prepared_issues}
 
     run_id = args.run_id or utc_run_id()
@@ -153,12 +167,16 @@ def run_command(args: argparse.Namespace) -> int:
     existing_run = run_dir.exists() and any(run_dir.iterdir())
     if existing_run:
         _validate_resume_metadata(run_dir, input_path, patterns_path, catalog, args)
+        validate_optimization_resume(run_dir, optimization, catalog)
         print(f"[resume] reutilizando run existente: {run_dir}")
     else:
         run_dir.mkdir(parents=True, exist_ok=True)
         save_manifest(
             run_dir, input_path, patterns_path, df, prepared_issues, catalog, args, input_report, pattern_report,
         )
+
+    if optimization.enabled:
+        save_optimization_manifest(run_dir, optimization, catalog, prepared_issues)
 
     if args.mode == "dry-run":
         build_dry_run_artifacts(prepared_issues, catalog, args, run_dir)
@@ -175,7 +193,11 @@ def run_command(args: argparse.Namespace) -> int:
     try:
         stage1_existing = ResultStore(run_dir / "stage1_results.csv", stage="stage1")
         stage1_pending = len({item.custom_id_stage1 for item in prepared_issues} - stage1_existing.completed_ids())
-        if args.mode == "sync":
+        if args.stage == 'stage2':
+            if stage1_pending:
+                raise ValueError('Stage 2 requires complete persisted Stage 1 results for the same run')
+            stage1_df = stage1_existing.dataframe.copy()
+        elif args.mode == "sync":
             stage1_df = run_stage1_sync(
                 get_client() if stage1_pending else None,
                 prepared_issues,
@@ -202,6 +224,12 @@ def run_command(args: argparse.Namespace) -> int:
                 args.poll_seconds,
                 run_dir,
             )
+
+        if args.stage == 'stage1':
+            succeeded = int((stage1_df['request_status'] == 'succeeded').sum())
+            write_json(run_dir / 'stage1_summary.json', {'issues': len(df), 'succeeded': succeeded,
+                       'pending': len(df)-succeeded, 'stage': 'stage1'})
+            return 0 if succeeded == len(df) else 1
 
         pairs = stage2_pairs_from_stage1(stage1_df)
         write_json(
@@ -257,6 +285,10 @@ def run_command(args: argparse.Namespace) -> int:
     finally:
         if client is not None:
             close_client(client)
+        if optimization.token_telemetry_enabled:
+            append_jsonl(run_dir / 'execution_sessions.jsonl', {'timestamp':utc_now_iso(),
+                         'elapsed_seconds':time.perf_counter()-session_started,'mode':args.mode,'stage':args.stage})
+            summarize_calls(run_dir, optimization)
 
     issue_df = aggregate_issue_results(stage1_df, stage2_df, input_df=df)
     write_dataframe_csv(run_dir / "issue_results.csv", issue_df)
@@ -297,7 +329,7 @@ def run_command(args: argparse.Namespace) -> int:
     }
     write_json(run_dir / "run_summary.json", summary)
     print(json.dumps(summary, ensure_ascii=False, indent=2))
-    return 0
+    return 0 if integrity['status'] == 'OK' else 1
 
 
 def validate_command(args: argparse.Namespace) -> int:
@@ -376,6 +408,9 @@ def build_parser() -> argparse.ArgumentParser:
 
     run = subparsers.add_parser("run", help="Executa o pipeline Gemini ou gera dry-run.")
     run.add_argument("--input", required=True)
+    run.add_argument('--profile', choices=['legacy', 'optimized'], default='legacy',
+                     help='Optimized is experimental until a labeled live A/B benchmark passes.')
+    run.add_argument('--stage', choices=['all','stage1','stage2'], default='all')
     run.add_argument("--patterns", default="blockchain_patterns_keywords_v3.csv")
     run.add_argument("--mode", choices=["sync", "batch", "dry-run"], default="sync")
     run.add_argument("--output-dir", default="outputs/runs")

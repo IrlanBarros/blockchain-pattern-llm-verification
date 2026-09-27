@@ -168,3 +168,13 @@ Flags comuns:
 - Contratos Stage 1/2: `docs/PIPELINE_STAGE1_STAGE2.md`
 - Testes de integração: `INTEGRATION_TESTS_README.md`
 - Documentação completa do projeto: `docs/PROJECT_DOCUMENTATION.md`
+
+## Otimização experimental de tokens
+
+O perfil opcional `--profile optimized` adiciona retrieval local com fallback,
+catálogo compacto, seleção de trechos, IDs internos e telemetria. O perfil
+`legacy` continua padrão. A avaliação piloto contra 8 pares humanos confirmados
+recuperou 8/8 com a candidata LSA intermediária, shortlist média 16,11, fallback
+completo 0,5% e redução estimada de input 64,02%. A amostra positiva é pequena;
+a aprovação é apenas para A/B real. Veja [implementação, limites, resultados e
+comandos](docs/TOKEN_OPTIMIZATION.md).

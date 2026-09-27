@@ -1,0 +1,94 @@
+{
+  "decision": "APROVAR",
+  "human_reference_term": "human-reviewed pilot annotations",
+  "independent_gold_standard": false,
+  "methodology": {
+    "folds": [
+      {
+        "held_out_issue": "OpenZeppelin/openzeppelin-contracts#3735",
+        "misses": [],
+        "positive_pairs": 2,
+        "selected_configuration": "lsa_expanded_fallback"
+      },
+      {
+        "held_out_issue": "ethereum/pm#867",
+        "misses": [],
+        "positive_pairs": 1,
+        "selected_configuration": "lsa_expanded_fallback"
+      },
+      {
+        "held_out_issue": "foundry-rs/foundry#8015",
+        "misses": [],
+        "positive_pairs": 1,
+        "selected_configuration": "lsa_expanded_fallback"
+      },
+      {
+        "held_out_issue": "graphprotocol/graph-node#3373",
+        "misses": [],
+        "positive_pairs": 1,
+        "selected_configuration": "lsa_expanded_fallback"
+      },
+      {
+        "held_out_issue": "solana-labs/solana-program-library#2003",
+        "misses": [],
+        "positive_pairs": 1,
+        "selected_configuration": "lsa_expanded_fallback"
+      },
+      {
+        "held_out_issue": "solana-labs/solana-program-library#3165",
+        "misses": [],
+        "positive_pairs": 1,
+        "selected_configuration": "lsa_expanded_fallback"
+      },
+      {
+        "held_out_issue": "web3swift-team/web3swift#103",
+        "misses": [],
+        "positive_pairs": 1,
+        "selected_configuration": "lsa_expanded_fallback"
+      }
+    ],
+    "limitation": "Internal pilot validation, not an unbiased population estimate.",
+    "method": "deterministic leave-one-positive-issue-out internal validation",
+    "misses": 0,
+    "positive_pairs": 8,
+    "reason": "Only seven strict-positive issues; a 50-issue holdout would be statistically indefensible.",
+    "recall": 1.0
+  },
+  "neural_was_assumed_better": false,
+  "ready_for_real_ab": true,
+  "ready_for_unattended_full_gpu_run": false,
+  "reason": "Zero known strict/safety misses, <=20 mean shortlist, <=20% full fallback and >=60% estimated input reduction on this pilot.",
+  "recommended_config": {
+    "body_budget_fraction": 0.75,
+    "comment_retrieval_enabled": true,
+    "compact_output": true,
+    "context_chunk_chars": 800,
+    "embedding_batch_size": 16,
+    "embedding_cache_dir": ".cache/retrieval_embeddings",
+    "embedding_local_files_only": true,
+    "embedding_model": "intfloat/multilingual-e5-small",
+    "embedding_model_revision": "0e60b8d9d2166d80387f86e3b48ec9ced55f4d15",
+    "enabled": true,
+    "force_full_catalog": false,
+    "full_catalog_fallback": true,
+    "input_price_per_million": null,
+    "output_price_per_million": null,
+    "retrieval_ambiguity_ratio": 0.8,
+    "retrieval_confidence_threshold": 0.35,
+    "retrieval_enabled": true,
+    "retrieval_fallback_multiplier": 2,
+    "retrieval_family_expansion": true,
+    "retrieval_max_candidates": 10,
+    "retrieval_min_candidates": 5,
+    "retrieval_require_lexical_anchor": false,
+    "retrieval_similarity_threshold": 0.18,
+    "semantic_backend": "lsa",
+    "semantic_chunk_chars": 1200,
+    "semantic_dimensions": 32,
+    "stage1_max_context_tokens": 1600,
+    "stage2_max_context_tokens": 2400,
+    "token_telemetry_enabled": true
+  },
+  "recommended_configuration": "lsa_intermediate",
+  "small_sample_warning": "Only 8 strict-positive pairs across 7 issues and one uncertain pair. Approval is for an A/B candidate, not a population-level default guarantee."
+}

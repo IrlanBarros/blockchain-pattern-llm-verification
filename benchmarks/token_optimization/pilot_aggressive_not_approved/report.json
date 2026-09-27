@@ -1,0 +1,307 @@
+{
+  "acceptance": "NOT_VALIDATED: live paired inference and populated human annotations required",
+  "actual_llm_elapsed_seconds": null,
+  "actual_output_tokens": null,
+  "actual_total_tokens": null,
+  "estimator": "uncalibrated ceil(Unicode characters/4), including schema; not official Gemini tokens",
+  "fixed_workload_input_estimate": {
+    "baseline": 2048912.0,
+    "optimized": 737963.0,
+    "reduction_percent": 63.98268934927415
+  },
+  "historical_llm_candidates_excluded": [
+    {
+      "issue_number": "388",
+      "pattern": "Low contract footprint",
+      "repository": "Consensys/gnark"
+    },
+    {
+      "issue_number": "1311",
+      "pattern": "Low contract footprint",
+      "repository": "Consensys/gnark"
+    },
+    {
+      "issue_number": "691",
+      "pattern": "Rate limit",
+      "repository": "MetaMask/core"
+    },
+    {
+      "issue_number": "6105",
+      "pattern": "Limited-access",
+      "repository": "MetaMask/metamask-extension"
+    },
+    {
+      "issue_number": "13525",
+      "pattern": "Tokenization",
+      "repository": "MetaMask/metamask-extension"
+    },
+    {
+      "issue_number": "28962",
+      "pattern": "Blocklist",
+      "repository": "MetaMask/metamask-extension"
+    },
+    {
+      "issue_number": "4441",
+      "pattern": "Off-chain Signatures",
+      "repository": "MetaMask/metamask-mobile"
+    },
+    {
+      "issue_number": "14857",
+      "pattern": "Master & Sub Key",
+      "repository": "MetaMask/metamask-mobile"
+    },
+    {
+      "issue_number": "722",
+      "pattern": "Guard check",
+      "repository": "OpenZeppelin/openzeppelin-contracts"
+    },
+    {
+      "issue_number": "93",
+      "pattern": "Relay contract",
+      "repository": "ProjectOpenSea/operator-filter-registry"
+    },
+    {
+      "issue_number": "3261",
+      "pattern": "Contract Registry (on-chain)",
+      "repository": "algorand/go-algorand"
+    },
+    {
+      "issue_number": "244",
+      "pattern": "X-confirmation",
+      "repository": "ethereum/execution-apis"
+    },
+    {
+      "issue_number": "970",
+      "pattern": "Key Sharding",
+      "repository": "ethers-io/ethers.js"
+    },
+    {
+      "issue_number": "1362",
+      "pattern": "Tokenization",
+      "repository": "ethersphere/bee"
+    },
+    {
+      "issue_number": "5156",
+      "pattern": "X-confirmation",
+      "repository": "graphprotocol/graph-node"
+    },
+    {
+      "issue_number": "671",
+      "pattern": "Mortal",
+      "repository": "hyperledger/besu"
+    },
+    {
+      "issue_number": "845",
+      "pattern": "Oracle",
+      "repository": "ipfs/ipfs-webui"
+    },
+    {
+      "issue_number": "2190",
+      "pattern": "Off-chain data storage",
+      "repository": "ipfs/ipfs-webui"
+    },
+    {
+      "issue_number": "3869",
+      "pattern": "Off-chain data storage",
+      "repository": "ipfs/kubo"
+    },
+    {
+      "issue_number": "5206",
+      "pattern": "Mutex",
+      "repository": "ipfs/kubo"
+    },
+    {
+      "issue_number": "8303",
+      "pattern": "Delegated Computation",
+      "repository": "ipfs/kubo"
+    },
+    {
+      "issue_number": "452",
+      "pattern": "Off-chain computation",
+      "repository": "ipfs/public-gateway-checker"
+    },
+    {
+      "issue_number": "3229",
+      "pattern": "Off-chain computation",
+      "repository": "livepeer/go-livepeer"
+    },
+    {
+      "issue_number": "306",
+      "pattern": "State anchoring",
+      "repository": "near/nearcore"
+    },
+    {
+      "issue_number": "317",
+      "pattern": "Low contract footprint",
+      "repository": "paritytech/polkadot-sdk"
+    },
+    {
+      "issue_number": "2245",
+      "pattern": "Low contract footprint",
+      "repository": "paritytech/polkadot-sdk"
+    },
+    {
+      "issue_number": "9497",
+      "pattern": "Reverse Oracle",
+      "repository": "paritytech/polkadot-sdk"
+    },
+    {
+      "issue_number": "1117",
+      "pattern": "Data refresh",
+      "repository": "paritytech/subxt"
+    },
+    {
+      "issue_number": "5681",
+      "pattern": "Oracle",
+      "repository": "solana-labs/solana"
+    },
+    {
+      "issue_number": "2057",
+      "pattern": "Reverse Oracle",
+      "repository": "trustwallet/assets"
+    },
+    {
+      "issue_number": "4740",
+      "pattern": "Announcement",
+      "repository": "trustwallet/assets"
+    }
+  ],
+  "input_reduction_percent": {
+    "stage1": 71.96686875749516,
+    "stage2": 27.391653837245737
+  },
+  "input_sha256": "411d66b08d2f2838d313c7a19b8d50f4628447e510c263a93ea8adffd4875617",
+  "issues": 200,
+  "metrics": {
+    "baseline": {
+      "local_preparation_seconds": 0.12359147800088977,
+      "stage1": {
+        "max": 9957.0,
+        "mean": 8409.585,
+        "median": 8218.5,
+        "min": 8003.0,
+        "n": 200,
+        "p95": 9320.9,
+        "sum": 1681917.0
+      },
+      "stage2": {
+        "max": 6480.0,
+        "mean": 5097.152777777777,
+        "median": 4950.0,
+        "min": 4326.0,
+        "n": 72,
+        "p95": 6011.75,
+        "sum": 366995.0
+      }
+    },
+    "optimized": {
+      "local_preparation_seconds": 4.933328499999334,
+      "stage1": {
+        "max": 5077.0,
+        "mean": 2357.47,
+        "median": 2214.0,
+        "min": 1785.0,
+        "n": 200,
+        "p95": 3301.6499999999996,
+        "sum": 471494.0
+      },
+      "stage2": {
+        "max": 5424.0,
+        "mean": 3700.9583333333335,
+        "median": 3476.0,
+        "min": 3048.0,
+        "n": 72,
+        "p95": 4996.200000000001,
+        "sum": 266469.0
+      }
+    }
+  },
+  "mode": "offline_prompt_construction_only",
+  "patterns_sha256": "f210c75e5dfd443e11727943c78e6e1efc77b80f9ea140f0fb993419d2457970",
+  "provenance": {
+    "compact_catalog_sha256": "589ed40606a249ae9f7ba3c403f8391ef62e90bd170a2b0f0774020c68676598",
+    "implementation_sha256": {
+      "__init__.py": "8baffcaf9403e4f2f60847622839df2c4735685736efe9aa7fa0423d0e73146f",
+      "aggregation.py": "1bbd912fbe62ef6f880c9eea880bb4551718cfae79966b3d7d0b361461f204b6",
+      "artifacts.py": "1bb2d898b27586335e7ece1b80c696b8a62488ebf86337808663bdb853ad79ff",
+      "checkpoint.py": "0ed6994b8fed2dfc797557d6503d6e40442793225906a6f3d67430295c49de4a",
+      "cli.py": "173ca267d5338b58c08f9cd2d316ba17dbc965f3dec19b113357eec15cb93a6f",
+      "client.py": "b648e7eed39d8461bcc9885b80ab33c3f703c1c07bd1c10b9ea23ea4f1d220fb",
+      "compact_catalog_v1.json": "588dcc8115f1c4c99aeaeb33feb8905ad610ace45fa888afceabb6ad3cb9e405",
+      "compact_wire.py": "75528733671aee884f1ba2674ae52f5afbc7bb013c2831b69d6e6212bc2beae6",
+      "confidence.py": "fa3449e1215cd344de5a5f91c7daca1c2be4239ecf4bb3c148b9dd0106c32d1a",
+      "config.py": "e8d60b2a1120c09161f49567737fa58f1e00df83e47fc3518cebd9b8cf1140d0",
+      "context.py": "eee4701f6e35c775de4e96995a26744369531205b361cf5dc0662fb112c1d436",
+      "data.py": "a63ad266601bc11cd5d3ebeb8ca1efbf6a5ba7f588921d32cc34216347dd1f66",
+      "evidence.py": "60d393ef958aa2e89e46d654e65ed3e6c6cc1eb5e0c1f1b7cc467f720a7954e4",
+      "lexical.py": "4774672b1622119df55e3a6863ebcbe89942a7c10cae4a8be983b25b4fa5b52a",
+      "models.py": "32a1af51da26225432ecc042f1ecbd755dccb1bed9ee08bc628585ceefcc052d",
+      "normalization.py": "4cdf81e3c309f9c2f050b33d35d1476fcd4881e4466b708204c75929699438bb",
+      "optimization.py": "dd781489b030318969a38187972665b9dc9519c1bd89a63ab59a4ec90c9e3e9a",
+      "optimization_runtime.py": "fb8732ff07510184430526fb892c2194a4ec4f7ed5b44cde39841e125f2356de",
+      "prompts.py": "472bcc58ecaa7568f7bcc48c5fa785e5ccee322912b0122872dad07f41f4a60c",
+      "requests.py": "944cf11f01c50aa0dfc6d34ff490be4aebaeb2184d8e2520d7d31a502c7a790e",
+      "retrieval.py": "02bf7989a1893f134cfb765223000ea40d8029477835c5ae1b2e824f0c2ee2cf",
+      "schemas.py": "d9aa87ab37fc3e05642f57b2a0b4d350f05dbb4c38c608f2c3e3a5b1c0c1ab7a",
+      "stability.py": "ec1cfccd8acd4da2eccb2e486e63ebfb3454958b74d2af0344e4115e1bfc78bc",
+      "stages.py": "f428efa1879d6d6dfbb6e5438bfc1f4b8aec68fcbcf69054e5db963e6ffe5bf7",
+      "telemetry.py": "cde2cb7ae3dcaece43f49364ee361a4c3aed1746b46eb08aa8c4a7941b6bcadb",
+      "truncation.py": "ac784d2540f6b0221247bc8ba77a9fa7e7fa7f9cbc5506ef8332665552da241a",
+      "utils.py": "ac539269e80497a07efa66cfb648268c9988ec90d7853f7b7ed918d12b650b3d"
+    },
+    "numpy_version": "2.5.1",
+    "optimization_config": {
+      "body_budget_fraction": 0.75,
+      "comment_retrieval_enabled": true,
+      "compact_output": true,
+      "context_chunk_chars": 800,
+      "enabled": true,
+      "force_full_catalog": false,
+      "full_catalog_fallback": true,
+      "input_price_per_million": null,
+      "output_price_per_million": null,
+      "retrieval_ambiguity_ratio": 0.8,
+      "retrieval_confidence_threshold": 0.18,
+      "retrieval_enabled": true,
+      "retrieval_fallback_multiplier": 2,
+      "retrieval_family_expansion": true,
+      "retrieval_max_candidates": 10,
+      "retrieval_min_candidates": 5,
+      "retrieval_require_lexical_anchor": false,
+      "retrieval_similarity_threshold": 0.18,
+      "semantic_dimensions": 32,
+      "stage1_max_context_tokens": 1600,
+      "stage2_max_context_tokens": 2400,
+      "token_telemetry_enabled": true
+    },
+    "optimization_config_sha256": "d28c033b99360adfe8046c9b40a9b4a0227b2a77c6266fb9ef709fee95c8a6fd",
+    "optimization_version": "retrieval-v1"
+  },
+  "quality": {
+    "new_llm_false_negatives": null,
+    "stage1_candidate_recall": null,
+    "stage2_f1": null,
+    "stage2_precision": null,
+    "stage2_recall": null
+  },
+  "retrieval": {
+    "candidate_count": {
+      "max": 82.0,
+      "mean": 16.14,
+      "median": 16.0,
+      "min": 10.0,
+      "n": 200,
+      "p95": 21.0,
+      "sum": 3228.0
+    },
+    "fallback_issues": 1,
+    "human_labeled_issues": 0,
+    "human_positive_pairs": 0,
+    "missed_positive_count": null,
+    "missed_positives": [],
+    "note": "No human labels: quality unavailable.",
+    "recall": null
+  },
+  "stage2_pair_source": "fixed_historical_stage1_candidates_not_gold",
+  "stage2_pairs": 72
+}
